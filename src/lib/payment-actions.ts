@@ -2,20 +2,55 @@
 
 import { prisma } from '@/lib/db'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import Razorpay from 'razorpay'
+import crypto from 'crypto'
 
-export async function processPayment(gateway: string) {
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+})
+
+export async function createOrder(amount: number) {
     const userSession = (await cookies()).get('user_session')?.value
     if (!userSession) return { error: 'Unauthorized' }
 
-    // Simulate API call to Razorpay/Stripe
-    console.log(`Processing payment via ${gateway} for user ${userSession}`)
+    try {
+        const order = await razorpay.orders.create({
+            amount: amount * 100, // Amount in paise
+            currency: 'INR',
+            receipt: `receipt_${userSession}_${Date.now()}`,
+        })
 
-    // On Success
-    await prisma.user.update({
-        where: { id: userSession },
-        data: { isPaid: true }
-    })
+        return { success: true, orderId: order.id, amount: order.amount }
+    } catch (error) {
+        console.error('Razorpay Error:', error)
+        return { error: 'Failed to create order' }
+    }
+}
 
-    return { success: true }
+export async function verifyPayment(
+    razorpay_order_id: string,
+    razorpay_payment_id: string,
+    razorpay_signature: string
+) {
+    const userSession = (await cookies()).get('user_session')?.value
+    if (!userSession) return { error: 'Unauthorized' }
+
+    const body = razorpay_order_id + '|' + razorpay_payment_id
+    const expectedSignature = crypto
+        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+        .update(body.toString())
+        .digest('hex')
+
+    const isAuthentic = expectedSignature === razorpay_signature
+
+    if (isAuthentic) {
+        await prisma.user.update({
+            where: { id: userSession },
+            data: { isPaid: true }
+        })
+        return { success: true }
+    } else {
+        return { error: 'Invalid signature' }
+    }
 }
