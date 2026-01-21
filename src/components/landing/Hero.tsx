@@ -20,7 +20,7 @@ export default function Hero() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col lg:flex-row items-center gap-12 mt-12">
 
                 {/* Text Section */}
-                <div className="flex-1 space-y-6 z-10">
+                <div className="flex-1 space-y-6 z-10 text-center lg:text-left">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -29,13 +29,13 @@ export default function Hero() {
                         <span className="inline-block px-4 py-1.5 rounded-full bg-rose-100 text-rose-700 font-medium text-sm mb-4 border border-rose-200">
                             #1 Trusted Matrimony App
                         </span>
-                        <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 leading-tight font-serif">
+                        <h1 className="text-4xl lg:text-7xl font-bold text-slate-900 leading-tight font-serif">
                             Find Your Soulmate <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-orange-600">
                                 With Tradition
                             </span>
                         </h1>
-                        <p className="text-lg text-slate-600 max-w-xl leading-relaxed">
+                        <p className="text-lg text-slate-600 max-w-xl leading-relaxed mx-auto lg:mx-0">
                             Experience the perfect blend of tradition and technology.
                             Connecting hearts from Kerala to Canada with trust and elegance.
                         </p>
@@ -46,18 +46,18 @@ export default function Hero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="flex gap-4 pt-4"
+                        className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start"
                     >
-                        <button className="px-8 py-4 bg-rose-600 text-white rounded-full font-semibold shadow-xl shadow-rose-200 hover:bg-rose-700 hover:shadow-rose-300 transition-all transform hover:-translate-y-1">
+                        <button className="px-8 py-4 bg-rose-600 text-white rounded-full font-semibold shadow-xl shadow-rose-200 hover:bg-rose-700 hover:shadow-rose-300 transition-all transform hover:-translate-y-1 w-full sm:w-auto">
                             Find Your Match
                         </button>
-                        <button className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-semibold shadow-sm hover:bg-slate-50 transition-all">
+                        <button className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-semibold shadow-sm hover:bg-slate-50 transition-all w-full sm:w-auto">
                             View Success Stories
                         </button>
                     </motion.div>
 
                     {/* Draggable Cards Area */}
-                    <div className="pt-12 flex gap-4">
+                    <div className="pt-12 flex gap-4 justify-center lg:justify-start flex-wrap hidden sm:flex">
                         {/* Abstract placement of features */}
                         {cards.slice(0, 2).map((card, i) => (
                             <motion.div
