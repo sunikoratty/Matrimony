@@ -9,6 +9,17 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
+    // Date Logic
+    const defaultDate = user.profile?.dob ? new Date(user.profile.dob) : null
+    const [day, setDay] = useState(defaultDate ? defaultDate.getDate() : '')
+    const [month, setMonth] = useState(defaultDate ? defaultDate.getMonth() + 1 : '')
+    const [year, setYear] = useState(defaultDate ? defaultDate.getFullYear() : '')
+
+    const days = Array.from({ length: 31 }, (_, i) => i + 1)
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const currentYear = new Date().getFullYear()
+    const years = Array.from({ length: 80 }, (_, i) => currentYear - 18 - i)
+
     async function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
         if (file) {
@@ -50,13 +61,31 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
-                    <input
-                        name="dob"
-                        type="date"
-                        required
-                        defaultValue={user.profile?.dob ? new Date(user.profile.dob).toISOString().split('T')[0] : ''}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
-                    />
+                    <div className="grid grid-cols-3 gap-2">
+                        <select
+                            value={day} onChange={(e) => setDay(e.target.value)} required
+                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                        >
+                            <option value="">Day</option>
+                            {days.map(d => <option key={d} value={d}>{d}</option>)}
+                        </select>
+                        <select
+                            value={month} onChange={(e) => setMonth(e.target.value)} required
+                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                        >
+                            <option value="">Month</option>
+                            {months.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                        </select>
+                        <select
+                            value={year} onChange={(e) => setYear(e.target.value)} required
+                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                        >
+                            <option value="">Year</option>
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                    </div>
+                    {/* Hidden input to pass value to server action */}
+                    <input type="hidden" name="dob" value={day && month && year ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : ''} />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Current Residence Country</label>
