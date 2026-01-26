@@ -87,17 +87,12 @@ export default function Hero() {
                         {/* Main Image Frame (Arch/Cultural Shape) */}
                         <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white">
                             <Image
-                                src="/images/hero.png"
-                                alt="Traditional Kerala Couple"
+                                src="/images/hero_symbolic.png"
+                                alt="Symbolic Matrimony Hearts"
                                 fill
                                 className="object-cover"
                                 priority
                             />
-
-                            {/* Overlay Content */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-8 text-white">
-                                <p className="font-serif italic text-lg">"Matches are made in heaven"</p>
-                            </div>
                         </div>
 
                         {/* Floating Elements (Thali or Decor) */}

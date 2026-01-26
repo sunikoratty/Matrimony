@@ -21,19 +21,17 @@ export default function MembershipSection({ isPaid, country, isProfileComplete }
             <div className="mt-8 bg-gradient-to-r from-rose-500 to-orange-500 rounded-2xl p-8 text-white relative overflow-hidden">
                 <div className="relative z-10 flex justify-between items-center text-center sm:text-left flex-col sm:flex-row gap-4">
                     <div>
-                        <h2 className="text-2xl font-bold mb-2">Membership Status</h2>
-                        <p className="text-rose-100">
-                            {isPaid ? 'You are a Premium Member' : 'Upgrade to Premium to view contact details of matches'}
+                        <h2 className="text-2xl font-bold mb-2">Upgrade to Premium to view contact details of matches</h2>
+                        <p className="text-rose-100 italic text-sm">
+                            Connect with your perfect match today.
                         </p>
                     </div>
-                    {!isPaid && (
-                        <button
-                            onClick={() => setIsPaymentOpen(true)}
-                            className="px-6 py-3 bg-white text-rose-600 rounded-lg font-bold shadow-lg hover:bg-rose-50 transition-colors"
-                        >
-                            Upgrade Now
-                        </button>
-                    )}
+                    <button
+                        onClick={() => setIsPaymentOpen(true)}
+                        className="px-6 py-3 bg-white text-rose-600 rounded-lg font-bold shadow-lg hover:bg-rose-50 transition-colors whitespace-nowrap"
+                    >
+                        Upgrade Now
+                    </button>
                 </div>
             </div>
 

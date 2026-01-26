@@ -5,7 +5,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                     <div>
                         <h3 className="text-white text-lg font-bold mb-4">Kalyanam</h3>
-                        <p className="text-sm">Connecting hearts across India and Canada with trust and tradition.</p>
+                        <p className="text-sm">Connecting hearts with trust and tradition.</p>
                     </div>
                     <div>
                         <h4 className="text-white font-semibold mb-4">Company</h4>

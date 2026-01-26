@@ -33,6 +33,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
 
     return (
         <form action={async (formData) => {
+            if (!preview) {
+                alert('Please upload a photo to complete your profile.')
+                return
+            }
             setLoading(true)
             const res = await updateProfile(formData)
             setLoading(false)
@@ -88,31 +92,32 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <input type="hidden" name="dob" value={day && month && year ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : ''} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Current Residence Country</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Current Residence Country *</label>
                     <select
                         name="currentResidence"
+                        required
                         defaultValue={user.profile?.currentResidence || user.country}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     >
                         <option value="INDIA">India</option>
-                        <option value="CANADA">Canada</option>
+                        {/* <option value="CANADA">Canada</option> */}
                     </select>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Present Location (City/State)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Present Location (City and State) *</label>
                     <input
                         name="location"
                         required
                         defaultValue={user.profile?.location || ''}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
-                        placeholder="e.g. Mumbai"
+                        placeholder="e.g. Mumbai, Maharashtra"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Email ID</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Email ID *</label>
                     <input
                         name="email"
                         type="email"
@@ -126,9 +131,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Marital Status</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Marital Status *</label>
                     <select
                         name="maritalStatus"
+                        required
                         defaultValue={user.profile?.maritalStatus || 'UNMARRIED'}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     >
@@ -137,7 +143,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Religion</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Religion *</label>
                     <input
                         name="religion"
                         required
@@ -147,7 +153,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Caste</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Caste (Optional)</label>
                     <input
                         name="caste"
                         defaultValue={user.profile?.caste || ''}
@@ -155,7 +161,16 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Occupation</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
+                    <input
+                        name="birthStar"
+                        defaultValue={user.profile?.birthStar || ''}
+                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        placeholder="e.g. Rohini"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Occupation *</label>
                     <input
                         name="occupation"
                         required
@@ -167,27 +182,33 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Bio *</label>
                 <textarea
                     name="bio"
                     rows={4}
+                    required
                     defaultValue={user.profile?.bio || ''}
                     className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     placeholder="Write about your interests, lifestyle, and expectations..."
                 />
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-rose-50 rounded-lg">
+            <div className="flex items-start gap-4 p-6 bg-rose-50 rounded-xl border border-rose-100">
                 <input
                     type="checkbox"
                     name="consent"
                     required
                     defaultChecked={user.profile?.consent}
-                    className="mt-1 w-4 h-4 text-rose-600 rounded focus:ring-rose-500"
+                    className="mt-1.5 w-5 h-5 text-rose-600 rounded focus:ring-rose-500 cursor-pointer"
                 />
-                <p className="text-sm text-slate-600">
-                    We authorize the company to display our profile details. After marriage, we agree to update our status to Married.
-                </p>
+                <div className="space-y-2">
+                    <p className="text-lg font-medium text-slate-800 leading-snug">
+                        We authorize the company to display our profile details including Mobile number and Email.
+                    </p>
+                    <p className="text-lg font-medium text-slate-800 leading-snug">
+                        After marriage, we agree to update our status to Married.
+                    </p>
+                </div>
             </div>
 
             <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400">

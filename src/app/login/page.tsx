@@ -34,11 +34,9 @@ export default function Login() {
         setLoading(true)
         setError('')
         const res = await verifyOTP(mobile, otp)
-        setLoading(false)
-        if (res.success) {
-            router.push('/profile/view')
-        } else {
-            setError(res.error || 'Invalid OTP')
+        if (res?.error) {
+            setLoading(false)
+            setError(res.error)
         }
     }
 

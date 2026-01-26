@@ -25,36 +25,43 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
         }
     }, [])
 
-    // Logic: India -> Razorpay, Others -> Stripe (Stripe not implemented yet)
-    const gateway = country === 'INDIA' ? 'Razorpay' : 'Stripe'
-    const price = country === 'INDIA' ? '999' : '29.99'
-    const currency = country === 'INDIA' ? 'INR' : 'USD'
+    // Logic: Force Razorpay for testing as requested
+    const gateway = 'Razorpay'
+    const price = country === 'INDIA' ? '100' : '5'
+    const currency = 'INR' // Razorpay order is created as INR on server
 
     async function handlePayment() {
-        if (gateway === 'Stripe') {
-            alert('International payments via Stripe coming soon!')
+        console.log('Payment Button Clicked. Gateway:', gateway, 'Price:', price)
+
+        if (!window.Razorpay) {
+            console.error('Razorpay SDK not loaded')
+            alert('Payment system is still loading. Please wait a few seconds and try again.')
             return
         }
 
         setLoading(true)
 
         try {
+            console.log('Initiating createOrder on server...')
             const res = await createOrder(Number(price))
+            console.log('Server Response:', res)
 
             if (res.error) {
-                alert(res.error)
+                console.error('Order Creation Failed:', res.error)
+                alert(`Order Error: ${res.error}`)
                 setLoading(false)
                 return
             }
 
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Use Next.js public env
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: res.amount,
                 currency: currency,
                 name: 'Kalyanam Matrimony',
                 description: 'Premium Membership Payment',
                 order_id: res.orderId,
                 handler: async function (response: any) {
+                    console.log('Razorpay Handler Response:', response)
                     const verification = await verifyPayment(
                         response.razorpay_order_id,
                         response.razorpay_payment_id,
@@ -66,30 +73,31 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                         onClose()
                         router.refresh()
                     } else {
-                        alert('Payment Verification Failed!')
+                        console.error('Verification Error:', verification.error)
+                        alert(verification.error || 'Payment Verification Failed!')
+                        // Even if verification failed on our server, if the payment was actually made, 
+                        // we should probably let the user close the modal.
+                        onClose()
                     }
                     setLoading(false)
                 },
-                prefill: {
-                    name: '', // Optional: can be passed from props
-                    email: '',
-                    contact: '',
-                },
                 theme: {
-                    color: '#e11d48', // rose-600
+                    color: '#e11d48',
                 },
                 modal: {
                     ondismiss: function () {
+                        console.log('Payment Modal Dismissed')
                         setLoading(false)
                     }
                 }
             }
 
+            console.log('Opening Razorpay Modal with options:', { ...options, key: '***' })
             const rzp = new window.Razorpay(options)
             rzp.open()
         } catch (error) {
-            console.error('Payment Error:', error)
-            alert('Something went wrong. Please try again.')
+            console.error('Payment Error (Catch):', error)
+            alert('Something went wrong. Please check your console for details.')
             setLoading(false)
         }
     }
@@ -125,6 +133,32 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                     <span className="text-xl font-bold text-rose-600">{country === 'INDIA' ? '₹' : '$'}{price}</span>
                 </div>
 
+                {process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.startsWith('rzp_test_') && (
+                    <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                        <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase mb-2">
+                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                            Test Mode Active
+                        </div>
+                        <div className="space-y-3">
+                            <div>
+                                <p className="text-[10px] text-amber-600 uppercase font-bold mb-1">Domestic Card (Test):</p>
+                                <p className="text-[10px] text-amber-700 leading-tight">
+                                    <code className="font-bold bg-white px-1 rounded">5267 3181 8797 5449</code><br />
+                                    Exp: <code className="font-bold">12/30</code> | CVV: <code className="font-bold">123</code>
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-amber-600 uppercase font-bold mb-1">Domestic RuPay:</p>
+                                <p className="text-[10px] text-amber-700 leading-tight">
+                                    <code className="font-bold bg-white px-1 rounded">6070 1200 0000 0000</code><br />
+                                    OTP for all: <code className="font-bold">123456</code>
+                                </p>
+                            </div>
+                        </div>
+                        <p className="mt-3 text-[9px] text-amber-600 italic">Tip: Type the digits manually without spaces if copy-paste fails.</p>
+                    </div>
+                )}
+
                 <button
                     onClick={handlePayment}
                     disabled={loading}
@@ -135,6 +169,9 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
 
                 <p className="text-xs text-center text-slate-400 mt-4 flex items-center justify-center gap-1">
                     <Lock size={12} /> Secure 256-bit SSL Encrypted
+                </p>
+                <p className="text-[10px] text-center text-slate-400 mt-2 italic px-4 leading-tight">
+                    Note: International cards may require "International Payments" to be enabled in your Razorpay dashboard.
                 </p>
             </div>
         </div>

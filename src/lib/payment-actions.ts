@@ -18,7 +18,7 @@ export async function createOrder(amount: number) {
         const order = await razorpay.orders.create({
             amount: amount * 100, // Amount in paise
             currency: 'INR',
-            receipt: `receipt_${userSession}_${Date.now()}`,
+            receipt: `rcpt_${userSession.slice(0, 8)}_${Date.now()}`,
         })
 
         return { success: true, orderId: order.id, amount: order.amount }
@@ -45,11 +45,20 @@ export async function verifyPayment(
     const isAuthentic = expectedSignature === razorpay_signature
 
     if (isAuthentic) {
-        await prisma.user.update({
-            where: { id: userSession },
-            data: { isPaid: true }
-        })
-        return { success: true }
+        try {
+            await prisma.user.update({
+                where: { id: userSession },
+                data: { isPaid: true }
+            })
+            return { success: true }
+        } catch (dbError) {
+            console.error('Database Error during payment verification:', dbError)
+            return {
+                success: false,
+                error: 'Payment received but database update failed. Please contact support.',
+                paymentId: razorpay_payment_id
+            }
+        }
     } else {
         return { error: 'Invalid signature' }
     }
