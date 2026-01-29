@@ -10,14 +10,14 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET!,
 })
 
-export async function createOrder(amount: number) {
+export async function createOrder(amount: number, currency: string = 'INR') {
     const userSession = (await cookies()).get('user_session')?.value
     if (!userSession) return { error: 'Unauthorized' }
 
     try {
         const order = await razorpay.orders.create({
-            amount: amount * 100, // Amount in paise
-            currency: 'INR',
+            amount: amount * 100, // Amount in paise/cents
+            currency: currency,
             receipt: `rcpt_${userSession.slice(0, 8)}_${Date.now()}`,
         })
 

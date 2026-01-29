@@ -25,13 +25,13 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
         }
     }, [])
 
-    // Logic: Force Razorpay for testing as requested
+    // Logic: Force Razorpay for both India and Canada
     const gateway = 'Razorpay'
     const price = country === 'INDIA' ? '100' : '5'
-    const currency = 'INR' // Razorpay order is created as INR on server
+    const currency = country === 'INDIA' ? 'INR' : 'CAD'
 
     async function handlePayment() {
-        console.log('Payment Button Clicked. Gateway:', gateway, 'Price:', price)
+        console.log('Payment Button Clicked. Gateway:', gateway, 'Price:', price, 'Currency:', currency)
 
         if (!window.Razorpay) {
             console.error('Razorpay SDK not loaded')
@@ -43,7 +43,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
 
         try {
             console.log('Initiating createOrder on server...')
-            const res = await createOrder(Number(price))
+            const res = await createOrder(Number(price), currency)
             console.log('Server Response:', res)
 
             if (res.error) {
