@@ -6,6 +6,7 @@ import { Lock, Smartphone, Mail, MapPin } from 'lucide-react'
 type Profile = {
     id: string
     name: string
+    country: string
     profile: {
         photoUrl?: string | null
         bio?: string | null
@@ -14,6 +15,8 @@ type Profile = {
         currentResidence?: string | null
         dob?: Date | null
         occupation?: string | null
+        qualification?: string | null
+        location?: string | null
     }
     mobile: string
     email: string | null
@@ -23,6 +26,10 @@ export default function ProfileCard({ profile, isPaid }: { profile: Profile, isP
     const age = profile.profile.dob
         ? new Date().getFullYear() - new Date(profile.profile.dob).getFullYear()
         : 'N/A'
+
+    const locationText = profile.country === 'INDIA'
+        ? (profile.profile.location || 'Location N/A')
+        : (profile.country === 'CANADA' ? 'Canada' : profile.country)
 
     return (
         <div
@@ -48,8 +55,9 @@ export default function ProfileCard({ profile, isPaid }: { profile: Profile, isP
             </div>
 
             <div className="p-5">
-                <h3 className="font-bold text-lg text-slate-900">{profile.name}, {age}</h3>
-                <p className="text-sm text-slate-500 mb-4">{profile.profile.religion || 'Religion N/A'} • {profile.profile.currentResidence || 'Location N/A'}</p>
+                <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{profile.name}, {age}</h3>
+                <p className="text-xs font-semibold text-rose-600 mb-2 uppercase tracking-wider">{profile.profile.qualification || 'Qualification N/A'}</p>
+                <p className="text-sm text-slate-500 mb-4">{profile.profile.religion || 'Religion N/A'} • {locationText}</p>
 
                 {isPaid ? (
                     <div className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">

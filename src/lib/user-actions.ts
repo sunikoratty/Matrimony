@@ -90,6 +90,12 @@ export async function verifyOTP(mobile: string, otp: string) {
     return { error: 'Invalid OTP' }
 }
 
+export async function signOut() {
+    const cookieStore = await cookies()
+    cookieStore.delete('user_session')
+    redirect('/')
+}
+
 export async function updateProfile(formData: FormData) {
     try {
         const cookieStore = await cookies()
@@ -106,17 +112,18 @@ export async function updateProfile(formData: FormData) {
         const location = formData.get('location') as string
         const occupation = formData.get('occupation') as string
         const birthStar = formData.get('birthStar') as string
+        const qualification = formData.get('qualification') as string
         const consent = formData.get('consent') === 'on'
         const maritalStatus = formData.get('maritalStatus') as string
 
-        // Check for profile completion (all fields mandatory as per user request)
+        // Check for profile completion (as per user request: qualification mandatory, occupation optional)
         const isComplete = !!(
             bio?.trim() &&
             dob &&
             religion?.trim() &&
             currentResidence &&
             location?.trim() &&
-            occupation?.trim() &&
+            qualification?.trim() &&
             photoUrl &&
             consent &&
             maritalStatus
@@ -140,6 +147,7 @@ export async function updateProfile(formData: FormData) {
                 location,
                 occupation,
                 birthStar,
+                qualification,
                 consent,
                 photoUrl,
                 maritalStatus,

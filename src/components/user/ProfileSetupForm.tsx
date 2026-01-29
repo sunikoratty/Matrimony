@@ -100,7 +100,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     >
                         <option value="INDIA">India</option>
-                        {/* <option value="CANADA">Canada</option> */}
+                        <option value="CANADA">Canada</option>
                     </select>
                 </div>
             </div>
@@ -170,10 +170,19 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Occupation *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Qualification *</label>
+                    <input
+                        name="qualification"
+                        required
+                        defaultValue={user.profile?.qualification || ''}
+                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        placeholder="e.g. B.Tech, MBA"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Occupation</label>
                     <input
                         name="occupation"
-                        required
                         defaultValue={user.profile?.occupation || ''}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="e.g. Software Engineer"

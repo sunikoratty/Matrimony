@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
+import { signOut } from '@/lib/user-actions'
 
 export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
     return (
@@ -19,35 +20,35 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                     </span>
                 </Link>
 
-                {!isLoggedIn && (
-                    <div className="flex items-center gap-3 sm:gap-6">
-                        <Link href="/login" className="text-sm sm:text-base text-slate-600 hover:text-rose-600 font-medium transition-colors">
-                            Login
-                        </Link>
-                        <Link
-                            href="/register"
-                            className="px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base bg-rose-600 hover:bg-rose-700 text-white rounded-full font-medium transition-all shadow-lg shadow-rose-200"
-                        >
-                            Register Free
-                        </Link>
-                    </div>
-                )}
-                {isLoggedIn && (
-                    <div className="flex items-center gap-3 sm:gap-6">
-                        <Link href="/profile/view" className="text-sm sm:text-base text-slate-600 hover:text-rose-600 font-medium transition-colors">
-                            My Profile
-                        </Link>
-                        <form action={async () => {
-                            // Dynamically import to avoid server/client boundary issues if simple action fails
-                            const { signOut } = await import('@/lib/auth-actions')
-                            await signOut()
-                        }}>
-                            <button className="text-sm px-3 py-1.5 sm:px-4 sm:py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <div className="flex items-center gap-6">
+                    {isLoggedIn ? (
+                        <>
+                            <Link href="/profile/view" className="font-medium hover:text-rose-600 transition-colors">
+                                Profile
+                            </Link>
+                            <button
+                                onClick={async () => {
+                                    await signOut()
+                                }}
+                                className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors"
+                            >
                                 Sign Out
                             </button>
-                        </form>
-                    </div>
-                )}
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login" className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider">
+                                Login
+                            </Link>
+                            <Link
+                                href="/register"
+                                className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
+                            >
+                                Register
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
         </motion.header>
     )
