@@ -153,7 +153,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Caste (Optional)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Caste</label>
                     <input
                         name="caste"
                         defaultValue={user.profile?.caste || ''}
@@ -161,7 +161,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star</label>
                     <input
                         name="birthStar"
                         defaultValue={user.profile?.birthStar || ''}

@@ -98,7 +98,7 @@ export default function Register() {
                                     <div className="relative">
                                         <select name="country" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer">
                                             <option value="INDIA">India</option>
-                                            {/* <option value="CANADA">Canada</option> */}
+                                            <option value="CANADA">Canada</option>
                                         </select>
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
