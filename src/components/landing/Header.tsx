@@ -30,7 +30,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                                 onClick={async () => {
                                     await signOut()
                                 }}
-                                className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors"
+                                className="px-5 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200"
                             >
                                 Sign Out
                             </button>

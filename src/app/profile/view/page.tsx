@@ -57,7 +57,10 @@ export default async function ProfileView({
                                             {user.gender} • {age ? `${age} yrs` : 'Age not set'} • {user.profile?.religion || 'Religion not set'}
                                         </p>
                                     </div>
-                                    <Link href="/profile/setup" className="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 text-sm font-medium">
+                                    <Link
+                                        href="/profile/setup"
+                                        className="px-6 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200 whitespace-nowrap"
+                                    >
                                         Edit Profile
                                     </Link>
                                 </div>

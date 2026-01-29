@@ -56,7 +56,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     )}
                     <input type="hidden" name="photoUrl" value={preview} />
                 </div>
-                <label className="cursor-pointer px-4 py-2 bg-slate-100 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-200 transition-colors">
+                <label className="cursor-pointer px-5 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-all shadow-md shadow-rose-100 mt-2 block w-max mx-auto">
                     Upload Photo
                     <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
                 </label>

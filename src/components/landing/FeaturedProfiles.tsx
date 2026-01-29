@@ -8,9 +8,13 @@ type Profile = {
     id: string
     name: string
     gender: string
+    country: string
     profile: {
         photoUrl?: string | null
         dob?: Date | null
+        religion?: string | null
+        location?: string | null
+        qualification?: string | null
     }
 }
 
@@ -47,6 +51,10 @@ export default function FeaturedProfiles({
                             ? new Date().getFullYear() - new Date(user.profile.dob).getFullYear()
                             : null
 
+                        const locationText = user.country === 'INDIA'
+                            ? (user.profile?.location || 'Location N/A')
+                            : (user.country === 'CANADA' ? 'Canada' : user.country)
+
                         return (
                             <motion.div
                                 key={user.id}
@@ -71,12 +79,20 @@ export default function FeaturedProfiles({
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-rose-600 transition-colors">
+                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-rose-600 transition-colors truncate">
                                         {user.name}
                                     </h3>
-                                    <p className="text-slate-500 text-sm">
-                                        {age ? `${age} yrs` : 'Age not set'}
-                                    </p>
+                                    <div className="space-y-0.5 mt-1">
+                                        <p className="text-xs font-bold text-rose-600 uppercase tracking-wider truncate">
+                                            {user.profile?.qualification || 'Qualification N/A'}
+                                        </p>
+                                        <p className="text-slate-500 text-sm">
+                                            {age ? `${age} yrs` : 'Age N/A'} • {user.profile?.religion || 'Religion N/A'}
+                                        </p>
+                                        <p className="text-slate-400 text-xs truncate">
+                                            {locationText}
+                                        </p>
+                                    </div>
                                 </Link>
                             </motion.div>
                         )
