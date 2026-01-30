@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Header from '@/components/landing/Header'
 import Hero from '@/components/landing/Hero'
 import Footer from '@/components/landing/Footer'
@@ -14,6 +15,21 @@ export default function LandingPageContent({
     brides: any[],
     grooms: any[]
 }) {
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    // Return a stable skeleton/loading state during hydration
+    if (!mounted) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="h-12 w-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen bg-white">
             <Header isLoggedIn={isLoggedIn} />
