@@ -35,7 +35,7 @@ export default async function ProfileByIdView({
                     {/* Profile Header with Background Image (Synced with /profile/view) */}
                     <div className="relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-8">
                         <div className="absolute top-0 left-0 right-0 h-32 overflow-hidden">
-                            <img src="/images/CoupleImage.png" className="w-full h-full object-cover blur-[2px] opacity-40" alt="background" />
+                            <img src="/images/CoupleImage3.png" className="w-full h-full object-cover blur-[2px] opacity-40" alt="background" />
                             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
                         </div>
                         <div className="relative p-8 flex flex-col md:flex-row gap-8 items-start pt-16">

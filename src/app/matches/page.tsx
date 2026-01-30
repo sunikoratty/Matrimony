@@ -27,7 +27,7 @@ export default async function MatchesPage({
                 {/* Hero Section */}
                 <div className="relative h-64 sm:h-80 bg-rose-900 overflow-hidden mb-8">
                     <img
-                        src="/images/CoupleImage4.png"
+                        src="/images/KeralaCouple.png"
                         alt="Matches"
                         className="w-full h-full object-cover opacity-60"
                     />
