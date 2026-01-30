@@ -10,7 +10,7 @@ export default function Hero() {
             {/* Background Image Layer */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/images/hero_symbolic.png"
+                    src="/images/KeralaCouple.png"
                     alt="Traditional Indian Matrimony"
                     fill
                     className="object-cover"

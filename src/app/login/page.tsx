@@ -10,6 +10,7 @@ import { Heart } from 'lucide-react'
 export default function Login() {
     const router = useRouter()
     const [step, setStep] = useState(1) // 1: Mobile, 2: OTP
+    const [countryCode, setCountryCode] = useState('+91')
     const [mobile, setMobile] = useState('')
     const [otp, setOtp] = useState('')
     const [error, setError] = useState('')
@@ -19,7 +20,8 @@ export default function Login() {
         e.preventDefault()
         setLoading(true)
         setError('')
-        const res = await sendOTP(mobile)
+        const fullMobile = `${countryCode}${mobile}`
+        const res = await sendOTP(fullMobile)
         setLoading(false)
         if (res.success) {
             setStep(2)
@@ -33,7 +35,8 @@ export default function Login() {
         e.preventDefault()
         setLoading(true)
         setError('')
-        const res = await verifyOTP(mobile, otp)
+        const fullMobile = `${countryCode}${mobile}`
+        const res = await verifyOTP(fullMobile, otp)
         if (res?.error) {
             setLoading(false)
             setError(res.error)
@@ -79,15 +82,28 @@ export default function Login() {
                         <form onSubmit={handleSendOTP} className="space-y-5">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Mobile Number</label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">+91</span>
+                                <div className="flex gap-2">
+                                    <div className="relative w-28 shrink-0">
+                                        <select
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                            className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer text-slate-900 font-medium"
+                                        >
+                                            <option value="+91">+91 (IN)</option>
+                                            <option value="+1">+1 (CA)</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        </div>
+                                    </div>
                                     <input
                                         autoFocus
                                         value={mobile}
                                         onChange={(e) => setMobile(e.target.value)}
-                                        required pattern="[0-9]{10}"
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white"
-                                        placeholder="98765 43210"
+                                        required
+                                        pattern="[0-9]{7,15}"
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium"
+                                        placeholder="Mobile Number"
                                     />
                                 </div>
                             </div>
@@ -111,8 +127,9 @@ export default function Login() {
                                 />
                                 <div className="flex justify-between items-center mt-2">
                                     <p className="text-xs text-slate-500">
-                                        Sent to +91 {mobile}
+                                        Sent to {countryCode} {mobile}
                                     </p>
+                                    {/* Temporarily hidden as per user request
                                     <button
                                         type="button"
                                         onClick={() => setStep(1)}
@@ -120,6 +137,7 @@ export default function Login() {
                                     >
                                         Change Number
                                     </button>
+                                    */}
                                 </div>
                             </div>
                             {error && <p className="text-rose-600 text-sm bg-rose-50 p-3 rounded-lg border border-rose-100">{error}</p>}

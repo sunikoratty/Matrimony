@@ -4,10 +4,12 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { sendOTPCode, verifyOTPCode } from './sms-utils'
 
 const RegisterSchema = z.object({
     name: z.string().min(2),
-    mobile: z.string().min(10),
+    countryCode: z.string().startsWith('+'),
+    mobile: z.string().min(7),
     gender: z.string(),
     motherTongue: z.string(),
     country: z.string(),
@@ -22,7 +24,8 @@ export async function registerUser(formData: FormData) {
         return { error: 'Invalid data. Please check all fields.' }
     }
 
-    const { mobile, name, gender, motherTongue, country } = result.data
+    const { mobile: rawMobile, countryCode, name, gender, motherTongue, country } = result.data
+    const mobile = `${countryCode}${rawMobile}`
 
     try {
         const user = await prisma.user.create({
@@ -60,8 +63,13 @@ export async function sendOTP(mobile: string) {
     try {
         const user = await prisma.user.findUnique({ where: { mobile } })
         if (!user) return { error: 'User not registered. Please register first', success: false }
-        console.log(`OTP for ${mobile} is 123456`)
-        return { success: true, otp: '123456' }
+
+        const res = await sendOTPCode(mobile)
+        if (res.success) {
+            return { success: true }
+        } else {
+            return { error: res.error || 'Failed to send OTP', success: false }
+        }
     } catch (e) {
         console.error('Error in sendOTP:', e)
         return { error: 'Database connection failed. Please try again.', success: false }
@@ -69,7 +77,8 @@ export async function sendOTP(mobile: string) {
 }
 
 export async function verifyOTP(mobile: string, otp: string) {
-    if (otp === '123456') {
+    const res = await verifyOTPCode(mobile, otp)
+    if (res.success) {
         try {
             const user = await prisma.user.findUnique({ where: { mobile } })
             if (!user) return { error: 'User not found. Please register.' }
@@ -87,7 +96,7 @@ export async function verifyOTP(mobile: string, otp: string) {
         }
         redirect('/profile/view')
     }
-    return { error: 'Invalid OTP' }
+    return { error: res.error || 'Invalid OTP' }
 }
 
 export async function signOut() {

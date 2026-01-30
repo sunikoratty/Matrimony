@@ -68,15 +68,32 @@ export default function Register() {
                     }} className="space-y-5">
                         <div className="space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
-                                <input name="name" required className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white" placeholder="e.g. John Doe" />
+                                <label className="block text-sm font-medium text-slate-900 mb-1.5">Full Name</label>
+                                <input name="name" required className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium" placeholder="e.g. John Doe" />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Mobile Number</label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">+91</span>
-                                    <input name="mobile" required pattern="[0-9]{10}" className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white" placeholder="98765 43210" />
+                                <label className="block text-sm font-medium text-slate-900 mb-1.5">Mobile Number</label>
+                                <div className="flex gap-2">
+                                    <div className="relative w-28 shrink-0">
+                                        <select
+                                            name="countryCode"
+                                            className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer text-slate-900 font-medium"
+                                        >
+                                            <option value="+91">+91 (IN)</option>
+                                            <option value="+1">+1 (CA)</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        </div>
+                                    </div>
+                                    <input
+                                        name="mobile"
+                                        required
+                                        pattern="[0-9]{7,15}"
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium"
+                                        placeholder="Mobile Number"
+                                    />
                                 </div>
                             </div>
 

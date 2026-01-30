@@ -8,6 +8,9 @@ import Link from 'next/link'
 export default function ProfileSetupForm({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
+    const [religion, setReligion] = useState(user.profile?.religion || '')
+    const [caste, setCaste] = useState(user.profile?.caste || '')
+    const [denomination, setDenomination] = useState(user.profile?.denomination || '')
 
     // Date Logic
     const defaultDate = user.profile?.dob ? new Date(user.profile.dob) : null
@@ -144,31 +147,103 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Religion *</label>
-                    <input
+                    <select
                         name="religion"
                         required
-                        defaultValue={user.profile?.religion || ''}
+                        value={religion}
+                        onChange={(e) => setReligion(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
-                        placeholder="e.g. Hindu"
-                    />
+                    >
+                        <option value="">Select Religion</option>
+                        <option value="Hindu">Hindu</option>
+                        <option value="Christian">Christian</option>
+                        <option value="Muslim">Muslim</option>
+                    </select>
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Caste</label>
-                    <input
-                        name="caste"
-                        defaultValue={user.profile?.caste || ''}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star</label>
-                    <input
-                        name="birthStar"
-                        defaultValue={user.profile?.birthStar || ''}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
-                        placeholder="e.g. Rohini"
-                    />
-                </div>
+                {religion === 'Hindu' && (
+                    <>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Caste *</label>
+                            <select
+                                value={caste}
+                                onChange={(e) => setCaste(e.target.value)}
+                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
+                            >
+                                <option value="">Select Caste</option>
+                                <option value="Nair">Nair</option>
+                                <option value="Ezhava">Ezhava</option>
+                                <option value="Vishwakarma">Vishwakarma</option>
+                                <option value="Brahmin">Brahmin</option>
+                                <option value="Pulaya">Pulaya</option>
+                                <option value="Vettuva">Vettuva</option>
+                                <option value="Kaniyan">Kaniyan</option>
+                                <option value="Dheevara">Dheevara</option>
+                                <option value="Others">Others</option>
+                            </select>
+                            {caste === 'Others' && (
+                                <input
+                                    name="caste"
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                    placeholder="Type your caste"
+                                />
+                            )}
+                            {caste !== 'Others' && <input type="hidden" name="caste" value={caste} />}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>
+                            <input
+                                name="dosham"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                placeholder="e.g. Chovva Dosham, etc."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
+                            <input
+                                name="birthStar"
+                                defaultValue={user.profile?.birthStar || ''}
+                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                placeholder="e.g. Rohini"
+                            />
+                        </div>
+                    </>
+                )}
+                {religion === 'Christian' && (
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">Denomination *</label>
+                        <select
+                            value={denomination}
+                            onChange={(e) => setDenomination(e.target.value)}
+                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
+                        >
+                            <option value="">Select Denomination</option>
+                            <option value="Latin Catholic">Latin Catholic</option>
+                            <option value="Roman Catholic">Roman Catholic</option>
+                            <option value="Syro Malabar">Syro Malabar</option>
+                            <option value="Syrian Catholic">Syrian Catholic</option>
+                            <option value="Syro Malankara">Syro Malankara</option>
+                            <option value="Pentecost">Pentecost</option>
+                            <option value="Others">Others</option>
+                        </select>
+                        {denomination === 'Others' && (
+                            <input
+                                name="denomination"
+                                required
+                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                placeholder="Type your denomination"
+                            />
+                        )}
+                        {denomination !== 'Others' && <input type="hidden" name="denomination" value={denomination} />}
+                    </div>
+                )}
+                {(religion === '' || religion === 'Muslim') && (
+                    <>
+                        <div className="opacity-0 pointer-events-none absolute h-0 overflow-hidden">
+                            <input name="caste" value="" readOnly /><input name="birthStar" value="" readOnly />
+                        </div>
+                    </>
+                )}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Qualification *</label>
                     <input
