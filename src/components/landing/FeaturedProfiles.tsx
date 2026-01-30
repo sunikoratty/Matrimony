@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { User } from 'lucide-react'
+import AgeDisplay from '../ui/AgeDisplay'
 
 type Profile = {
     id: string
@@ -47,9 +48,7 @@ export default function FeaturedProfiles({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                     {profiles.map((user, index) => {
-                        const age = user.profile?.dob
-                            ? new Date().getFullYear() - new Date(user.profile.dob).getFullYear()
-                            : null
+
 
                         const locationText = user.country === 'INDIA'
                             ? (user.profile?.location || 'Location N/A')
@@ -87,7 +86,7 @@ export default function FeaturedProfiles({
                                             {user.profile?.qualification || 'Qualification N/A'}
                                         </p>
                                         <p className="text-slate-500 text-sm">
-                                            {age ? `${age} yrs` : 'Age N/A'} • {user.profile?.religion || 'Religion N/A'}
+                                            <AgeDisplay dob={user.profile?.dob} /> • {user.profile?.religion || 'Religion N/A'}
                                         </p>
                                         <p className="text-slate-400 text-xs truncate">
                                             {locationText}

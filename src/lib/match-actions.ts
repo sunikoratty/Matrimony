@@ -136,10 +136,10 @@ export async function getPublicProfiles(gender?: 'MALE' | 'FEMALE', limit: numbe
             const profiles = await prisma.user.findMany({
                 where: commonCriteria,
                 include: { profile: true },
-                take: 50
+                take: limit
             })
 
-            return profiles.sort(() => Math.random() - 0.5).slice(0, limit)
+            return profiles
         }
 
         return await prisma.user.findMany({
