@@ -20,18 +20,8 @@ export async function sendOTPCode(mobile: string) {
         return { success: true, mock: true }
     }
 
-    /* Commented out for testing
-    try {
-        const verification = await client.verify.v2.services(verifySid)
-            .verifications
-            .create({ to: mobile, channel: 'sms' })
-
-        return { success: true, status: verification.status }
-    } catch (error: any) {
-        console.error('Error sending OTP:', error.message)
-        return { success: false, error: error.message }
-    }
-    */
+    /* Commented out for testing */
+    return { success: false, error: 'Twilio disabled for testing' }
 }
 
 export async function verifyOTPCode(mobile: string, code: string) {
