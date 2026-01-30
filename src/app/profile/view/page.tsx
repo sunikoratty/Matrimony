@@ -38,8 +38,8 @@ export default async function ProfileView({
                             <img src="/images/CoupleImage3.png" className="w-full h-full object-cover blur-[2px] opacity-40" alt="background" />
                             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
                         </div>
-                        <div className="relative p-8 flex flex-col md:flex-row gap-8 items-start pt-16">
-                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-slate-100 flex-shrink-0">
+                        <div className="relative p-6 sm:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start pt-16">
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-slate-100 flex-shrink-0 relative z-10">
                                 {user.profile?.photoUrl ? (
                                     <img src={user.profile.photoUrl} alt={user.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -49,17 +49,19 @@ export default async function ProfileView({
                                 )}
                             </div>
 
-                            <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h1 className="text-3xl font-bold text-slate-900">{user.name}</h1>
-                                        <p className="text-slate-500">
+                            <div className="flex-1 w-full text-center md:text-left">
+                                <div className="flex flex-col sm:flex-row justify-between items-center md:items-start gap-4">
+                                    <div className="max-w-full">
+                                        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 break-words leading-tight">
+                                            {user.name}
+                                        </h1>
+                                        <p className="text-slate-500 mt-1">
                                             {user.gender} • {age ? `${age} yrs` : 'Age not set'} • {user.profile?.religion || 'Religion not set'}
                                         </p>
                                     </div>
                                     <Link
                                         href="/profile/setup"
-                                        className="px-6 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200 whitespace-nowrap"
+                                        className="w-full sm:w-auto px-6 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200 whitespace-nowrap inline-block"
                                     >
                                         Edit Profile
                                     </Link>
