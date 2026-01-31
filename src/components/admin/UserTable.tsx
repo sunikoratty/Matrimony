@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { togglePaidStatus, updateUserStatus } from '@/lib/actions'
-import { Check, X, Shield, Trash2, MoreHorizontal } from 'lucide-react'
+import { Check, X, Shield, Trash2, MoreHorizontal, Pencil } from 'lucide-react'
+import EditUserModal from './EditUserModal'
 
 import { useRouter } from 'next/navigation'
 
@@ -22,6 +23,7 @@ type User = {
 export default function UserTable({ users }: { users: User[] }) {
     const router = useRouter()
     const [loadingId, setLoadingId] = useState<string | null>(null)
+    const [editingUser, setEditingUser] = useState<User | null>(null)
 
     async function handleTogglePaid(userId: string, currentStatus: boolean) {
         setLoadingId(userId)
@@ -94,6 +96,13 @@ export default function UserTable({ users }: { users: User[] }) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
                                         <button
+                                            onClick={() => setEditingUser(user)}
+                                            className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"
+                                            title="Edit User"
+                                        >
+                                            <Pencil size={16} />
+                                        </button>
+                                        <button
                                             onClick={() => handleStatusChange(user.id, user.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED')}
                                             className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
                                             title={user.status === 'BLOCKED' ? 'Unblock' : 'Block'}
@@ -121,6 +130,13 @@ export default function UserTable({ users }: { users: User[] }) {
                     </tbody>
                 </table>
             </div>
+
+            {editingUser && (
+                <EditUserModal
+                    user={editingUser}
+                    onClose={() => setEditingUser(null)}
+                />
+            )}
         </div>
     )
 }

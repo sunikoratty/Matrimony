@@ -74,3 +74,38 @@ export async function getUsers() {
         include: { profile: true },
     })
 }
+
+export async function adminUpdateUser(userId: string, data: any) {
+    const { profile, ...userData } = data
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            // Update User fields
+            await tx.user.update({
+                where: { id: userId },
+                data: userData,
+            })
+
+            // Update or Create Profile fields
+            if (profile) {
+                // Ensure dob is a proper Date object if provided
+                if (profile.dob) {
+                    profile.dob = new Date(profile.dob)
+                }
+
+                await tx.profile.upsert({
+                    where: { userId },
+                    create: {
+                        ...profile,
+                        userId,
+                    },
+                    update: profile,
+                })
+            }
+        })
+        return { success: true }
+    } catch (error: any) {
+        console.error('Admin user update failed:', error)
+        return { error: error.message || 'Failed to update user' }
+    }
+}
