@@ -7,10 +7,10 @@ import MatchesList from '@/components/user/MatchesList'
 export default async function MatchesPage({
     searchParams
 }: {
-    searchParams: Promise<{ gender?: 'MALE' | 'FEMALE' }>
+    searchParams: Promise<{ gender?: 'MALE' | 'FEMALE', mode?: 'broad' | 'recommended' }>
 }) {
-    const { gender } = await searchParams
-    const matchesResult = await getMatches('broad', 0, 20, gender)
+    const { gender, mode = 'recommended' } = await searchParams
+    const matchesResult = await getMatches(mode as any, 0, 20, gender)
 
     if ('error' in matchesResult) {
         return <div className="p-20 text-center">{matchesResult.error}</div>

@@ -15,6 +15,7 @@ export async function getMatches(
 
         // Guest Mode
         if (!userSession) {
+            console.log(`[Matchmaking] Guest Mode - fetching all ${guestGender || 'FEMALE'}s globally`)
             const matches = await prisma.user.findMany({
                 where: {
                     role: 'USER',
@@ -27,7 +28,8 @@ export async function getMatches(
                 },
                 include: { profile: true },
                 skip,
-                take
+                take,
+                orderBy: { createdAt: 'desc' }
             })
             return { matches, currentUser: { isPaid: false, country: 'INDIA' }, isGuest: true }
         }
@@ -39,7 +41,7 @@ export async function getMatches(
 
         if (!currentUser) return { error: 'User not found' }
 
-        const matchGender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE'
+        const matchGender = guestGender || (currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE')
         // const matchCountry = currentUser.country // Removed from baseCriteria
 
         const baseCriteria: any = {
