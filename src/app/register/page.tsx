@@ -6,8 +6,10 @@ import { registerUser } from '@/lib/user-actions'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart, Sparkles } from 'lucide-react'
+import { useToast } from '@/components/ui/Toast'
 
 export default function Register() {
+    const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
@@ -63,7 +65,10 @@ export default function Register() {
 
                         if (res?.error) {
                             setError(res.error)
+                            showToast(res.error, 'error')
                             setLoading(false)
+                        } else {
+                            showToast('Welcome to Kalyanam! Let\'s setup your profile.', 'success')
                         }
                     }} className="space-y-5">
                         <div className="space-y-5">

@@ -5,6 +5,7 @@ import ProfileCard from '@/components/user/ProfileCard'
 import PaymentModal from '@/components/payment/PaymentModal'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useToast } from '@/components/ui/Toast'
 
 type Profile = {
     id: string
@@ -39,6 +40,7 @@ export default function MatchesList({
     gender?: 'MALE' | 'FEMALE',
     unlockedIds?: string[]
 }) {
+    const { showToast } = useToast()
     const [allMatches, setAllMatches] = useState(initialMatches)
     const [unlockedIds, setUnlockedIds] = useState<string[]>(initialUnlockedIds)
     const [page, setPage] = useState(1)
@@ -104,8 +106,9 @@ export default function MatchesList({
             const result = await unlockContact(targetId)
             if ('success' in result) {
                 setUnlockedIds(prev => [...prev, targetId])
+                showToast('Contact unlocked successfully!', 'success')
             } else if ('error' in result) {
-                alert(result.error)
+                showToast(result.error, 'error')
             }
         } catch (error) {
             console.error('Unlock failed:', error)

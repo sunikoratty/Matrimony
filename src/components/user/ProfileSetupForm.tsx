@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
 import { Camera } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/Toast'
 
 export default function ProfileSetupForm({ user }: { user: any }) {
+    const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
@@ -58,14 +60,16 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     return (
         <form action={async (formData) => {
             if (!preview) {
-                alert('Please upload a photo to complete your profile.')
+                showToast('Please upload a photo to complete your profile.', 'error')
                 return
             }
             setLoading(true)
             const res = await updateProfile(formData)
             setLoading(false)
             if (res?.error) {
-                alert(res.error)
+                showToast(res.error, 'error')
+            } else {
+                showToast('Profile updated successfully!', 'success')
             }
         }} className="space-y-6">
             {/* Photo Upload */}

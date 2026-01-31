@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { createOrder, verifyPayment } from '@/lib/payment-actions'
 import { CreditCard, Globe, X, Lock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/ui/Toast'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 declare global {
     interface Window {
@@ -12,6 +14,7 @@ declare global {
 }
 
 export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boolean, onClose: () => void, country: string }) {
+    const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
@@ -35,7 +38,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
 
         if (!window.Razorpay) {
             console.error('Razorpay SDK not loaded')
-            alert('Payment system is still loading. Please wait a few seconds and try again.')
+            showToast('Payment system is still loading. Please wait a few seconds and try again.', 'error')
             return
         }
 
@@ -48,7 +51,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
 
             if (res.error) {
                 console.error('Order Creation Failed:', res.error)
-                alert(`Order Error: ${res.error}`)
+                showToast(`Order Error: ${res.error}`, 'error')
                 setLoading(false)
                 return
             }
@@ -69,12 +72,12 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                     )
 
                     if (verification.success) {
-                        alert('Payment Successful! Your account is now Premium.')
+                        showToast('Payment Successful! Your account is now Premium.', 'success')
                         onClose()
                         router.refresh()
                     } else {
                         console.error('Verification Error:', verification.error)
-                        alert(verification.error || 'Payment Verification Failed!')
+                        showToast(verification.error || 'Payment Verification Failed!', 'error')
                         // Even if verification failed on our server, if the payment was actually made, 
                         // we should probably let the user close the modal.
                         onClose()
@@ -97,7 +100,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
             rzp.open()
         } catch (error) {
             console.error('Payment Error (Catch):', error)
-            alert('Something went wrong. Please check your console for details.')
+            showToast('Something went wrong. Please check your console for details.', 'error')
             setLoading(false)
         }
     }
@@ -164,8 +167,19 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                     disabled={loading}
                     className="w-full py-4 bg-gradient-to-r from-rose-600 to-orange-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all relative overflow-hidden"
                 >
-                    {loading ? 'Processing...' : `Pay Now`}
+                    {loading ? (
+                        <div className="flex items-center justify-center gap-2">
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span>Processing...</span>
+                        </div>
+                    ) : `Pay Now`}
                 </button>
+
+                {loading && (
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
+                        <LoadingSpinner />
+                    </div>
+                )}
 
                 <p className="text-xs text-center text-slate-400 mt-4 flex items-center justify-center gap-1">
                     <Lock size={12} /> Secure 256-bit SSL Encrypted

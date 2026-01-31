@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Heart } from 'lucide-react'
+import { useToast } from '@/components/ui/Toast'
 
 export default function Login() {
+    const { showToast } = useToast()
     const router = useRouter()
     const [step, setStep] = useState(1) // 1: Mobile, 2: OTP
     const [countryCode, setCountryCode] = useState('+91')
@@ -25,9 +27,12 @@ export default function Login() {
         setLoading(false)
         if (res.success) {
             setStep(2)
+            showToast('OTP sent successfully!', 'success')
         } else {
             // @ts-ignore
-            setError(res.error || 'Failed to send OTP')
+            const msg = res.error || 'Failed to send OTP'
+            setError(msg)
+            showToast(msg, 'error')
         }
     }
 
@@ -40,6 +45,9 @@ export default function Login() {
         if (res?.error) {
             setLoading(false)
             setError(res.error)
+            showToast(res.error, 'error')
+        } else {
+            showToast('Logged in successfully!', 'success')
         }
     }
 
