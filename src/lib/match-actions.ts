@@ -40,12 +40,11 @@ export async function getMatches(
         if (!currentUser) return { error: 'User not found' }
 
         const matchGender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE'
-        const matchCountry = currentUser.country
+        // const matchCountry = currentUser.country // Removed from baseCriteria
 
         const baseCriteria: any = {
             role: 'USER',
             gender: matchGender,
-            country: matchCountry,
             status: 'ACTIVE',
             isProfileCompleted: true, // Only show completed profiles
             profile: {
@@ -87,9 +86,13 @@ export async function getMatches(
                 }
 
                 // Strictly filter by chosen gender, status, AND the prioritized religion criteria
+                // For Recommended and Matching, we also include the user's country as a base filter
+                // However, the user said "Browse all" shouldn't filter by country.
+                // We'll keep country for Recommended/Matching to keep them relevant.
                 matches = await prisma.user.findMany({
                     where: {
                         ...baseCriteria,
+                        country: currentUser.country, // Keep country for recommended/matching
                         profile: {
                             ...baseCriteria.profile, // Contains maritalStatus filter
                             OR: religionConditions
@@ -103,29 +106,13 @@ export async function getMatches(
 
                 console.log(`[Matchmaking] Found ${matches.length} strict matches for ${religion}`)
 
-                // For 'recommended' mode, if we don't have enough matches, add broad ones
-                if (mode === 'recommended' && matches.length < take) {
-                    const matchedIds = matches.map(m => m.id)
-                    const broadTake = take - matches.length
-
-                    console.log(`[Matchmaking] Appending up to ${broadTake} broader matches for Hybrid Recommended view`)
-
-                    const broaderMatches = await prisma.user.findMany({
-                        where: {
-                            ...baseCriteria,
-                            id: { notIn: matchedIds }
-                        },
-                        include: { profile: true },
-                        take: broadTake,
-                        orderBy: { createdAt: 'desc' }
-                    })
-                    matches = [...matches, ...broaderMatches]
-                }
+                // FALLBACK REMOVED: We no longer append broader matches in recommended mode
+                // as per user request: "Do not show Hindu or other profiles in the recommended section if i am christian"
             } else {
-                // No religion set on profile - broad matching is the only fallback
-                console.log(`[Matchmaking] No valid religion found, falling back to broad matches`)
+                // No religion set on profile - return nothing or fallback to filtered broad?
+                // Given the instructions, we'll return broad matches but still filtered by country.
                 matches = await prisma.user.findMany({
-                    where: baseCriteria,
+                    where: { ...baseCriteria, country: currentUser.country },
                     include: { profile: true },
                     skip,
                     take,
@@ -133,8 +120,9 @@ export async function getMatches(
                 })
             }
         } else {
-            // Broad mode - strictly base criteria (gender, country, status, completed)
-            console.log(`[Matchmaking] Mode is 'broad' - ignoring religion completely`)
+            // Broad mode - strictly base criteria (gender, role, status, completed)
+            // NO country filter here as per user request: "All profiles (Browse all) shoulld display all the profiles do not filter with any condition like country or anything"
+            console.log(`[Matchmaking] Mode is 'broad' - ignoring religion and country completely`)
             matches = await prisma.user.findMany({
                 where: baseCriteria,
                 include: { profile: true },
