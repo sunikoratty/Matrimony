@@ -107,7 +107,7 @@ export default async function ProfileByIdView({
                             <MembershipSection
                                 isPaid={false}
                                 country={currentUser?.country || 'INDIA'}
-                                isProfileComplete={true}
+                                isProfileComplete={!!currentUser?.isProfileCompleted}
                             />
                         </div>
                     )}

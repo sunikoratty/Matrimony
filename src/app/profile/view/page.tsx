@@ -25,7 +25,7 @@ export default async function ProfileView({
         : null
 
     // Check if critical matching details are present
-    const isProfileComplete = !!(user.profile?.dob && user.profile?.religion)
+    const isProfileComplete = !!user.isProfileCompleted
 
     return (
         <div className="min-h-screen bg-slate-50">
