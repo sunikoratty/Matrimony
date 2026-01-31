@@ -92,6 +92,7 @@ export async function getMatches(
 
         if (mode === 'matching' || mode === 'recommended') {
             const profile = currentUser.profile as any
+            const isExplicitSearch = filters && Object.values(filters).some(v => v !== undefined)
 
             // Priority: Search Filters > Profile Defaults
             const religion = filters?.religion || profile?.religion?.trim()
@@ -111,31 +112,44 @@ export async function getMatches(
                 }
             }
 
-            console.log(`[Matchmaking] User: ${currentUser.name}, Mode: ${mode}, Religion Filter: '${religion}'`)
+            console.log(`[Matchmaking] User: ${currentUser.name}, Mode: ${mode}, IsSearch: ${isExplicitSearch}, Religion: '${religion}'`)
 
             if (religion && religion !== 'N/A') {
-                const religionConditions: any[] = []
+                let currentWhere: any = {
+                    ...baseCriteria,
+                    profile: {
+                        ...baseCriteria.profile,
+                        religion,
+                        ...(Object.keys(dobFilter).length > 0 ? { dob: dobFilter } : {})
+                    }
+                }
 
-                if (religion === 'Hindu') {
-                    if (dosham?.trim()) religionConditions.push({ religion, dosham: dosham.trim() })
-                    if (caste?.trim()) religionConditions.push({ religion, caste: caste.trim() })
-                    religionConditions.push({ religion })
-                } else if (religion === 'Christian') {
-                    if (denomination?.trim()) religionConditions.push({ religion, denomination: denomination.trim() })
-                    religionConditions.push({ religion })
+                // If explicit search filters like caste are provided, use strict matching
+                if (isExplicitSearch) {
+                    if (filters?.religion === 'Hindu') {
+                        if (filters.caste) currentWhere.profile.caste = filters.caste
+                        if (filters.dosham) currentWhere.profile.dosham = filters.dosham
+                    } else if (filters?.religion === 'Christian') {
+                        if (filters.denomination) currentWhere.profile.denomination = filters.denomination
+                    }
                 } else {
-                    religionConditions.push({ religion })
+                    // Default Recommended logic (OR fallback for members)
+                    const religionConditions: any[] = []
+                    if (religion === 'Hindu') {
+                        if (dosham?.trim()) religionConditions.push({ religion, dosham: dosham.trim() })
+                        if (caste?.trim()) religionConditions.push({ religion, caste: caste.trim() })
+                        religionConditions.push({ religion })
+                    } else if (religion === 'Christian') {
+                        if (denomination?.trim()) religionConditions.push({ religion, denomination: denomination.trim() })
+                        religionConditions.push({ religion })
+                    } else {
+                        religionConditions.push({ religion })
+                    }
+                    currentWhere.profile.OR = religionConditions
                 }
 
                 matches = await prisma.user.findMany({
-                    where: {
-                        ...baseCriteria,
-                        profile: {
-                            ...baseCriteria.profile,
-                            OR: religionConditions,
-                            ...(Object.keys(dobFilter).length > 0 ? { dob: dobFilter } : {})
-                        }
-                    },
+                    where: currentWhere,
                     include: { profile: true },
                     skip,
                     take,

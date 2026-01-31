@@ -2,6 +2,7 @@
 
 import { Lock, Smartphone, Mail, MapPin, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import AgeDisplay from '../ui/AgeDisplay'
 
 type Profile = {
     id: string
@@ -33,11 +34,6 @@ export default function ProfileCard({
     isUnlocked?: boolean,
     onUnlock?: () => void
 }) {
-    // console.log(`[ProfileCard] Profile: ${profile.name}, isUnlocked: ${isUnlocked}`)
-    const age = profile.profile.dob
-        ? new Date().getFullYear() - new Date(profile.profile.dob).getFullYear()
-        : 'N/A'
-
     const locationText = profile.country === 'INDIA'
         ? (profile.profile.location || 'Location N/A')
         : (profile.country === 'CANADA' ? 'Canada' : profile.country)
@@ -70,7 +66,7 @@ export default function ProfileCard({
                 <div className="p-5">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{profile.name}, {age}</h3>
+                            <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{profile.name}, <AgeDisplay dob={profile.profile.dob} /></h3>
                             <p className="text-xs font-semibold text-rose-600 mb-2 uppercase tracking-wider">{profile.profile.qualification || 'Qualification N/A'}</p>
                         </div>
                         <ExternalLink size={16} className="text-slate-300 mt-1" />
