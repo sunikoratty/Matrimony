@@ -49,11 +49,11 @@ export default async function ProfileByIdView({
                     {/* Back Link */}
                     <div className="mb-6">
                         <Link
-                            href="/profile/view#matches"
+                            href={`/matches?gender=${viewedUser.gender}`}
                             className="inline-flex items-center gap-2 text-slate-500 hover:text-rose-600 transition-colors font-medium text-sm group"
                         >
                             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to My Profile
+                            Back to Profile
                         </Link>
                     </div>
 
