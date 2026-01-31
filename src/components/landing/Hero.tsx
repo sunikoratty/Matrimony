@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 export default function Hero() {
     const router = useRouter()
     const [searchData, setSearchData] = useState({
+        gender: '',
         age: '',
         religion: '',
         caste: '',
@@ -20,6 +21,7 @@ export default function Hero() {
     const handleSearch = () => {
         const params = new URLSearchParams()
         params.set('mode', 'recommended') // Default search behavior
+        if (searchData.gender) params.set('gender', searchData.gender)
         if (searchData.age) params.set('age', searchData.age)
         if (searchData.religion) params.set('religion', searchData.religion)
         if (searchData.caste) params.set('caste', searchData.caste)
@@ -96,7 +98,21 @@ export default function Hero() {
                                 <Search className="w-5 h-5 text-rose-400" />
                                 Search Profile
                             </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                                {/* Gender Filter */}
+                                <div className="space-y-1.5 text-left">
+                                    <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">I am looking for</label>
+                                    <select
+                                        value={searchData.gender}
+                                        onChange={(e) => setSearchData({ ...searchData, gender: e.target.value })}
+                                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                    >
+                                        <option value="" className="bg-slate-900">Any</option>
+                                        <option value="FEMALE" className="bg-slate-900">Bride (Female)</option>
+                                        <option value="MALE" className="bg-slate-900">Groom (Male)</option>
+                                    </select>
+                                </div>
+
                                 {/* Age Filter */}
                                 <div className="space-y-1.5 text-left">
                                     <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Age Range</label>
