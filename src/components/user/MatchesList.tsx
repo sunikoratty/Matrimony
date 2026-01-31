@@ -27,15 +27,18 @@ export default function MatchesList({
     currentUser,
     isGuest = false,
     layout = 'cards',
-    gender
+    gender,
+    unlockedIds: initialUnlockedIds = []
 }: {
     matches: any[],
     currentUser: any,
     isGuest?: boolean,
     layout?: 'cards' | 'simple',
-    gender?: 'MALE' | 'FEMALE'
+    gender?: 'MALE' | 'FEMALE',
+    unlockedIds?: string[]
 }) {
     const [allMatches, setAllMatches] = useState(initialMatches)
+    const [unlockedIds, setUnlockedIds] = useState<string[]>(initialUnlockedIds)
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(initialMatches.length >= 20)
@@ -49,10 +52,11 @@ export default function MatchesList({
     // Sync state when props change (Server -> Client navigation)
     useEffect(() => {
         setAllMatches(initialMatches)
+        setUnlockedIds(initialUnlockedIds)
         setPage(1)
         setHasMore(initialMatches.length >= 20)
         setIsNavigating(false)
-    }, [initialMatches])
+    }, [initialMatches, initialUnlockedIds])
 
     const userCountry = currentUser.country || 'INDIA'
 
@@ -74,6 +78,12 @@ export default function MatchesList({
             if ('matches' in result && result.matches) {
                 const newMatches = result.matches as any[]
                 setAllMatches(prev => [...(prev || []), ...newMatches])
+
+                if ('unlockedIds' in result && result.unlockedIds) {
+                    const newUnlocked = result.unlockedIds as string[]
+                    setUnlockedIds(prev => Array.from(new Set([...prev, ...newUnlocked])))
+                }
+
                 setPage(prev => prev + 1)
                 setHasMore(newMatches.length >= 20)
             }
@@ -81,6 +91,20 @@ export default function MatchesList({
             console.error('Failed to load more matches:', error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleUnlock = async (targetId: string) => {
+        try {
+            const { unlockContact } = await import('@/lib/user-actions')
+            const result = await unlockContact(targetId)
+            if ('success' in result) {
+                setUnlockedIds(prev => [...prev, targetId])
+            } else if ('error' in result) {
+                alert(result.error)
+            }
+        } catch (error) {
+            console.error('Unlock failed:', error)
         }
     }
 
@@ -121,33 +145,37 @@ export default function MatchesList({
 
             <div className={layout === 'simple' ? "space-y-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"}>
                 {allMatches.map(profile => (
-                    <Link key={profile.id} href={`/profile/${profile.id}`}>
+                    <div key={profile.id}>
                         {layout === 'simple' ? (
-                            <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
-                                <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
-                                    {profile.profile.photoUrl ? (
-                                        <img src={profile.profile.photoUrl} className="w-full h-full object-cover" alt={profile.name} />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-rose-300 font-bold text-xl">
-                                            {profile.name.charAt(0)}
-                                        </div>
-                                    )}
+                            <Link href={`/profile/${profile.id}`}>
+                                <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
+                                    <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
+                                        {profile.profile.photoUrl ? (
+                                            <img src={profile.profile.photoUrl} className="w-full h-full object-cover" alt={profile.name} />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-rose-300 font-bold text-xl">
+                                                {profile.name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="font-bold text-slate-900">{profile.name}</h3>
+                                        <p className="text-sm text-slate-500">
+                                            {profile.profile.religion || 'Religion N/A'} • {profile.profile.currentResidence || 'Location N/A'}
+                                        </p>
+                                        <p className="text-xs text-rose-600 font-medium mt-1">View Profile &rarr;</p>
+                                    </div>
                                 </div>
-                                <div className="flex-1">
-                                    <h3 className="font-bold text-slate-900">{profile.name}</h3>
-                                    <p className="text-sm text-slate-500">
-                                        {profile.profile.religion || 'Religion N/A'} • {profile.profile.currentResidence || 'Location N/A'}
-                                    </p>
-                                    <p className="text-xs text-rose-600 font-medium mt-1">View Profile &rarr;</p>
-                                </div>
-                            </div>
+                            </Link>
                         ) : (
                             <ProfileCard
                                 profile={profile}
                                 isPaid={currentUser.isPaid}
+                                isUnlocked={unlockedIds.includes(profile.id)}
+                                onUnlock={() => handleUnlock(profile.id)}
                             />
                         )}
-                    </Link>
+                    </div>
                 ))}
             </div>
 

@@ -1,7 +1,5 @@
-'use client'
-
-
-import { Lock, Smartphone, Mail, MapPin } from 'lucide-react'
+import { Lock, Smartphone, Mail, MapPin, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 type Profile = {
     id: string
@@ -22,7 +20,17 @@ type Profile = {
     email: string | null
 }
 
-export default function ProfileCard({ profile, isPaid }: { profile: Profile, isPaid: boolean }) {
+export default function ProfileCard({
+    profile,
+    isPaid,
+    isUnlocked = false,
+    onUnlock
+}: {
+    profile: Profile,
+    isPaid: boolean,
+    isUnlocked?: boolean,
+    onUnlock?: () => void
+}) {
     const age = profile.profile.dob
         ? new Date().getFullYear() - new Date(profile.profile.dob).getFullYear()
         : 'N/A'
@@ -33,33 +41,44 @@ export default function ProfileCard({ profile, isPaid }: { profile: Profile, isP
 
     return (
         <div
-            className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow"
+            className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-shadow relative"
         >
-            {/* Photo Area */}
-            <div className="h-64 bg-slate-100 relative overflow-hidden group">
-                {profile.profile.photoUrl ? (
-                    <img src={profile.profile.photoUrl} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-rose-50 text-rose-300 font-bold text-4xl">
-                        {profile.name.charAt(0)}
+            {/* Clickable Area for Profile Details */}
+            <Link href={`/profile/${profile.id}`} className="block">
+                {/* Photo Area */}
+                <div className="h-64 bg-slate-100 relative overflow-hidden group">
+                    {profile.profile.photoUrl ? (
+                        <img src={profile.profile.photoUrl} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-rose-50 text-rose-300 font-bold text-4xl">
+                            {profile.name.charAt(0)}
+                        </div>
+                    )}
+
+                    {!isPaid && (
+                        <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p className="px-4 py-2 bg-black/60 text-white rounded-full text-xs font-semibold">
+                                Upgrade to View Full Photo
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                <div className="p-5">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{profile.name}, {age}</h3>
+                            <p className="text-xs font-semibold text-rose-600 mb-2 uppercase tracking-wider">{profile.profile.qualification || 'Qualification N/A'}</p>
+                        </div>
+                        <ExternalLink size={16} className="text-slate-300 mt-1" />
                     </div>
-                )}
+                    <p className="text-sm text-slate-500 mb-4">{profile.profile.religion || 'Religion N/A'} • {locationText}</p>
+                </div>
+            </Link>
 
-                {!isPaid && (
-                    <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <p className="px-4 py-2 bg-black/60 text-white rounded-full text-xs font-semibold">
-                            Upgrade to View Full Photo
-                        </p>
-                    </div>
-                )}
-            </div>
-
-            <div className="p-5">
-                <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{profile.name}, {age}</h3>
-                <p className="text-xs font-semibold text-rose-600 mb-2 uppercase tracking-wider">{profile.profile.qualification || 'Qualification N/A'}</p>
-                <p className="text-sm text-slate-500 mb-4">{profile.profile.religion || 'Religion N/A'} • {locationText}</p>
-
-                {isPaid ? (
+            {/* Contact Reveal Area - Persistent at the bottom */}
+            <div className="px-5 pb-5 pt-0">
+                {isUnlocked ? (
                     <div className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Smartphone size={14} className="text-green-600" />
@@ -75,17 +94,27 @@ export default function ProfileCard({ profile, isPaid }: { profile: Profile, isP
                                 <span>{profile.profile.occupation}</span>
                             </div>
                         )}
-                        {profile.profile.bio && (
-                            <p className="text-xs text-slate-500 mt-2 italic line-clamp-2">"{profile.profile.bio}"</p>
-                        )}
                     </div>
                 ) : (
                     <div className="bg-orange-50 p-4 rounded-lg border border-orange-100 text-center">
                         <div className="flex justify-center mb-2 text-orange-400">
-                            <Lock size={20} />
+                            <Lock size={18} />
                         </div>
                         <p className="text-xs font-medium text-orange-800 mb-2">Contact Locked</p>
-                        <p className="text-[10px] text-orange-600">Pay Premium to view Phone, Email & Bio</p>
+                        {isPaid ? (
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onUnlock?.();
+                                }}
+                                className="w-full py-1.5 bg-rose-600 text-white text-[10px] font-bold rounded-lg hover:bg-rose-700 transition-all shadow-sm shadow-rose-100"
+                            >
+                                Unlock Now
+                            </button>
+                        ) : (
+                            <p className="text-[10px] text-orange-600 font-medium italic">Premium Required</p>
+                        )}
                     </div>
                 )}
             </div>

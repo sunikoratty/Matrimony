@@ -135,11 +135,15 @@ export async function getMatches(
 
         return {
             matches,
-            currentUser: { isPaid: currentUser.isPaid, country: currentUser.country }
+            currentUser: { isPaid: currentUser.isPaid, country: currentUser.country },
+            unlockedIds: await (prisma as any).contactView.findMany({
+                where: { viewerId: currentUser.id },
+                select: { targetId: true }
+            }).then((views: any[]) => views.map((v: any) => v.targetId))
         }
     } catch (error) {
-        console.warn('Database connection failed in getMatches')
-        return { matches: [], currentUser: { isPaid: false, country: 'INDIA' }, isGuest: true, error: 'Database connection failed' }
+        console.warn('Database connection failed in getMatches:', error)
+        return { matches: [], currentUser: { isPaid: false, country: 'INDIA' }, isGuest: true, error: 'Database connection failed', unlockedIds: [] }
     }
 }
 

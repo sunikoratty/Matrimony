@@ -164,7 +164,7 @@ export async function updateProfile(formData: FormData) {
                 consent,
                 photoUrl,
                 maritalStatus,
-            }
+            } as any
         })
 
         if (isComplete) {
@@ -220,7 +220,7 @@ export async function unlockContact(targetId: string) {
             return { error: 'Only premium members can unlock contact details.' }
         }
 
-        await prisma.contactView.upsert({
+        await (prisma as any).contactView.upsert({
             where: {
                 viewerId_targetId: {
                     viewerId: userSession,
@@ -243,7 +243,7 @@ export async function unlockContact(targetId: string) {
 
 export async function hasUnlockedContact(viewerId: string, targetId: string) {
     try {
-        const view = await prisma.contactView.findUnique({
+        const view = await (prisma as any).contactView.findUnique({
             where: {
                 viewerId_targetId: {
                     viewerId,

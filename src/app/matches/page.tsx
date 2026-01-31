@@ -46,7 +46,13 @@ export default async function MatchesPage({
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-                    <MatchesList matches={matches} currentUser={userWithCountry} isGuest={isGuest} gender={gender} />
+                    <MatchesList
+                        matches={matches}
+                        currentUser={userWithCountry}
+                        isGuest={isGuest}
+                        gender={gender}
+                        unlockedIds={matchesResult.unlockedIds}
+                    />
                 </div>
             </div>
         </div>
