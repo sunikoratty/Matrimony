@@ -56,15 +56,15 @@ export async function getMatches(
         let matches: any[] = []
 
         if (mode === 'matching' || mode === 'recommended') {
-            const profile = currentUser.profile
+            const profile = currentUser.profile as any
             const religion = profile?.religion?.trim()
             const caste = profile?.caste?.trim()
             const dosham = profile?.dosham as string | undefined
             const denomination = profile?.denomination as string | undefined
 
-            console.log(`[Matching] User: ${currentUser.name}, Mode: ${mode}, Religion: '${religion}', Denomination: '${denomination}'`)
+            console.log(`[Matchmaking] User: ${currentUser.name} (${currentUser.mobile}), Religion: '${religion}', Mode: ${mode}`)
 
-            if (religion) {
+            if (religion && religion !== 'N/A') {
                 // Determine priority conditions based on religion
                 const religionConditions: any[] = []
 
@@ -101,10 +101,15 @@ export async function getMatches(
                     orderBy: { createdAt: 'desc' }
                 })
 
+                console.log(`[Matchmaking] Found ${matches.length} strict matches for ${religion}`)
+
                 // For 'recommended' mode, if we don't have enough matches, add broad ones
                 if (mode === 'recommended' && matches.length < take) {
                     const matchedIds = matches.map(m => m.id)
                     const broadTake = take - matches.length
+
+                    console.log(`[Matchmaking] Appending up to ${broadTake} broader matches for Hybrid Recommended view`)
+
                     const broaderMatches = await prisma.user.findMany({
                         where: {
                             ...baseCriteria,
@@ -117,21 +122,25 @@ export async function getMatches(
                     matches = [...matches, ...broaderMatches]
                 }
             } else {
-                // No religion set on profile - fallback to broad matching
+                // No religion set on profile - broad matching is the only fallback
+                console.log(`[Matchmaking] No valid religion found, falling back to broad matches`)
                 matches = await prisma.user.findMany({
                     where: baseCriteria,
                     include: { profile: true },
                     skip,
-                    take
+                    take,
+                    orderBy: { createdAt: 'desc' }
                 })
             }
         } else {
-            // Broad mode
+            // Broad mode - strictly base criteria (gender, country, status, completed)
+            console.log(`[Matchmaking] Mode is 'broad' - ignoring religion completely`)
             matches = await prisma.user.findMany({
                 where: baseCriteria,
                 include: { profile: true },
                 skip,
-                take
+                take,
+                orderBy: { createdAt: 'desc' }
             })
         }
 
