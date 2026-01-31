@@ -115,6 +115,8 @@ export async function updateProfile(formData: FormData) {
         const dob = formData.get('dob') as string
         const religion = formData.get('religion') as string
         const caste = formData.get('caste') as string
+        const denomination = formData.get('denomination') as string
+        const dosham = formData.get('dosham') as string
         const currentResidence = formData.get('currentResidence') as string
         const photoUrl = formData.get('photoUrl') as string
         const email = formData.get('email') as string
@@ -152,6 +154,8 @@ export async function updateProfile(formData: FormData) {
                 dob: dob ? new Date(dob) : undefined,
                 religion,
                 caste,
+                denomination,
+                dosham,
                 currentResidence,
                 location,
                 occupation,

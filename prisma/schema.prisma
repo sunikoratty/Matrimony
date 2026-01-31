@@ -35,6 +35,8 @@ model Profile {
   photoUrl         String? // Base64 or URL
   religion         String?
   caste            String?
+  denomination     String?
+  dosham           String?
   birthStar        String?
   maritalStatus    String   @default("UNMARRIED") // UNMARRIED, MARRIED
   currentResidence String?  // Country
