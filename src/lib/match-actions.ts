@@ -57,81 +57,50 @@ export async function getMatches(
 
         if (mode === 'matching') {
             const profile = currentUser.profile
-            const religion = profile?.religion
-            const caste = profile?.caste
+            const religion = profile?.religion?.trim()
+            const caste = profile?.caste?.trim()
             const dosham = profile?.dosham as string | undefined
             const denomination = profile?.denomination as string | undefined
 
-            if (religion === 'Hindu') {
-                // Hindu Priority Logic:
-                // 1. Same Religion + Same Dosham (if available)
-                // 2. Same Religion + Same Caste (if available)
-                // 3. Same Religion
+            console.log(`[Matching] User: ${currentUser.name}, Mode: ${mode}, Religion: '${religion}', Denomination: '${denomination}'`)
 
-                const conditions = []
+            if (religion) {
+                // Determine priority conditions based on religion
+                const religionConditions: any[] = []
 
-                // Priority 1: Religion + Dosham
-                if (dosham) {
-                    conditions.push({ ...baseCriteria.profile, religion, dosham })
+                if (religion === 'Hindu') {
+                    if (dosham?.trim()) {
+                        religionConditions.push({ religion, dosham: dosham.trim() })
+                    }
+                    if (caste?.trim()) {
+                        religionConditions.push({ religion, caste: caste.trim() })
+                    }
+                    religionConditions.push({ religion })
+                } else if (religion === 'Christian') {
+                    if (denomination?.trim()) {
+                        religionConditions.push({ religion, denomination: denomination.trim() })
+                    }
+                    religionConditions.push({ religion })
+                } else {
+                    // Muslim or any other specific religion
+                    religionConditions.push({ religion })
                 }
 
-                // Priority 2: Religion + Caste
-                if (caste) {
-                    conditions.push({ ...baseCriteria.profile, religion, caste })
-                }
-
-                // Priority 3: Religion only
-                conditions.push({ ...baseCriteria.profile, religion })
-
-                matches = await prisma.user.findMany({
-                    where: {
-                        ...baseCriteria,
-                        OR: conditions.map(profileCond => ({ profile: profileCond }))
-                    },
-                    include: { profile: true },
-                    skip,
-                    take
-                })
-            } else if (religion === 'Christian') {
-                // Christian Priority Logic:
-                // 1. Same Religion + Same Denomination (if available)
-                // 2. Same Religion
-
-                const conditions = []
-
-                // Priority 1: Religion + Denomination
-                if (denomination) {
-                    conditions.push({ ...baseCriteria.profile, religion, denomination })
-                }
-
-                // Priority 2: Religion only
-                conditions.push({ ...baseCriteria.profile, religion })
-
-                matches = await prisma.user.findMany({
-                    where: {
-                        ...baseCriteria,
-                        OR: conditions.map(profileCond => ({ profile: profileCond }))
-                    },
-                    include: { profile: true },
-                    skip,
-                    take
-                })
-            } else if (religion === 'Muslim') {
-                // Muslim logic: Just same religion
                 matches = await prisma.user.findMany({
                     where: {
                         ...baseCriteria,
                         profile: {
-                            ...baseCriteria.profile,
-                            religion
+                            ...baseCriteria.profile, // Contains maritalStatus filter
+                            OR: religionConditions
                         }
                     },
                     include: { profile: true },
                     skip,
-                    take
+                    take,
+                    orderBy: { createdAt: 'desc' }
                 })
             } else {
-                // Fallback for other/no religion
+                // No religion set on profile - fallback to broad matching
                 matches = await prisma.user.findMany({
                     where: baseCriteria,
                     include: { profile: true },
@@ -140,6 +109,7 @@ export async function getMatches(
                 })
             }
         } else {
+            // Broad mode
             matches = await prisma.user.findMany({
                 where: baseCriteria,
                 include: { profile: true },
