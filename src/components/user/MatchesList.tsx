@@ -6,6 +6,7 @@ import PaymentModal from '@/components/payment/PaymentModal'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useToast } from '@/components/ui/Toast'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 type Profile = {
     id: string
@@ -151,13 +152,8 @@ export default function MatchesList({
             </div>
 
             {isNavigating ? (
-                <div className="py-32 text-center flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] animate-pulse">
-                    <div className="relative w-16 h-16 mb-6">
-                        <div className="absolute inset-0 border-4 border-rose-100 rounded-full"></div>
-                        <div className="absolute inset-0 border-4 border-rose-600 rounded-full border-t-transparent animate-spin"></div>
-                    </div>
-                    <h2 className="text-xl font-bold text-slate-900 mb-2">Curating Your Matches</h2>
-                    <p className="text-slate-500 italic">Finding the perfect profiles for you...</p>
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] flex items-center justify-center">
+                    <LoadingSpinner />
                 </div>
             ) : (
                 <>
