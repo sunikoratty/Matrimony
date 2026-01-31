@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
 import { Camera } from 'lucide-react'
 import Link from 'next/link'
@@ -8,15 +8,36 @@ import Link from 'next/link'
 export default function ProfileSetupForm({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
-    const [religion, setReligion] = useState(user.profile?.religion || '')
-    const [caste, setCaste] = useState(user.profile?.caste || '')
-    const [denomination, setDenomination] = useState(user.profile?.denomination || '')
+
+    // Controlled States for all fields
+    const [religion, setReligion] = useState(user.profile?.religion?.trim() || '')
+
+    const castes = ['Nair', 'Ezhava', 'Vishwakarma', 'Brahmin', 'Pulaya', 'Vettuva', 'Kaniyan', 'Dheevara', 'Others']
+    const initIsCustomCaste = user.profile?.caste && !castes.includes(user.profile.caste.trim())
+    const [caste, setCaste] = useState(initIsCustomCaste ? 'Others' : (user.profile?.caste?.trim() || ''))
+    const [customCaste, setCustomCaste] = useState(initIsCustomCaste ? user.profile.caste : '')
+
+    const denominations = ['Latin Catholic', 'Roman Catholic', 'Syro Malabar', 'Syrian Catholic', 'Syro Malankara', 'Pentecost', 'Others']
+    const initIsCustomDenom = user.profile?.denomination && !denominations.includes(user.profile.denomination.trim())
+    const [denomination, setDenomination] = useState(initIsCustomDenom ? 'Others' : (user.profile?.denomination?.trim() || ''))
+    const [customDenomination, setCustomDenomination] = useState(initIsCustomDenom ? user.profile.denomination : '')
+
+    const [location, setLocation] = useState(user.profile?.location || '')
+    const [email, setEmail] = useState(user.email || '')
+    const [maritalStatus, setMaritalStatus] = useState(user.profile?.maritalStatus || 'UNMARRIED')
+    const [currentResidence, setCurrentResidence] = useState(user.profile?.currentResidence || user.country || 'INDIA')
+    const [bio, setBio] = useState(user.profile?.bio || '')
+    const [qualification, setQualification] = useState(user.profile?.qualification || '')
+    const [occupation, setOccupation] = useState(user.profile?.occupation || '')
+    const [dosham, setDosham] = useState(user.profile?.dosham || '')
+    const [birthStar, setBirthStar] = useState(user.profile?.birthStar || '')
+    const [consent, setConsent] = useState(user.profile?.consent || false)
 
     // Date Logic
     const defaultDate = user.profile?.dob ? new Date(user.profile.dob) : null
-    const [day, setDay] = useState(defaultDate ? defaultDate.getDate() : '')
-    const [month, setMonth] = useState(defaultDate ? defaultDate.getMonth() + 1 : '')
-    const [year, setYear] = useState(defaultDate ? defaultDate.getFullYear() : '')
+    const [day, setDay] = useState(defaultDate ? defaultDate.getDate().toString() : '')
+    const [month, setMonth] = useState(defaultDate ? (defaultDate.getMonth() + 1).toString() : '')
+    const [year, setYear] = useState(defaultDate ? defaultDate.getFullYear().toString() : '')
 
     const days = Array.from({ length: 31 }, (_, i) => i + 1)
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -91,7 +112,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
-                    {/* Hidden input to pass value to server action */}
                     <input type="hidden" name="dob" value={day && month && year ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : ''} />
                 </div>
                 <div>
@@ -99,7 +119,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <select
                         name="currentResidence"
                         required
-                        defaultValue={user.profile?.currentResidence || user.country}
+                        value={currentResidence}
+                        onChange={(e) => setCurrentResidence(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     >
                         <option value="INDIA">India</option>
@@ -114,7 +135,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <input
                         name="location"
                         required
-                        defaultValue={user.profile?.location || ''}
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="e.g. Mumbai, Maharashtra"
                     />
@@ -125,7 +147,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         name="email"
                         type="email"
                         required
-                        defaultValue={user.email || ''}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="e.g. user@example.com"
                     />
@@ -138,7 +161,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <select
                         name="maritalStatus"
                         required
-                        defaultValue={user.profile?.maritalStatus || 'UNMARRIED'}
+                        value={maritalStatus}
+                        onChange={(e) => setMaritalStatus(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     >
                         <option value="UNMARRIED">Unmarried</option>
@@ -160,6 +184,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         <option value="Muslim">Muslim</option>
                     </select>
                 </div>
+
                 {religion === 'Hindu' && (
                     <>
                         <div>
@@ -170,30 +195,28 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
                             >
                                 <option value="">Select Caste</option>
-                                <option value="Nair">Nair</option>
-                                <option value="Ezhava">Ezhava</option>
-                                <option value="Vishwakarma">Vishwakarma</option>
-                                <option value="Brahmin">Brahmin</option>
-                                <option value="Pulaya">Pulaya</option>
-                                <option value="Vettuva">Vettuva</option>
-                                <option value="Kaniyan">Kaniyan</option>
-                                <option value="Dheevara">Dheevara</option>
+                                {castes.filter(c => c !== 'Others').map(c => (
+                                    <option key={c} value={c}>{c}</option>
+                                ))}
                                 <option value="Others">Others</option>
                             </select>
                             {caste === 'Others' && (
                                 <input
-                                    name="caste"
                                     required
+                                    value={customCaste}
+                                    onChange={(e) => setCustomCaste(e.target.value)}
                                     className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                                     placeholder="Type your caste"
                                 />
                             )}
-                            {caste !== 'Others' && <input type="hidden" name="caste" value={caste} />}
+                            <input type="hidden" name="caste" value={caste === 'Others' ? customCaste : caste} />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>
                             <input
                                 name="dosham"
+                                value={dosham}
+                                onChange={(e) => setDosham(e.target.value)}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                                 placeholder="e.g. Chovva Dosham, etc."
                             />
@@ -202,13 +225,15 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
                             <input
                                 name="birthStar"
-                                defaultValue={user.profile?.birthStar || ''}
+                                value={birthStar}
+                                onChange={(e) => setBirthStar(e.target.value)}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                                 placeholder="e.g. Rohini"
                             />
                         </div>
                     </>
                 )}
+
                 {religion === 'Christian' && (
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Denomination *</label>
@@ -218,38 +243,31 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
                         >
                             <option value="">Select Denomination</option>
-                            <option value="Latin Catholic">Latin Catholic</option>
-                            <option value="Roman Catholic">Roman Catholic</option>
-                            <option value="Syro Malabar">Syro Malabar</option>
-                            <option value="Syrian Catholic">Syrian Catholic</option>
-                            <option value="Syro Malankara">Syro Malankara</option>
-                            <option value="Pentecost">Pentecost</option>
+                            {denominations.filter(d => d !== 'Others').map(d => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
                             <option value="Others">Others</option>
                         </select>
                         {denomination === 'Others' && (
                             <input
-                                name="denomination"
                                 required
+                                value={customDenomination}
+                                onChange={(e) => setCustomDenomination(e.target.value)}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                                 placeholder="Type your denomination"
                             />
                         )}
-                        {denomination !== 'Others' && <input type="hidden" name="denomination" value={denomination} />}
+                        <input type="hidden" name="denomination" value={denomination === 'Others' ? customDenomination : denomination} />
                     </div>
                 )}
-                {(religion === '' || religion === 'Muslim') && (
-                    <>
-                        <div className="opacity-0 pointer-events-none absolute h-0 overflow-hidden">
-                            <input name="caste" value="" readOnly /><input name="birthStar" value="" readOnly />
-                        </div>
-                    </>
-                )}
+
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Qualification *</label>
                     <input
                         name="qualification"
                         required
-                        defaultValue={user.profile?.qualification || ''}
+                        value={qualification}
+                        onChange={(e) => setQualification(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="e.g. B.Tech, MBA"
                     />
@@ -258,7 +276,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <label className="block text-sm font-medium text-slate-700 mb-1">Occupation</label>
                     <input
                         name="occupation"
-                        defaultValue={user.profile?.occupation || ''}
+                        value={occupation}
+                        onChange={(e) => setOccupation(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                         placeholder="e.g. Software Engineer"
                     />
@@ -271,7 +290,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     name="bio"
                     rows={4}
                     required
-                    defaultValue={user.profile?.bio || ''}
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
                     className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
                     placeholder="Write about your interests, lifestyle, and expectations..."
                 />
@@ -282,7 +302,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     type="checkbox"
                     name="consent"
                     required
-                    defaultChecked={user.profile?.consent}
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
                     className="mt-1.5 w-5 h-5 text-rose-600 rounded focus:ring-rose-500 cursor-pointer"
                 />
                 <div className="space-y-2">
@@ -301,3 +322,4 @@ export default function ProfileSetupForm({ user }: { user: any }) {
         </form>
     )
 }
+
