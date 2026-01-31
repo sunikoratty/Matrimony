@@ -122,7 +122,7 @@ export async function getMatches(
         } else {
             // Broad mode - strictly base criteria (gender, role, status, completed)
             // NO country filter here as per user request: "All profiles (Browse all) shoulld display all the profiles do not filter with any condition like country or anything"
-            console.log(`[Matchmaking] Mode is 'broad' - ignoring religion and country completely`)
+            console.log(`[Matchmaking] Mode is 'broad' - matching all ${matchGender}s globally`)
             matches = await prisma.user.findMany({
                 where: baseCriteria,
                 include: { profile: true },

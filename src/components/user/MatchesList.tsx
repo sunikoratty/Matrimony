@@ -82,8 +82,7 @@ export default function MatchesList({
                             currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
                     </h1>
                     <p className="text-slate-500 mt-1">
-                        {currentMode === 'matching' ? 'Strict matches based on your profile' :
-                            currentMode === 'recommended' ? 'Prioritized matches followed by all profiles' : 'Exploring all eligible members'}
+                        {currentMode === 'recommended' ? 'Strict matches based on your religion' : 'Exploring all eligible members'}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -96,17 +95,7 @@ export default function MatchesList({
                     >
                         Recommended
                     </button>
-                    {!isGuest && (
-                        <button
-                            onClick={() => setMode('matching')}
-                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'matching'
-                                ? 'bg-rose-600 text-white shadow-lg'
-                                : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
-                                }`}
-                        >
-                            Strict Matches
-                        </button>
-                    )}
+
                     <button
                         onClick={() => setMode('broad')}
                         className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
