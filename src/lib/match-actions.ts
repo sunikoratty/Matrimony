@@ -31,7 +31,12 @@ export async function getMatches(
                 take,
                 orderBy: { createdAt: 'desc' }
             })
-            return { matches, currentUser: { isPaid: false, country: 'INDIA' }, isGuest: true }
+            return {
+                matches,
+                currentUser: { isPaid: false, country: 'INDIA' },
+                isGuest: true,
+                unlockedIds: []
+            }
         }
 
         const currentUser = await prisma.user.findUnique({
@@ -133,13 +138,24 @@ export async function getMatches(
             })
         }
 
-        return {
-            matches,
-            currentUser: { isPaid: currentUser.isPaid, country: currentUser.country },
-            unlockedIds: await (prisma as any).contactView.findMany({
+        const unlockedIdsSet = new Set(
+            currentUser.id ? await (prisma as any).contactView.findMany({
                 where: { viewerId: currentUser.id },
                 select: { targetId: true }
-            }).then((views: any[]) => views.map((v: any) => v.targetId))
+            }).then((views: any[]) => views.map((v: any) => v.targetId as string)) : []
+        )
+
+        const matchesWithUnlockStatus = matches.map(m => ({
+            ...m,
+            isUnlocked: unlockedIdsSet.has(m.id)
+        }))
+
+        console.log(`[UnlockCheck] User: ${currentUser.mobile}, Total Matches: ${matches.length}, Unlocked Count: ${unlockedIdsSet.size}`)
+
+        return {
+            matches: matchesWithUnlockStatus,
+            currentUser: { isPaid: currentUser.isPaid, country: currentUser.country },
+            unlockedIds: Array.from(unlockedIdsSet) // Keep for backward compatibility if needed
         }
     } catch (error) {
         console.warn('Database connection failed in getMatches:', error)

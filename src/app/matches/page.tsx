@@ -21,6 +21,15 @@ export default async function MatchesPage({
     }
 
     const { matches, currentUser, isGuest } = matchesResult
+
+    // Safety check: Registered users must complete profile before browsing
+    if (!isGuest) {
+        const user = await getProfile()
+        if (user && !user.isProfileCompleted) {
+            redirect('/profile/setup')
+        }
+    }
+
     // Use default country if not present (should be present for registered users)
     const userWithCountry = { ...currentUser, country: currentUser.country || 'INDIA' }
 
@@ -51,7 +60,7 @@ export default async function MatchesPage({
                         currentUser={userWithCountry}
                         isGuest={isGuest}
                         gender={gender}
-                        unlockedIds={matchesResult.unlockedIds}
+                        unlockedIds={matchesResult.unlockedIds as string[]}
                     />
                 </div>
             </div>

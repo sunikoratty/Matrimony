@@ -42,6 +42,8 @@ export default function MatchesList({
     const [allMatches, setAllMatches] = useState(initialMatches)
     const [unlockedIds, setUnlockedIds] = useState<string[]>(initialUnlockedIds)
     const [page, setPage] = useState(1)
+
+    console.log(`[MatchesList] initialUnlockedIds:`, initialUnlockedIds)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(initialMatches.length >= 20)
     const [isPaymentOpen, setIsPaymentOpen] = useState(false)
@@ -173,7 +175,7 @@ export default function MatchesList({
                             <ProfileCard
                                 profile={profile}
                                 isPaid={currentUser.isPaid}
-                                isUnlocked={unlockedIds.includes(profile.id)}
+                                isUnlocked={profile.isUnlocked || unlockedIds.includes(profile.id)}
                                 onUnlock={() => handleUnlock(profile.id)}
                             />
                         )}

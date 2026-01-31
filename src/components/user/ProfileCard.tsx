@@ -1,3 +1,5 @@
+'use client'
+
 import { Lock, Smartphone, Mail, MapPin, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 
@@ -31,6 +33,7 @@ export default function ProfileCard({
     isUnlocked?: boolean,
     onUnlock?: () => void
 }) {
+    // console.log(`[ProfileCard] Profile: ${profile.name}, isUnlocked: ${isUnlocked}`)
     const age = profile.profile.dob
         ? new Date().getFullYear() - new Date(profile.profile.dob).getFullYear()
         : 'N/A'
@@ -100,7 +103,9 @@ export default function ProfileCard({
                         <div className="flex justify-center mb-2 text-orange-400">
                             <Lock size={18} />
                         </div>
-                        <p className="text-xs font-medium text-orange-800 mb-2">Contact Locked</p>
+                        <p className="text-xs font-black text-white bg-orange-600 px-2 py-1 rounded inline-block mb-2">
+                            LOCKED - PREMIUM ONLY
+                        </p>
                         {isPaid ? (
                             <button
                                 onClick={(e) => {

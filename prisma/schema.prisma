@@ -8,55 +8,54 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  mobile       String   @unique
-  email        String?
-  password     String?
-  gender       String
-  motherTongue String
-  country      String
-  isPaid             Boolean  @default(false)
-  isProfileCompleted Boolean  @default(false)
-  role               String   @default("USER") // USER, ADMIN
-  status       String   @default("ACTIVE") // ACTIVE, BLOCKED, DELETED
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  profile Profile?
-  unlockedProfiles ContactView[] @relation("ViewerRelation")
-  unlockedBy       ContactView[] @relation("TargetRelation")
+  id                 String        @id @default(uuid())
+  name               String
+  mobile             String        @unique
+  email              String?
+  password           String?
+  gender             String
+  motherTongue       String
+  country            String
+  isPaid             Boolean       @default(false)
+  role               String        @default("USER")
+  status             String        @default("ACTIVE")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  isProfileCompleted Boolean       @default(false)
+  unlockedBy         ContactView[] @relation("TargetRelation")
+  unlockedProfiles   ContactView[] @relation("ViewerRelation")
+  profile            Profile?
 }
 
 model ContactView {
   id        String   @id @default(uuid())
   viewerId  String
   targetId  String
-  viewer    User     @relation("ViewerRelation", fields: [viewerId], references: [id])
-  target    User     @relation("TargetRelation", fields: [targetId], references: [id])
   createdAt DateTime @default(now())
+  target    User     @relation("TargetRelation", fields: [targetId], references: [id])
+  viewer    User     @relation("ViewerRelation", fields: [viewerId], references: [id])
 
   @@unique([viewerId, targetId])
 }
 
 model Profile {
-  id               String   @id @default(uuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String    @id @default(uuid())
+  userId           String    @unique
   dob              DateTime?
   bio              String?
-  photoUrl         String? // Base64 or URL
+  photoUrl         String?
   religion         String?
   caste            String?
+  birthStar        String?
+  maritalStatus    String    @default("UNMARRIED")
+  currentResidence String?
+  location         String?
+  occupation       String?
+  consent          Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  qualification    String?
   denomination     String?
   dosham           String?
-  birthStar        String?
-  maritalStatus    String   @default("UNMARRIED") // UNMARRIED, MARRIED
-  currentResidence String?  // Country
-  location         String?  // City/State
-  occupation       String?
-  qualification    String?
-  consent          Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
