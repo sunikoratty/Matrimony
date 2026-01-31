@@ -102,7 +102,7 @@ export default async function ProfileView({
                     )}
 
                     {isProfileComplete && (
-                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+                        <div id="matches" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
                             <MatchesList
                                 matches={matchesResult.matches as any[]}
                                 currentUser={{

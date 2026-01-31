@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Header from '@/components/landing/Header'
 import MembershipSection from '@/components/user/MembershipSection'
 import { revalidatePath } from 'next/cache'
+import { ArrowLeft } from 'lucide-react'
 
 export default async function ProfileByIdView({
     params
@@ -45,6 +46,17 @@ export default async function ProfileByIdView({
             <Header isLoggedIn={isLoggedIn} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
+                    {/* Back Link */}
+                    <div className="mb-6">
+                        <Link
+                            href="/profile/view#matches"
+                            className="inline-flex items-center gap-2 text-slate-500 hover:text-rose-600 transition-colors font-medium text-sm group"
+                        >
+                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                            Back to My Profile
+                        </Link>
+                    </div>
+
                     {/* Profile Header with Background Image */}
                     <div className="relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-8">
                         <div className="absolute top-0 left-0 right-0 h-32 overflow-hidden">
