@@ -14,9 +14,8 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-1.5 sm:gap-2">
-                    <Heart className="text-rose-600 fill-rose-600 w-5 h-5 sm:w-6 sm:h-6" />
                     <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
-                        Kalyanam
+                        ❤️Match
                     </span>
                 </Link>
 

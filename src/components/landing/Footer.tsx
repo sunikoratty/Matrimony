@@ -4,7 +4,7 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                     <div>
-                        <h3 className="text-white text-lg font-bold mb-4">Kalyanam</h3>
+                        <h3 className="text-white text-lg font-bold mb-4">❤️Match</h3>
                         <p className="text-sm">Connecting hearts with trust and tradition.</p>
                     </div>
                     <div>
@@ -33,7 +33,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="pt-8 border-t border-slate-800 text-center text-xs">
-                    © 2026 Kalyanam Matrimony. All rights reserved.
+                    © 2026 ❤️Match Matrimony. All rights reserved.
                 </div>
             </div>
         </footer>

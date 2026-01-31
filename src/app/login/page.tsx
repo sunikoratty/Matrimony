@@ -65,8 +65,7 @@ export default function Login() {
                 />
                 <div className="absolute bottom-0 left-0 right-0 z-20 p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
                     <div className="flex items-center gap-2 mb-4">
-                        <Heart className="text-rose-500 fill-rose-500" size={32} />
-                        <span className="text-3xl font-bold">Kalyanam</span>
+                        <span className="text-3xl font-bold text-white">❤️Match</span>
                     </div>
                     <h2 className="text-4xl font-serif font-bold mb-4">Starts Here.</h2>
                     <p className="text-lg text-rose-100 max-w-md">

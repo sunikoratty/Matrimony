@@ -26,9 +26,8 @@ export default function Register() {
                     priority
                 />
                 <div className="absolute top-0 left-0 p-8 z-20">
-                    <div className="flex items-center gap-2 text-white">
-                        <Heart className="text-white fill-white" size={28} />
-                        <span className="text-2xl font-bold">Kalyanam</span>
+                    <div className="flex items-center gap-2 text-white text-2xl font-bold">
+                        ❤️Match
                     </div>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 z-20 p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
