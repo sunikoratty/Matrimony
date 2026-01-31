@@ -1,8 +1,9 @@
-import { getProfileById, getProfile } from '@/lib/user-actions'
+import { getProfileById, getProfile, hasUnlockedContact, unlockContact } from '@/lib/user-actions'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/landing/Header'
 import MembershipSection from '@/components/user/MembershipSection'
+import { revalidatePath } from 'next/cache'
 
 export default async function ProfileByIdView({
     params
@@ -27,12 +28,24 @@ export default async function ProfileByIdView({
     const isLoggedIn = !!currentUser
     const isOwnProfile = currentUser?.id === viewedUser.id
 
+    // Check if contact is unlocked (only relevant if not own profile and user is paid)
+    const isUnlocked = isOwnProfile || (isLoggedIn && isPaid && await hasUnlockedContact(currentUser.id, viewedUser.id))
+
+    async function handleUnlock() {
+        'use server'
+        if (!currentUser || !viewedUser) return
+        const result = await unlockContact(viewedUser.id)
+        if ('success' in result) {
+            revalidatePath(`/profile/${viewedUser.id}`)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-slate-50">
             <Header isLoggedIn={isLoggedIn} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
-                    {/* Profile Header with Background Image (Synced with /profile/view) */}
+                    {/* Profile Header with Background Image */}
                     <div className="relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-8">
                         <div className="absolute top-0 left-0 right-0 h-32 overflow-hidden">
                             <img src="/images/CoupleImage3.png" className="w-full h-full object-cover blur-[2px] opacity-40" alt="background" />
@@ -69,14 +82,27 @@ export default async function ProfileByIdView({
                                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                                         <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Contact</p>
-                                        {(isPaid || isOwnProfile) ? (
+                                        {isUnlocked ? (
                                             <>
                                                 <p className="font-medium">{viewedUser.mobile}</p>
                                                 <p className="text-sm text-slate-500">{viewedUser.email || 'Email not set'}</p>
                                             </>
                                         ) : (
-                                            <div className="flex items-center gap-2 text-slate-400 mt-1">
-                                                <span className="text-sm italic">Locked - Premium Only</span>
+                                            <div className="mt-2">
+                                                {isPaid ? (
+                                                    <form action={handleUnlock}>
+                                                        <button
+                                                            type="submit"
+                                                            className="flex items-center gap-2 px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-all"
+                                                        >
+                                                            Unlock Contact Details
+                                                        </button>
+                                                    </form>
+                                                ) : (
+                                                    <div className="flex items-center gap-2 text-slate-400 mt-1">
+                                                        <span className="text-sm italic">Locked - Premium Only</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -89,12 +115,18 @@ export default async function ProfileByIdView({
 
                                 <div className="mt-6">
                                     <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">About</p>
-                                    {(isPaid || isOwnProfile) ? (
+                                    {isUnlocked ? (
                                         <p className="text-slate-600 leading-relaxed">
                                             {viewedUser.profile?.bio || 'No bio added yet.'}
                                         </p>
                                     ) : (
-                                        <p className="text-slate-400 italic text-sm">Upgrade to premium to read full bio.</p>
+                                        <div className="mt-2">
+                                            {isPaid ? (
+                                                <p className="text-slate-400 italic text-sm">Please unlock contact details to see full bio.</p>
+                                            ) : (
+                                                <p className="text-slate-400 italic text-sm">Upgrade to premium to read full bio.</p>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>

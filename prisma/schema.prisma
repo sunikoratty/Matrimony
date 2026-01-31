@@ -24,6 +24,19 @@ model User {
   updatedAt    DateTime @updatedAt
 
   profile Profile?
+  unlockedProfiles ContactView[] @relation("ViewerRelation")
+  unlockedBy       ContactView[] @relation("TargetRelation")
+}
+
+model ContactView {
+  id        String   @id @default(uuid())
+  viewerId  String
+  targetId  String
+  viewer    User     @relation("ViewerRelation", fields: [viewerId], references: [id])
+  target    User     @relation("TargetRelation", fields: [targetId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([viewerId, targetId])
 }
 
 model Profile {

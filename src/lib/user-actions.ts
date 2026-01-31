@@ -208,3 +208,51 @@ export async function getProfile() {
         return null
     }
 }
+
+export async function unlockContact(targetId: string) {
+    try {
+        const cookieStore = await cookies()
+        const userSession = cookieStore.get('user_session')?.value
+        if (!userSession) return { error: 'Unauthorized' }
+
+        const currentUser = await prisma.user.findUnique({ where: { id: userSession } })
+        if (!currentUser?.isPaid) {
+            return { error: 'Only premium members can unlock contact details.' }
+        }
+
+        await prisma.contactView.upsert({
+            where: {
+                viewerId_targetId: {
+                    viewerId: userSession,
+                    targetId: targetId
+                }
+            },
+            update: {},
+            create: {
+                viewerId: userSession,
+                targetId: targetId
+            }
+        })
+
+        return { success: true }
+    } catch (error) {
+        console.error('Error in unlockContact:', error)
+        return { error: 'Failed to unlock contact. Please try again.' }
+    }
+}
+
+export async function hasUnlockedContact(viewerId: string, targetId: string) {
+    try {
+        const view = await prisma.contactView.findUnique({
+            where: {
+                viewerId_targetId: {
+                    viewerId,
+                    targetId
+                }
+            }
+        })
+        return !!view
+    } catch (error) {
+        return false
+    }
+}
