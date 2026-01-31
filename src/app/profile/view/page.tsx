@@ -101,19 +101,17 @@ export default async function ProfileView({
                         </div>
                     )}
 
-                    {/* Matches Section - Separate Section with Header */}
-                    {isProfileComplete && (
-                        <div className="mt-12 pt-8 border-t border-slate-200">
-                            <MatchesList
-                                matches={matches as any[]}
-                                layout="simple"
-                                currentUser={{
-                                    isPaid: user.isPaid,
-                                    country: user.country || 'INDIA'
-                                } as any}
-                            />
-                        </div>
-                    )}
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+                        <MatchesList
+                            matches={matchesResult.matches as any[]}
+                            currentUser={{
+                                isPaid: user.isPaid,
+                                country: user.country || 'INDIA'
+                            } as any}
+                            unlockedIds={matchesResult.unlockedIds}
+                            layout="simple"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

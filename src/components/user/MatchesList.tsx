@@ -22,13 +22,15 @@ type Profile = {
     country?: string // Needed for payment gateway logic
 }
 
+const STABLE_EMPTY_ARRAY: any[] = []
+
 export default function MatchesList({
     matches: initialMatches,
     currentUser,
     isGuest = false,
     layout = 'cards',
     gender,
-    unlockedIds: initialUnlockedIds = []
+    unlockedIds: initialUnlockedIds = STABLE_EMPTY_ARRAY
 }: {
     matches: any[],
     currentUser: any,
