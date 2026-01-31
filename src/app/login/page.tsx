@@ -47,7 +47,7 @@ export default function Login() {
         <div className="min-h-screen flex bg-white">
             {/* Left Side - Image Board */}
             <div className="hidden lg:block lg:w-1/2 relative">
-                <div className="absolute inset-0 bg-rose-900/40 z-10" />
+                <div className="absolute inset-0 bg-black/5 z-10" />
                 <Image
                     src="/images/CoupleImage1.jpg"
                     alt="Happy Couple"

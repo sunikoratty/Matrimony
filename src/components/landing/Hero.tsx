@@ -16,9 +16,8 @@ export default function Hero() {
                     className="object-cover"
                     priority
                 />
-                {/* Advanced Gradient Overlay for better legibility and aesthetics */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
-                <div className="absolute inset-0 bg-rose-900/10 mix-blend-overlay" />
+                {/* Clearer view - removed overlays */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
