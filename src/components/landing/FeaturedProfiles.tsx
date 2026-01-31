@@ -23,13 +23,21 @@ export default function FeaturedProfiles({
     title,
     subtitle,
     profiles,
-    gender
+    gender,
+    userGender
 }: {
     title: string,
     subtitle: string,
     profiles: any[],
-    gender: 'MALE' | 'FEMALE'
+    gender: 'MALE' | 'FEMALE',
+    userGender?: string
 }) {
+    // Determine the target gender for the "View All" link
+    // Rule: Logged-in users always go to the opposite of THEIR gender.
+    // Guests keep the gender from the prop.
+    const targetGender = userGender
+        ? (userGender === 'MALE' ? 'FEMALE' : 'MALE')
+        : gender;
     return (
         <section className="py-20 px-4 bg-white">
             <div className="max-w-7xl mx-auto">
@@ -39,7 +47,7 @@ export default function FeaturedProfiles({
                         <p className="text-slate-500">{subtitle}</p>
                     </div>
                     <Link
-                        href={`/matches?gender=${gender}`}
+                        href={`/matches?gender=${targetGender}`}
                         className="text-rose-600 font-semibold hover:text-rose-700 transition-colors flex items-center gap-1"
                     >
                         View All {gender === 'FEMALE' ? 'Brides' : 'Grooms'} &rarr;
@@ -63,7 +71,7 @@ export default function FeaturedProfiles({
                                 viewport={{ once: true }}
                                 className="group cursor-pointer"
                             >
-                                <Link href={`/matches?gender=${gender}`}>
+                                <Link href={`/matches?gender=${targetGender}`}>
                                     <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-4 shadow-lg group-hover:shadow-xl transition-all">
                                         {user.profile?.photoUrl ? (
                                             <img

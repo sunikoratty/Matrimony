@@ -41,7 +41,10 @@ export async function getMatches(
 
         if (!currentUser) return { error: 'User not found' }
 
-        const matchGender = guestGender || (currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE')
+        // EXCLUSIVE RULE: For logged-in users, ALWAYS show the opposite gender.
+        // Even if they click a "Brides" link, if they are female, they must see "Grooms" (Males).
+        // This confirms "clicking View All Brides -> should display the Profiles of Males only in matches?gender=MALE"
+        const matchGender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE'
         // const matchCountry = currentUser.country // Removed from baseCriteria
 
         const baseCriteria: any = {
