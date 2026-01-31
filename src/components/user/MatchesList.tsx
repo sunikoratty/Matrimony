@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ProfileCard from '@/components/user/ProfileCard'
 import PaymentModal from '@/components/payment/PaymentModal'
 import Link from 'next/link'
@@ -40,14 +40,25 @@ export default function MatchesList({
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(initialMatches.length >= 20)
     const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+    const [isNavigating, setIsNavigating] = useState(false)
 
     const router = useRouter()
     const searchParams = useSearchParams()
     const currentMode = searchParams.get('mode') || 'recommended'
 
+    // Sync state when props change (Server -> Client navigation)
+    useEffect(() => {
+        setAllMatches(initialMatches)
+        setPage(1)
+        setHasMore(initialMatches.length >= 20)
+        setIsNavigating(false)
+    }, [initialMatches])
+
     const userCountry = currentUser.country || 'INDIA'
 
     const setMode = (mode: string) => {
+        if (mode === currentMode) return
+        setIsNavigating(true)
         const params = new URLSearchParams(searchParams)
         params.set('mode', mode)
         router.push(`?${params.toString()}`)
@@ -140,9 +151,16 @@ export default function MatchesList({
                 ))}
             </div>
 
-            {allMatches.length === 0 && (
+            {allMatches.length === 0 && !isNavigating && (
                 <div className="py-20 text-center">
                     <p className="text-slate-400 text-lg">No matches found yet.</p>
+                </div>
+            )}
+
+            {isNavigating && (
+                <div className="py-20 text-center">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600 mb-4"></div>
+                    <p className="text-slate-400">Updating matches...</p>
                 </div>
             )}
 

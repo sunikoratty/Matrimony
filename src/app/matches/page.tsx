@@ -1,8 +1,12 @@
+import { getProfile } from '@/lib/user-actions'
 import { getMatches } from '@/lib/match-actions'
-import ProfileCard from '@/components/user/ProfileCard'
-import Header from '@/components/landing/Header'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import Header from '@/components/landing/Header'
+import MembershipSection from '@/components/user/MembershipSection'
 import MatchesList from '@/components/user/MatchesList'
+
+export const dynamic = 'force-dynamic'
 
 export default async function MatchesPage({
     searchParams
