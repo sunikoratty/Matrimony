@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 export default function Hero() {
     const router = useRouter()
     const [searchData, setSearchData] = useState({
-        gender: '',
+        gender: 'FEMALE',
         age: '',
         religion: '',
         caste: '',
@@ -107,9 +107,8 @@ export default function Hero() {
                                         onChange={(e) => setSearchData({ ...searchData, gender: e.target.value })}
                                         className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
                                     >
-                                        <option value="" className="bg-slate-900">Any</option>
-                                        <option value="FEMALE" className="bg-slate-900">Bride (Female)</option>
-                                        <option value="MALE" className="bg-slate-900">Groom (Male)</option>
+                                        <option value="FEMALE" className="bg-slate-900">Bride</option>
+                                        <option value="MALE" className="bg-slate-900">Groom</option>
                                     </select>
                                 </div>
 
