@@ -147,66 +147,86 @@ export default function MatchesList({
                 </div>
             </div>
 
-            <div className={layout === 'simple' ? "space-y-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"}>
-                {allMatches.map(profile => (
-                    <div key={profile.id}>
-                        {layout === 'simple' ? (
-                            <Link href={`/profile/${profile.id}`}>
-                                <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
-                                    <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
-                                        {profile.profile.photoUrl ? (
-                                            <img src={profile.profile.photoUrl} className="w-full h-full object-cover" alt={profile.name} />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-rose-300 font-bold text-xl">
-                                                {profile.name.charAt(0)}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-bold text-slate-900">{profile.name}</h3>
-                                        <p className="text-sm text-slate-500">
-                                            {profile.profile.religion || 'Religion N/A'} • {profile.profile.currentResidence || 'Location N/A'}
-                                        </p>
-                                        <p className="text-xs text-rose-600 font-medium mt-1">View Profile &rarr;</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        ) : (
-                            <ProfileCard
-                                profile={profile}
-                                isPaid={currentUser.isPaid}
-                                isUnlocked={profile.isUnlocked || unlockedIds.includes(profile.id)}
-                                onUnlock={() => handleUnlock(profile.id)}
-                            />
-                        )}
+            {isNavigating ? (
+                <div className="py-32 text-center flex flex-col items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] animate-pulse">
+                    <div className="relative w-16 h-16 mb-6">
+                        <div className="absolute inset-0 border-4 border-rose-100 rounded-full"></div>
+                        <div className="absolute inset-0 border-4 border-rose-600 rounded-full border-t-transparent animate-spin"></div>
                     </div>
-                ))}
-            </div>
-
-            {allMatches.length === 0 && !isNavigating && (
-                <div className="py-20 text-center">
-                    <p className="text-slate-400 text-lg">No matches found yet.</p>
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Curating Your Matches</h2>
+                    <p className="text-slate-500 italic">Finding the perfect profiles for you...</p>
                 </div>
+            ) : (
+                <>
+                    <div className={layout === 'simple' ? "space-y-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"}>
+                        {allMatches.map(profile => (
+                            <div key={profile.id}>
+                                {layout === 'simple' ? (
+                                    <Link href={`/profile/${profile.id}`}>
+                                        <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
+                                            <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
+                                                {profile.profile.photoUrl ? (
+                                                    <img src={profile.profile.photoUrl} className="w-full h-full object-cover" alt={profile.name} />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-rose-300 font-bold text-xl">
+                                                        {profile.name.charAt(0)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-slate-900">{profile.name}</h3>
+                                                <p className="text-sm text-slate-500">
+                                                    {profile.profile.religion || 'Religion N/A'} • {profile.profile.currentResidence || 'Location N/A'}
+                                                </p>
+                                                <p className="text-xs text-rose-600 font-medium mt-1">View Profile &rarr;</p>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <ProfileCard
+                                        profile={profile}
+                                        isPaid={currentUser.isPaid}
+                                        isUnlocked={profile.isUnlocked || unlockedIds.includes(profile.id)}
+                                        onUnlock={() => handleUnlock(profile.id)}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    {allMatches.length === 0 && (
+                        <div className="py-20 text-center">
+                            <p className="text-slate-400 text-lg font-medium">No matches found for this criteria.</p>
+                            <button
+                                onClick={() => setMode('broad')}
+                                className="mt-4 text-rose-600 font-bold hover:underline"
+                            >
+                                Try Browsing All
+                            </button>
+                        </div>
+                    )}
+
+                    {hasMore && (
+                        <div className="mt-12 text-center">
+                            <button
+                                onClick={handleLoadMore}
+                                disabled={loading}
+                                className="px-8 py-3 bg-white border-2 border-rose-600 text-rose-600 rounded-full font-bold hover:bg-rose-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                            >
+                                {loading ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-rose-600 border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Loading...</span>
+                                    </div>
+                                ) : (
+                                    'Load More Profiles'
+                                )}
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
 
-            {isNavigating && (
-                <div className="py-20 text-center">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600 mb-4"></div>
-                    <p className="text-slate-400">Updating matches...</p>
-                </div>
-            )}
-
-            {hasMore && (
-                <div className="mt-12 text-center">
-                    <button
-                        onClick={handleLoadMore}
-                        disabled={loading}
-                        className="px-8 py-3 bg-white border-2 border-rose-600 text-rose-600 rounded-full font-bold hover:bg-rose-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-                    >
-                        {loading ? 'Loading...' : 'Load More Profiles'}
-                    </button>
-                </div>
-            )}
 
             <PaymentModal
                 isOpen={isPaymentOpen}
