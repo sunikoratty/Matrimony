@@ -78,6 +78,9 @@ export async function getUsers() {
 export async function adminUpdateUser(userId: string, data: any) {
     const { profile, ...userData } = data
 
+    // Sanitize User fields
+    if (userData.email === '') userData.email = null
+
     try {
         await prisma.$transaction(async (tx) => {
             // Update User fields
@@ -88,18 +91,30 @@ export async function adminUpdateUser(userId: string, data: any) {
 
             // Update or Create Profile fields
             if (profile) {
-                // Ensure dob is a proper Date object if provided
-                if (profile.dob) {
-                    profile.dob = new Date(profile.dob)
+                // Handle optional fields that might be empty strings
+                const processedProfile = { ...profile }
+
+                if (processedProfile.dob === '' || !processedProfile.dob) {
+                    processedProfile.dob = null
+                } else {
+                    processedProfile.dob = new Date(processedProfile.dob)
                 }
+
+                // Convert other empty strings to null for cleanliness if they are optional
+                const fieldsToNullify = ['bio', 'religion', 'caste', 'denomination', 'dosham', 'birthStar', 'currentResidence', 'location', 'occupation', 'qualification']
+                fieldsToNullify.forEach(field => {
+                    if (processedProfile[field] === '') {
+                        processedProfile[field] = null
+                    }
+                })
 
                 await tx.profile.upsert({
                     where: { userId },
                     create: {
-                        ...profile,
+                        ...processedProfile,
                         userId,
                     },
-                    update: profile,
+                    update: processedProfile,
                 })
             }
         })
