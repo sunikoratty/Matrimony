@@ -137,13 +137,22 @@ export default function Hero() {
                                     <>
                                         <div className="space-y-1.5 text-left">
                                             <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Caste</label>
-                                            <input
-                                                type="text"
-                                                placeholder="e.g. Nair, Ezhava"
+                                            <select
                                                 value={searchData.caste}
                                                 onChange={(e) => setSearchData({ ...searchData, caste: e.target.value })}
-                                                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all placeholder:text-white/30"
-                                            />
+                                                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                            >
+                                                <option value="" className="bg-slate-900">Select Caste</option>
+                                                <option value="Nair" className="bg-slate-900">Nair</option>
+                                                <option value="Ezhava" className="bg-slate-900">Ezhava</option>
+                                                <option value="Vishwakarma" className="bg-slate-900">Vishwakarma</option>
+                                                <option value="Brahmin" className="bg-slate-900">Brahmin</option>
+                                                <option value="Pulaya" className="bg-slate-900">Pulaya</option>
+                                                <option value="Vettuva" className="bg-slate-900">Vettuva</option>
+                                                <option value="Kaniyan" className="bg-slate-900">Kaniyan</option>
+                                                <option value="Dheevara" className="bg-slate-900">Dheevara</option>
+                                                <option value="Others" className="bg-slate-900">Others</option>
+                                            </select>
                                         </div>
                                         <div className="space-y-1.5 text-left">
                                             <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Dosham</label>
@@ -165,13 +174,20 @@ export default function Hero() {
                                 {searchData.religion === 'Christian' && (
                                     <div className="space-y-1.5 text-left">
                                         <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Denomination</label>
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. Catholic, Pentecostal"
+                                        <select
                                             value={searchData.denomination}
                                             onChange={(e) => setSearchData({ ...searchData, denomination: e.target.value })}
-                                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all placeholder:text-white/30"
-                                        />
+                                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                        >
+                                            <option value="" className="bg-slate-900">Select Denomination</option>
+                                            <option value="Latin Catholic" className="bg-slate-900">Latin Catholic</option>
+                                            <option value="Roman Catholic" className="bg-slate-900">Roman Catholic</option>
+                                            <option value="Syro Malabar" className="bg-slate-900">Syro Malabar</option>
+                                            <option value="Syrian Catholic" className="bg-slate-900">Syrian Catholic</option>
+                                            <option value="Syro Malankara" className="bg-slate-900">Syro Malankara</option>
+                                            <option value="Pentecost" className="bg-slate-900">Pentecost</option>
+                                            <option value="Others" className="bg-slate-900">Others</option>
+                                        </select>
                                     </div>
                                 )}
 
@@ -189,16 +205,6 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    {/* Simple Scroll Indicator */}
-                    <motion.div
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ repeat: Infinity, duration: 2 }}
-                        className="pt-16 hidden lg:block"
-                    >
-                        <div className="w-6 h-10 border-2 border-white/30 rounded-full mx-auto flex justify-center p-1">
-                            <div className="w-1 h-2 bg-white/60 rounded-full" />
-                        </div>
-                    </motion.div>
                 </motion.div>
             </div>
         </div>

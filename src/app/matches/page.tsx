@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/landing/Header'
 import MembershipSection from '@/components/user/MembershipSection'
 import MatchesList from '@/components/user/MatchesList'
+import { ArrowLeft } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -82,7 +83,14 @@ export default async function MatchesPage({
                         alt="Matches"
                         className="w-full h-full object-cover opacity-60"
                     />
-                    <div className="absolute inset-0 flex items-center justify-center text-center p-6">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                        <Link
+                            href="/"
+                            className="absolute top-8 left-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-sm font-medium"
+                        >
+                            <ArrowLeft size={16} />
+                            Back to Home
+                        </Link>
                         <div className="max-w-2xl">
                             <h1 className="text-4xl sm:text-5xl font-serif font-bold text-white mb-4">Discover Your Match.</h1>
                             <p className="text-rose-100 text-lg">
