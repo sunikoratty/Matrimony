@@ -86,13 +86,10 @@ export async function getMatches(
                 }
 
                 // Strictly filter by chosen gender, status, AND the prioritized religion criteria
-                // For Recommended and Matching, we also include the user's country as a base filter
-                // However, the user said "Browse all" shouldn't filter by country.
-                // We'll keep country for Recommended/Matching to keep them relevant.
+                // Country filter REMOVED as per user request: "Recommended: Strict religious matching off all the profiles irrespective of the country"
                 matches = await prisma.user.findMany({
                     where: {
                         ...baseCriteria,
-                        country: currentUser.country, // Keep country for recommended/matching
                         profile: {
                             ...baseCriteria.profile, // Contains maritalStatus filter
                             OR: religionConditions
@@ -104,15 +101,14 @@ export async function getMatches(
                     orderBy: { createdAt: 'desc' }
                 })
 
-                console.log(`[Matchmaking] Found ${matches.length} strict matches for ${religion}`)
+                console.log(`[Matchmaking] Found ${matches.length} strict global matches for ${religion}`)
 
                 // FALLBACK REMOVED: We no longer append broader matches in recommended mode
-                // as per user request: "Do not show Hindu or other profiles in the recommended section if i am christian"
             } else {
-                // No religion set on profile - return nothing or fallback to filtered broad?
-                // Given the instructions, we'll return broad matches but still filtered by country.
+                // No religion set on profile - return broad global matches
+                console.log(`[Matchmaking] No valid religion found, fetching broad matches`)
                 matches = await prisma.user.findMany({
-                    where: { ...baseCriteria, country: currentUser.country },
+                    where: baseCriteria,
                     include: { profile: true },
                     skip,
                     take,
@@ -121,7 +117,7 @@ export async function getMatches(
             }
         } else {
             // Broad mode - strictly base criteria (gender, role, status, completed)
-            // NO country filter here as per user request: "All profiles (Browse all) shoulld display all the profiles do not filter with any condition like country or anything"
+            // NO country/religion filter here - shows ALL profiles of opposite gender globally
             console.log(`[Matchmaking] Mode is 'broad' - matching all ${matchGender}s globally`)
             matches = await prisma.user.findMany({
                 where: baseCriteria,
