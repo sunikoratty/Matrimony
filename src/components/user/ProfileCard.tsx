@@ -99,26 +99,29 @@ export default function ProfileCard({
                         )}
                     </div>
                 ) : (
-                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-100 text-center">
-                        <div className="flex justify-center mb-2 text-orange-400">
-                            <Lock size={18} />
-                        </div>
-                        <p className="text-xs font-black text-white bg-orange-600 px-2 py-1 rounded inline-block mb-2">
-                            LOCKED - PREMIUM ONLY
-                        </p>
+                    <div className={`${isPaid ? 'bg-rose-50 border-rose-100' : 'bg-orange-50 border-orange-100'} p-4 rounded-lg border text-center transition-colors`}>
                         {isPaid ? (
-                            <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    onUnlock?.();
-                                }}
-                                className="w-full py-1.5 bg-rose-600 text-white text-[10px] font-bold rounded-lg hover:bg-rose-700 transition-all shadow-sm shadow-rose-100"
-                            >
-                                Unlock Now
-                            </button>
+                            <>
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        onUnlock?.();
+                                    }}
+                                    className="w-full py-2 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-all shadow-sm shadow-rose-100 mb-2"
+                                >
+                                    Unlock Now
+                                </button>
+                                <p className="text-[10px] text-rose-600 font-medium">Click to view contact details</p>
+                            </>
                         ) : (
-                            <p className="text-[10px] text-orange-600 font-medium italic">Premium Required</p>
+                            <>
+                                <div className="flex justify-center mb-2 text-orange-400">
+                                    <Lock size={18} />
+                                </div>
+                                <p className="text-xs font-bold text-orange-800 mb-1">Contact Locked</p>
+                                <p className="text-[10px] text-orange-600 font-medium italic">Premium Required</p>
+                            </>
                         )}
                     </div>
                 )}
