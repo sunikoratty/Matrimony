@@ -7,7 +7,15 @@ export async function getMatches(
     mode: 'broad' | 'matching' | 'recommended' = 'broad',
     skip: number = 0,
     take: number = 20,
-    guestGender?: 'MALE' | 'FEMALE'
+    guestGender?: 'MALE' | 'FEMALE',
+    filters?: {
+        minAge?: number,
+        maxAge?: number,
+        religion?: string,
+        caste?: string,
+        dosham?: string,
+        denomination?: string
+    }
 ) {
     try {
         const cookieStore = await cookies()
@@ -16,14 +24,33 @@ export async function getMatches(
         // Guest Mode
         if (!userSession) {
             console.log(`[Matchmaking] Guest Mode - fetching all ${guestGender || 'FEMALE'}s globally`)
+
+            // Age to DOB translation
+            let dobFilter = {}
+            if (filters?.minAge || filters?.maxAge) {
+                const now = new Date()
+                const maxDob = filters.minAge ? new Date(now.getFullYear() - filters.minAge, now.getMonth(), now.getDate()) : undefined
+                const minDob = filters.maxAge ? new Date(now.getFullYear() - (filters.maxAge + 1), now.getMonth(), now.getDate() + 1) : undefined
+
+                dobFilter = {
+                    ...(minDob ? { gte: minDob } : {}),
+                    ...(maxDob ? { lte: maxDob } : {})
+                }
+            }
+
             const matches = await prisma.user.findMany({
                 where: {
                     role: 'USER',
                     gender: guestGender || 'FEMALE',
                     status: 'ACTIVE',
-                    isProfileCompleted: true, // Show only completed profiles
+                    isProfileCompleted: true,
                     profile: {
-                        maritalStatus: { not: 'MARRIED' }
+                        maritalStatus: { not: 'MARRIED' },
+                        ...(filters?.religion ? { religion: filters.religion } : {}),
+                        ...(filters?.caste ? { caste: filters.caste } : {}),
+                        ...(filters?.dosham ? { dosham: filters.dosham } : {}),
+                        ...(filters?.denomination ? { denomination: filters.denomination } : {}),
+                        ...(Object.keys(dobFilter).length > 0 ? { dob: dobFilter } : {})
                     }
                 },
                 include: { profile: true },
@@ -66,43 +93,48 @@ export async function getMatches(
 
         if (mode === 'matching' || mode === 'recommended') {
             const profile = currentUser.profile as any
-            const religion = profile?.religion?.trim()
-            const caste = profile?.caste?.trim()
-            const dosham = profile?.dosham as string | undefined
-            const denomination = profile?.denomination as string | undefined
 
-            console.log(`[Matchmaking] User: ${currentUser.name} (${currentUser.mobile}), Religion: '${religion}', Mode: ${mode}`)
+            // Priority: Search Filters > Profile Defaults
+            const religion = filters?.religion || profile?.religion?.trim()
+            const caste = filters?.caste || profile?.caste?.trim()
+            const dosham = filters?.dosham || profile?.dosham as string | undefined
+            const denomination = filters?.denomination || profile?.denomination as string | undefined
+
+            // Age Filter for User Mode
+            let dobFilter = {}
+            if (filters?.minAge || filters?.maxAge) {
+                const now = new Date()
+                const maxDob = filters.minAge ? new Date(now.getFullYear() - filters.minAge, now.getMonth(), now.getDate()) : undefined
+                const minDob = filters.maxAge ? new Date(now.getFullYear() - (filters.maxAge + 1), now.getMonth(), now.getDate() + 1) : undefined
+                dobFilter = {
+                    ...(minDob ? { gte: minDob } : {}),
+                    ...(maxDob ? { lte: maxDob } : {})
+                }
+            }
+
+            console.log(`[Matchmaking] User: ${currentUser.name}, Mode: ${mode}, Religion Filter: '${religion}'`)
 
             if (religion && religion !== 'N/A') {
-                // Determine priority conditions based on religion
                 const religionConditions: any[] = []
 
                 if (religion === 'Hindu') {
-                    if (dosham?.trim()) {
-                        religionConditions.push({ religion, dosham: dosham.trim() })
-                    }
-                    if (caste?.trim()) {
-                        religionConditions.push({ religion, caste: caste.trim() })
-                    }
+                    if (dosham?.trim()) religionConditions.push({ religion, dosham: dosham.trim() })
+                    if (caste?.trim()) religionConditions.push({ religion, caste: caste.trim() })
                     religionConditions.push({ religion })
                 } else if (religion === 'Christian') {
-                    if (denomination?.trim()) {
-                        religionConditions.push({ religion, denomination: denomination.trim() })
-                    }
+                    if (denomination?.trim()) religionConditions.push({ religion, denomination: denomination.trim() })
                     religionConditions.push({ religion })
                 } else {
-                    // Muslim or any other specific religion
                     religionConditions.push({ religion })
                 }
 
-                // Strictly filter by chosen gender, status, AND the prioritized religion criteria
-                // Country filter REMOVED as per user request: "Recommended: Strict religious matching off all the profiles irrespective of the country"
                 matches = await prisma.user.findMany({
                     where: {
                         ...baseCriteria,
                         profile: {
-                            ...baseCriteria.profile, // Contains maritalStatus filter
-                            OR: religionConditions
+                            ...baseCriteria.profile,
+                            OR: religionConditions,
+                            ...(Object.keys(dobFilter).length > 0 ? { dob: dobFilter } : {})
                         }
                     },
                     include: { profile: true },

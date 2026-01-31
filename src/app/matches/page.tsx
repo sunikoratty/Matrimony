@@ -11,10 +11,48 @@ export const dynamic = 'force-dynamic'
 export default async function MatchesPage({
     searchParams
 }: {
-    searchParams: Promise<{ gender?: 'MALE' | 'FEMALE', mode?: 'broad' | 'recommended' }>
+    searchParams: Promise<{
+        gender?: 'MALE' | 'FEMALE',
+        mode?: 'broad' | 'recommended',
+        age?: string,
+        religion?: string,
+        caste?: string,
+        dosham?: string,
+        denomination?: string
+    }>
 }) {
-    const { gender, mode = 'recommended' } = await searchParams
-    const matchesResult = await getMatches(mode as any, 0, 20, gender)
+    const {
+        gender,
+        mode = 'recommended',
+        age,
+        religion,
+        caste,
+        dosham,
+        denomination
+    } = await searchParams
+
+    // Parse age (expecting "min-max" or single value)
+    let minAge: number | undefined
+    let maxAge: number | undefined
+    if (age) {
+        if (age.includes('-')) {
+            const parts = age.split('-')
+            minAge = parseInt(parts[0])
+            maxAge = parseInt(parts[1])
+        } else {
+            minAge = parseInt(age)
+            maxAge = minAge
+        }
+    }
+
+    const matchesResult = await getMatches(mode as any, 0, 20, gender, {
+        minAge,
+        maxAge,
+        religion,
+        caste,
+        dosham,
+        denomination
+    })
 
     if ('error' in matchesResult) {
         return <div className="p-20 text-center">{matchesResult.error}</div>
