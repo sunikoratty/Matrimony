@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db'
 import { cookies } from 'next/headers'
 
 export async function getMatches(
-    mode: 'broad' | 'matching' = 'broad',
+    mode: 'broad' | 'matching' | 'recommended' = 'broad',
     skip: number = 0,
     take: number = 20,
     guestGender?: 'MALE' | 'FEMALE'
@@ -55,7 +55,7 @@ export async function getMatches(
 
         let matches: any[] = []
 
-        if (mode === 'matching') {
+        if (mode === 'matching' || mode === 'recommended') {
             const profile = currentUser.profile
             const religion = profile?.religion?.trim()
             const caste = profile?.caste?.trim()
@@ -86,6 +86,7 @@ export async function getMatches(
                     religionConditions.push({ religion })
                 }
 
+                // Strictly filter by chosen gender, status, AND the prioritized religion criteria
                 matches = await prisma.user.findMany({
                     where: {
                         ...baseCriteria,
@@ -99,6 +100,22 @@ export async function getMatches(
                     take,
                     orderBy: { createdAt: 'desc' }
                 })
+
+                // For 'recommended' mode, if we don't have enough matches, add broad ones
+                if (mode === 'recommended' && matches.length < take) {
+                    const matchedIds = matches.map(m => m.id)
+                    const broadTake = take - matches.length
+                    const broaderMatches = await prisma.user.findMany({
+                        where: {
+                            ...baseCriteria,
+                            id: { notIn: matchedIds }
+                        },
+                        include: { profile: true },
+                        take: broadTake,
+                        orderBy: { createdAt: 'desc' }
+                    })
+                    matches = [...matches, ...broaderMatches]
+                }
             } else {
                 // No religion set on profile - fallback to broad matching
                 matches = await prisma.user.findMany({

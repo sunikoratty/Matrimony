@@ -43,7 +43,7 @@ export default function MatchesList({
 
     const router = useRouter()
     const searchParams = useSearchParams()
-    const currentMode = searchParams.get('mode') || 'broad'
+    const currentMode = searchParams.get('mode') || 'recommended'
 
     const userCountry = currentUser.country || 'INDIA'
 
@@ -78,21 +78,23 @@ export default function MatchesList({
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900">
-                        {currentMode === 'matching' ? 'Your Matching Profiles' : 'Recommended Matches'}
+                        {currentMode === 'matching' ? 'Your Matching Profiles' :
+                            currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
                     </h1>
                     <p className="text-slate-500 mt-1">
-                        {currentMode === 'matching' ? 'Strict matches based on your profile' : ''}
+                        {currentMode === 'matching' ? 'Strict matches based on your profile' :
+                            currentMode === 'recommended' ? 'Prioritized matches followed by all profiles' : 'Exploring all eligible members'}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => setMode('broad')}
-                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
+                        onClick={() => setMode('recommended')}
+                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'recommended'
                             ? 'bg-rose-600 text-white shadow-lg'
                             : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
                             }`}
                     >
-                        All Profiles
+                        Recommended
                     </button>
                     {!isGuest && (
                         <button
@@ -102,9 +104,18 @@ export default function MatchesList({
                                 : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
                                 }`}
                         >
-                            Matching Profiles
+                            Strict Matches
                         </button>
                     )}
+                    <button
+                        onClick={() => setMode('broad')}
+                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
+                            ? 'bg-rose-600 text-white shadow-lg'
+                            : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
+                            }`}
+                    >
+                        Browse All
+                    </button>
                 </div>
             </div>
 

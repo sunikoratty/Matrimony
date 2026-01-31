@@ -11,7 +11,7 @@ export default async function ProfileView({
 }: {
     searchParams: Promise<{ mode?: 'broad' | 'matching' }>
 }) {
-    const { mode = 'broad' } = await searchParams
+    const { mode = 'recommended' } = await searchParams
     const user = await getProfile()
 
     if (!user) {
