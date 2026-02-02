@@ -7,13 +7,11 @@ import Footer from '@/components/landing/Footer'
 import FeaturedProfiles from '@/components/landing/FeaturedProfiles'
 
 export default function LandingPageContent({
-    isLoggedIn,
-    userGender,
+    user,
     brides,
     grooms
 }: {
-    isLoggedIn: boolean,
-    userGender?: string,
+    user: any,
     brides: any[],
     grooms: any[]
 }) {
@@ -34,7 +32,7 @@ export default function LandingPageContent({
 
     return (
         <div className="min-h-screen bg-white">
-            <Header isLoggedIn={isLoggedIn} />
+            <Header user={user} />
             <main>
                 <Hero />
                 <FeaturedProfiles
@@ -42,14 +40,14 @@ export default function LandingPageContent({
                     subtitle="Explore a selection of beautiful brides looking for their life partners"
                     profiles={brides}
                     gender="FEMALE"
-                    userGender={userGender}
+                    userGender={user?.gender}
                 />
                 <FeaturedProfiles
                     title="Featured Grooms"
                     subtitle="Discover eligible grooms selected from various backgrounds and professions"
                     profiles={grooms}
                     gender="MALE"
-                    userGender={userGender}
+                    userGender={user?.gender}
                 />
             </main>
             <Footer />

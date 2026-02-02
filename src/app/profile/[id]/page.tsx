@@ -43,7 +43,7 @@ export default async function ProfileByIdView({
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <Header isLoggedIn={isLoggedIn} />
+            <Header user={currentUser} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
                     {/* Back Link */}
@@ -93,35 +93,102 @@ export default async function ProfileByIdView({
 
                                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Contact</p>
-                                        {isUnlocked ? (
-                                            <>
-                                                <p className="font-medium">{viewedUser.mobile}</p>
-                                                <p className="text-sm text-slate-500">{viewedUser.email || 'Email not set'}</p>
-                                            </>
-                                        ) : (
-                                            <div className="mt-2">
-                                                {isPaid ? (
-                                                    <form action={handleUnlock}>
-                                                        <button
-                                                            type="submit"
-                                                            className="flex items-center gap-2 px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-all"
-                                                        >
-                                                            Unlock Contact Details
-                                                        </button>
-                                                    </form>
-                                                ) : (
-                                                    <div className="flex items-center gap-2 text-slate-400 mt-1">
-                                                        <span className="text-sm italic">Locked - Premium Only</span>
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Contact Information</p>
+                                        <div className="space-y-2">
+                                            {isUnlocked ? (
+                                                <>
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Mobile</p>
+                                                        <p className="font-medium text-slate-700">{viewedUser.mobile}</p>
                                                     </div>
-                                                )}
-                                            </div>
-                                        )}
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Email</p>
+                                                        <p className="font-medium text-slate-700">{viewedUser.email || 'Email not set'}</p>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="mt-2">
+                                                    {isPaid ? (
+                                                        <form action={handleUnlock}>
+                                                            <button
+                                                                type="submit"
+                                                                className="flex items-center gap-2 px-3 py-1.5 bg-rose-600 text-white text-xs font-bold rounded-lg hover:bg-rose-700 transition-all"
+                                                            >
+                                                                Unlock Contact Details
+                                                            </button>
+                                                        </form>
+                                                    ) : (
+                                                        <div className="flex items-center gap-2 text-slate-400 mt-1">
+                                                            <span className="text-sm italic">Locked - Premium Only</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Location</p>
-                                        <p className="font-medium">{viewedUser.profile?.location || 'City not set'}</p>
-                                        <p className="text-sm text-slate-500">{viewedUser.profile?.currentResidence || viewedUser.country}</p>
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Location</p>
+                                        <div className="space-y-2">
+                                            <div>
+                                                <p className="text-xs text-slate-400">City</p>
+                                                <p className="font-medium text-slate-700">{viewedUser.profile?.location || 'City not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Residence</p>
+                                                <p className="font-medium text-slate-700">{viewedUser.profile?.currentResidence || viewedUser.country}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 md:col-span-2">
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Personal & Professional Details</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                                            <div>
+                                                <p className="text-xs text-slate-400">Marital Status</p>
+                                                <p className="font-medium text-slate-700 capitalize">{viewedUser.profile?.maritalStatus?.toLowerCase() || 'Not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Mother Tongue</p>
+                                                <p className="font-medium text-slate-700">{viewedUser.motherTongue}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Qualification</p>
+                                                <p className="font-medium text-slate-700">{viewedUser.profile?.qualification || 'Not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Occupation</p>
+                                                <p className="font-medium text-slate-700">{viewedUser.profile?.occupation || 'Not set'}</p>
+                                            </div>
+
+                                            {/* Religion Specific Fields */}
+                                            {viewedUser.profile?.religion === 'Hindu' && (
+                                                <>
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Caste</p>
+                                                        <p className="font-medium text-slate-700">{viewedUser.profile?.caste || 'Not set'}</p>
+                                                    </div>
+                                                    {viewedUser.profile?.dosham && (
+                                                        <div>
+                                                            <p className="text-xs text-slate-400">Dosham</p>
+                                                            <p className="font-medium text-slate-700">{viewedUser.profile.dosham}</p>
+                                                        </div>
+                                                    )}
+                                                    {viewedUser.profile?.birthStar && (
+                                                        <div>
+                                                            <p className="text-xs text-slate-400">Birth Star</p>
+                                                            <p className="font-medium text-slate-700">{viewedUser.profile.birthStar}</p>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {viewedUser.profile?.religion === 'Christian' && (
+                                                <div>
+                                                    <p className="text-xs text-slate-400">Denomination</p>
+                                                    <p className="font-medium text-slate-700">{viewedUser.profile?.denomination || 'Not set'}</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 

@@ -61,12 +61,12 @@ export default async function MatchesPage({
 
     const { matches, currentUser, isGuest } = matchesResult
 
+    // For Header avatar
+    const user = await getProfile()
+
     // Safety check: Registered users must complete profile before browsing
-    if (!isGuest) {
-        const user = await getProfile()
-        if (user && !user.isProfileCompleted) {
-            redirect('/profile/setup')
-        }
+    if (!isGuest && user && !user.isProfileCompleted) {
+        redirect('/profile/setup')
     }
 
     // Use default country if not present (should be present for registered users)
@@ -74,7 +74,7 @@ export default async function MatchesPage({
 
     return (
         <div className="min-h-screen bg-white">
-            <Header isLoggedIn={!isGuest} />
+            <Header user={user} />
             <div className="pt-20">
                 {/* Hero Section */}
                 <div className="relative h-64 sm:h-80 bg-rose-900 overflow-hidden mb-8">

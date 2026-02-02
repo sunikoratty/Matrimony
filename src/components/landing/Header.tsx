@@ -5,7 +5,11 @@ import { motion } from 'framer-motion'
 import { Heart } from 'lucide-react'
 import { signOut } from '@/lib/user-actions'
 
-export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
+import { User as UserIcon } from 'lucide-react'
+
+export default function Header({ user }: { user?: any }) {
+    const isLoggedIn = !!user
+
     return (
         <motion.header
             initial={{ y: -20, opacity: 0 }}
@@ -19,17 +23,38 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                     </span>
                 </Link>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 sm:gap-6">
                     {isLoggedIn ? (
                         <>
-                            <Link href="/profile/view" className="font-medium hover:text-rose-600 transition-colors">
-                                Profile
+                            <Link href="/profile/view" className="flex items-center gap-2 group">
+                                <div className="h-10 w-10 rounded-full border-2 border-rose-100 overflow-hidden bg-rose-50 flex items-center justify-center group-hover:border-rose-300 transition-all">
+                                    {user.profile?.photoUrl ? (
+                                        <img
+                                            src={user.profile.photoUrl}
+                                            alt={user.name}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="text-rose-400">
+                                            {user.gender === 'FEMALE' ? (
+                                                <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
+                                                    <path d="M12 2c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4z" />
+                                                </svg>
+                                            ) : (
+                                                <UserIcon size={24} />
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <span className="hidden sm:block font-medium text-slate-700 group-hover:text-rose-600 transition-colors">
+                                    {user.name.split(' ')[0]}
+                                </span>
                             </Link>
                             <button
                                 onClick={async () => {
                                     await signOut()
                                 }}
-                                className="px-5 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200"
+                                className="px-4 py-2 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 transition-all text-sm"
                             >
                                 Sign Out
                             </button>

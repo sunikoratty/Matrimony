@@ -9,8 +9,7 @@ export default async function Home() {
 
     return (
         <LandingPageContent
-            isLoggedIn={!!user}
-            userGender={user?.gender}
+            user={user}
             brides={brides}
             grooms={grooms}
         />

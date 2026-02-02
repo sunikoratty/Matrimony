@@ -29,7 +29,7 @@ export default async function ProfileView({
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <Header isLoggedIn={true} />
+            <Header user={user} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
                     {/* Profile Header with Background Image */}
@@ -69,14 +69,81 @@ export default async function ProfileView({
 
                                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="bg-slate-50 p-4 rounded-lg">
-                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Contact</p>
-                                        <p className="font-medium">{user.mobile}</p>
-                                        <p className="text-sm text-slate-500">{user.email || 'Email not set'}</p>
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Contact Information</p>
+                                        <div className="space-y-2">
+                                            <div>
+                                                <p className="text-xs text-slate-400">Mobile</p>
+                                                <p className="font-medium text-slate-700">{user.mobile}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Email</p>
+                                                <p className="font-medium text-slate-700">{user.email || 'Email not set'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="bg-slate-50 p-4 rounded-lg">
-                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Location</p>
-                                        <p className="font-medium">{user.profile?.location || 'City not set'}</p>
-                                        <p className="text-sm text-slate-500">{user.profile?.currentResidence || user.country}</p>
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Location</p>
+                                        <div className="space-y-2">
+                                            <div>
+                                                <p className="text-xs text-slate-400">City</p>
+                                                <p className="font-medium text-slate-700">{user.profile?.location || 'Not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Residence</p>
+                                                <p className="font-medium text-slate-700">{user.profile?.currentResidence || user.country}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-4 rounded-lg md:col-span-2">
+                                        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Personal & Professional Details</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                                            <div>
+                                                <p className="text-xs text-slate-400">Marital Status</p>
+                                                <p className="font-medium text-slate-700 capitalize">{user.profile?.maritalStatus?.toLowerCase() || 'Not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Mother Tongue</p>
+                                                <p className="font-medium text-slate-700">{user.motherTongue}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Qualification</p>
+                                                <p className="font-medium text-slate-700">{user.profile?.qualification || 'Not set'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs text-slate-400">Occupation</p>
+                                                <p className="font-medium text-slate-700">{user.profile?.occupation || 'Not set'}</p>
+                                            </div>
+
+                                            {/* Religion Specific Fields */}
+                                            {user.profile?.religion === 'Hindu' && (
+                                                <>
+                                                    <div>
+                                                        <p className="text-xs text-slate-400">Caste</p>
+                                                        <p className="font-medium text-slate-700">{user.profile?.caste || 'Not set'}</p>
+                                                    </div>
+                                                    {user.profile?.dosham && (
+                                                        <div>
+                                                            <p className="text-xs text-slate-400">Dosham</p>
+                                                            <p className="font-medium text-slate-700">{user.profile.dosham}</p>
+                                                        </div>
+                                                    )}
+                                                    {user.profile?.birthStar && (
+                                                        <div>
+                                                            <p className="text-xs text-slate-400">Birth Star</p>
+                                                            <p className="font-medium text-slate-700">{user.profile.birthStar}</p>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {user.profile?.religion === 'Christian' && (
+                                                <div>
+                                                    <p className="text-xs text-slate-400">Denomination</p>
+                                                    <p className="font-medium text-slate-700">{user.profile?.denomination || 'Not set'}</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
