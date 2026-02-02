@@ -8,6 +8,8 @@ import Link from 'next/link'
 
 import ErrorState from '@/components/ui/ErrorState'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard({
     searchParams,
 }: {
