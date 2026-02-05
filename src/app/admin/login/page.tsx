@@ -3,7 +3,8 @@
 import { useState } from 'react'
 
 import { adminLogin } from '@/lib/actions'
-import { RocketIcon, Loader2 } from 'lucide-react'
+import { RocketIcon, Loader2, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AdminLoginPage() {
     const [error, setError] = useState('')
@@ -23,7 +24,14 @@ export default function AdminLoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 relative">
+            <Link
+                href="/"
+                className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-rose-600 transition-colors font-medium px-4 py-2 rounded-lg hover:bg-white/50"
+            >
+                <ArrowLeft size={20} />
+                Back to Home
+            </Link>
             <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-slate-100">
                 <div className="text-center mb-8">
                     <div className="mx-auto w-12 h-12 bg-rose-500 rounded-full flex items-center justify-center mb-4 text-white">

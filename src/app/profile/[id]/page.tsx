@@ -1,4 +1,6 @@
 import { getProfileById, getProfile, hasUnlockedContact, unlockContact } from '@/lib/user-actions'
+import { getInterestStatus } from '@/lib/interest-actions'
+import InterestButton from '@/components/user/InterestButton'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/landing/Header'
@@ -28,6 +30,11 @@ export default async function ProfileByIdView({
     const isPaid = currentUser?.isPaid || false
     const isLoggedIn = !!currentUser
     const isOwnProfile = currentUser?.id === viewedUser.id
+
+    // Check interest status
+    const initialInterestStatus = isLoggedIn && !isOwnProfile
+        ? await getInterestStatus(viewedUser.id)
+        : null
 
     // Check if contact is unlocked (only relevant if not own profile and user is paid)
     const isUnlocked = isOwnProfile || (isLoggedIn && isPaid && await hasUnlockedContact(currentUser.id, viewedUser.id))
@@ -84,11 +91,19 @@ export default async function ProfileByIdView({
                                             {viewedUser.gender} • {age ? `${age} yrs` : 'Age not set'} • {viewedUser.profile?.religion || 'Religion not set'}
                                         </p>
                                     </div>
-                                    {isOwnProfile && (
-                                        <Link href="/profile/setup" className="w-full sm:w-auto px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 text-sm font-medium inline-block">
-                                            Edit Profile
-                                        </Link>
-                                    )}
+                                    <div className="flex gap-3">
+                                        {isOwnProfile ? (
+                                            <Link href="/profile/setup" className="w-full sm:w-auto px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 text-sm font-medium inline-block">
+                                                Edit Profile
+                                            </Link>
+                                        ) : isLoggedIn && (
+                                            <InterestButton
+                                                targetId={viewedUser.id}
+                                                initialStatus={initialInterestStatus}
+                                                isPaid={isPaid}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">

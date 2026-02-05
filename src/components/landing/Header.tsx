@@ -26,6 +26,14 @@ export default function Header({ user }: { user?: any }) {
                 <div className="flex items-center gap-4 sm:gap-6">
                     {isLoggedIn ? (
                         <>
+                            <Link href="/profile/interests" className="relative p-2 text-slate-400 hover:text-rose-600 transition-colors group" title="Interest Requests">
+                                <Heart size={24} className="group-hover:fill-rose-50" />
+                                {(user._count?.receivedInterests > 0 || user._count?.sentInterests > 0) && (
+                                    <span className="absolute top-0 right-0 h-5 w-5 bg-rose-600 text-white text-xs font-bold flex items-center justify-center rounded-full shadow-sm ring-2 ring-white">
+                                        {(user._count?.receivedInterests || 0) + (user._count?.sentInterests || 0)}
+                                    </span>
+                                )}
+                            </Link>
                             <Link href="/profile/view" className="flex items-center gap-2 group">
                                 <div className="h-10 w-10 rounded-full border-2 border-rose-100 overflow-hidden bg-rose-50 flex items-center justify-center group-hover:border-rose-300 transition-all">
                                     {user.profile?.photoUrl ? (

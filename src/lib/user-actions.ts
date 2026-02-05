@@ -201,7 +201,22 @@ export async function getProfile() {
 
         return await prisma.user.findUnique({
             where: { id: userSession },
-            include: { profile: true }
+            include: {
+                profile: true,
+                _count: {
+                    select: {
+                        receivedInterests: {
+                            where: { status: 'PENDING' }
+                        },
+                        sentInterests: {
+                            where: {
+                                status: { in: ['ACCEPTED', 'REJECTED'] },
+                                isSeenBySender: false
+                            }
+                        }
+                    }
+                }
+            }
         })
     } catch (error) {
         console.warn('Database connection failed in getProfile')

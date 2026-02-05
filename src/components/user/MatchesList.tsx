@@ -125,7 +125,7 @@ export default function MatchesList({
                             currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
                     </h1>
                     <p className="text-slate-500 mt-1">
-                        {currentMode === 'recommended' ? 'Strict matches based on your religion' : 'Exploring all eligible members'}
+                        {currentMode === 'recommended' ? 'Strict matches based on your profile' : 'Exploring all eligible members'}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">

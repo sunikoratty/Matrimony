@@ -25,6 +25,22 @@ model User {
   unlockedBy         ContactView[] @relation("TargetRelation")
   unlockedProfiles   ContactView[] @relation("ViewerRelation")
   profile            Profile?
+  sentInterests      Interest[]    @relation("SenderRelation")
+  receivedInterests  Interest[]    @relation("ReceiverRelation")
+}
+
+model Interest {
+  id        String   @id @default(uuid())
+  senderId  String
+  targetId  String
+  status          String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+  isSeenBySender  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sender    User     @relation("SenderRelation", fields: [senderId], references: [id])
+  target    User     @relation("ReceiverRelation", fields: [targetId], references: [id])
+
+  @@unique([senderId, targetId])
 }
 
 model ContactView {
