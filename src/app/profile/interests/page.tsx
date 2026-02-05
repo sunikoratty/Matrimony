@@ -64,7 +64,7 @@ export default async function InterestsPage() {
                                         <div className="flex-grow text-center sm:text-left">
                                             <h3 className="font-bold text-lg text-slate-900 mb-1">{interest.sender.name}</h3>
                                             <p className="text-slate-500 text-sm mb-3">
-                                                {interest.sender.profile?.currentState || 'Location not specified'}
+                                                {interest.sender.profile?.currentResidence || 'Location not specified'}
                                             </p>
                                             <Link
                                                 href={`/profile/${interest.sender.id}`}
