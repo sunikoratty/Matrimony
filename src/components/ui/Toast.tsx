@@ -33,7 +33,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return (
         <ToastContext.Provider value={{ showToast }}>
             {children}
-            <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-md w-full sm:w-auto">
+            <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-3 max-w-md w-full sm:w-auto">
                 <AnimatePresence>
                     {toasts.map((toast) => (
                         <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
@@ -57,9 +57,9 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className={`flex items-center gap-3 px-4 py-4 rounded-2xl shadow-xl border backdrop-blur-md ${toast.type === 'success'
-                    ? 'bg-emerald-50/90 border-emerald-100 text-emerald-900'
-                    : 'bg-rose-50/90 border-rose-100 text-rose-900'
+            className={`flex items-center gap-3 px-4 py-4 rounded-xl shadow-2xl border bg-white ${toast.type === 'success'
+                ? 'border-l-4 border-l-emerald-500 border-y-slate-100 border-r-slate-100'
+                : 'border-l-4 border-l-rose-500 border-y-slate-100 border-r-slate-100'
                 }`}
         >
             {toast.type === 'success' ? (
@@ -67,7 +67,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
             ) : (
                 <AlertCircle className="text-rose-500 shrink-0" size={20} />
             )}
-            <p className="text-sm font-semibold flex-1">{toast.message}</p>
+            <p className="text-sm font-bold text-slate-800 flex-1">{toast.message}</p>
             <button
                 onClick={() => onRemove(toast.id)}
                 className="p-1 hover:bg-black/5 rounded-full transition-colors shrink-0"

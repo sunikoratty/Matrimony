@@ -96,21 +96,21 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <div className="grid grid-cols-3 gap-2">
                         <select
                             value={day} onChange={(e) => setDay(e.target.value)} required
-                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                            className="px-2 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900 appearance-auto"
                         >
                             <option value="">Day</option>
                             {days.map(d => <option key={d} value={d}>{d}</option>)}
                         </select>
                         <select
                             value={month} onChange={(e) => setMonth(e.target.value)} required
-                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                            className="px-2 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900 appearance-auto"
                         >
                             <option value="">Month</option>
                             {months.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                         </select>
                         <select
                             value={year} onChange={(e) => setYear(e.target.value)} required
-                            className="px-2 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 bg-white appearance-auto"
+                            className="px-2 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900 appearance-auto"
                         >
                             <option value="">Year</option>
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
@@ -125,7 +125,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={currentResidence}
                         onChange={(e) => setCurrentResidence(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                     >
                         <option value="INDIA">India</option>
                         <option value="CANADA">Canada</option>
@@ -141,7 +141,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                         placeholder="e.g. Mumbai, Maharashtra"
                     />
                 </div>
@@ -153,7 +153,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                         placeholder="e.g. user@example.com"
                     />
                 </div>
@@ -167,7 +167,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={maritalStatus}
                         onChange={(e) => setMaritalStatus(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                     >
                         <option value="UNMARRIED">Unmarried</option>
                         <option value="MARRIED">Married</option>
@@ -180,7 +180,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={religion}
                         onChange={(e) => setReligion(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                     >
                         <option value="">Select Religion</option>
                         <option value="Hindu">Hindu</option>
@@ -196,7 +196,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             <select
                                 value={caste}
                                 onChange={(e) => setCaste(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900"
                             >
                                 <option value="">Select Caste</option>
                                 {castes.filter(c => c !== 'Others').map(c => (
@@ -209,7 +209,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                     required
                                     value={customCaste}
                                     onChange={(e) => setCustomCaste(e.target.value)}
-                                    className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                    className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                                     placeholder="Type your caste"
                                 />
                             )}
@@ -221,7 +221,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 name="dosham"
                                 value={dosham}
                                 onChange={(e) => setDosham(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                                 placeholder="e.g. Chovva Dosham, etc."
                             />
                         </div>
@@ -231,7 +231,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 name="birthStar"
                                 value={birthStar}
                                 onChange={(e) => setBirthStar(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                                 placeholder="e.g. Rohini"
                             />
                         </div>
@@ -244,7 +244,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         <select
                             value={denomination}
                             onChange={(e) => setDenomination(e.target.value)}
-                            className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500 mb-2"
+                            className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900"
                         >
                             <option value="">Select Denomination</option>
                             {denominations.filter(d => d !== 'Others').map(d => (
@@ -257,7 +257,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 required
                                 value={customDenomination}
                                 onChange={(e) => setCustomDenomination(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                                 placeholder="Type your denomination"
                             />
                         )}
@@ -272,7 +272,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         required
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                         placeholder="e.g. B.Tech, MBA"
                     />
                 </div>
@@ -282,7 +282,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         name="occupation"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                         placeholder="e.g. Software Engineer"
                     />
                 </div>
@@ -296,7 +296,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     required
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                     placeholder="Write about your interests, lifestyle, and expectations..."
                 />
             </div>

@@ -81,7 +81,7 @@ export default async function MatchesPage({
                     <img
                         src="/images/KeralaCouple.png"
                         alt="Matches"
-                        className="w-full h-full object-cover opacity-60"
+                        className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
                         <Link

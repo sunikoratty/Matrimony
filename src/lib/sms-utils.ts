@@ -1,16 +1,16 @@
-// import twilio from 'twilio'
+import twilio from 'twilio'
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const verifySid = process.env.TWILIO_SERVICE_SID
 
-// const client = twilio(accountSid, authToken)
+const client = twilio(accountSid, authToken)
 
 /**
  * MOCK OTP: 123456
  * Set this to true to force testing mode even if credentials exist.
  */
-const FORCE_MOCK = true
+const FORCE_MOCK = false
 
 export async function sendOTPCode(mobile: string) {
     if (FORCE_MOCK || !accountSid || !authToken || !verifySid) {
@@ -21,7 +21,18 @@ export async function sendOTPCode(mobile: string) {
     }
 
     /* Commented out for testing */
-    return { success: false, error: 'Twilio disabled for testing' }
+    // return { success: false, error: 'Twilio disabled for testing' }
+
+    try {
+        const verification = await client.verify.v2.services(verifySid)
+            .verifications
+            .create({ to: mobile, channel: 'sms' })
+
+        return { success: verification.status === 'pending' }
+    } catch (error: any) {
+        console.error('Error sending OTP:', error.message)
+        return { success: false, error: error.message }
+    }
 }
 
 export async function verifyOTPCode(mobile: string, code: string) {
@@ -30,7 +41,7 @@ export async function verifyOTPCode(mobile: string, code: string) {
         return { success: false, error: 'Invalid OTP. Use 123456 for testing.' }
     }
 
-    /* Commented out for testing
+    /* Commented out for testing */
     try {
         const verificationCheck = await client.verify.v2.services(verifySid)
             .verificationChecks
@@ -41,6 +52,6 @@ export async function verifyOTPCode(mobile: string, code: string) {
         console.error('Error verifying OTP:', error.message)
         return { success: false, error: error.message }
     }
-    */
-    return { success: false, error: 'Twilio disabled' }
+
+    // return { success: false, error: 'Twilio disabled' }
 }
