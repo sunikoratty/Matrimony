@@ -165,7 +165,7 @@ export default function MatchesList({
                                         <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
                                             <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
                                                 {profile.profile.photoUrl ? (
-                                                    <img src={profile.profile.photoUrl} className="w-full h-full object-cover" alt={profile.name} />
+                                                    <img src={profile.profile.photoUrl} className="w-full h-full object-cover object-top" alt={profile.name} />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-rose-300 font-bold text-xl">
                                                         {profile.name.charAt(0)}

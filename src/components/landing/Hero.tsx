@@ -39,11 +39,11 @@ export default function Hero() {
                     src="/images/KeralaCouple.png"
                     alt="Traditional Indian Matrimony"
                     fill
-                    className="object-cover"
+                    className="object-cover object-top" // Prioritize faces
                     priority
                 />
-                {/* Clearer view - removed overlays */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+                {/* Gradient Overlay for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
@@ -58,19 +58,19 @@ export default function Hero() {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="inline-block px-6 py-2 rounded-full bg-rose-600/30 text-rose-100 backdrop-blur-xl font-semibold text-sm border border-white/20 uppercase tracking-[0.2em] mb-6"
+                            className="inline-block px-6 py-2 rounded-full bg-white/10 text-rose-50 backdrop-blur-xl font-medium text-sm border border-white/20 uppercase tracking-[0.2em] mb-6"
                         >
                             #1 Trusted Matrimony Platform
                         </motion.span>
                         <h1 className="text-6xl lg:text-[10rem] font-bold text-white leading-[0.9] font-serif drop-shadow-2xl">
                             Find Your<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
                                 Soulmate
                             </span>
                         </h1>
                     </div>
 
-                    <p className="text-xl lg:text-2xl text-rose-50/90 max-w-3xl leading-relaxed mx-auto font-light drop-shadow-lg">
+                    <p className="text-xl lg:text-2xl text-white/90 max-w-3xl leading-relaxed mx-auto font-light drop-shadow-xl font-serif italic">
                         Where tradition meets modern matching. <br className="hidden md:block" />
                         Connecting verified hearts with elegance and trust.
                     </p>
@@ -80,12 +80,12 @@ export default function Hero() {
                             href="/register"
                             className="group relative px-12 py-5 bg-rose-600 text-white rounded-full font-bold shadow-2xl hover:bg-rose-700 transition-all overflow-hidden"
                         >
-                            <span className="relative z-10">Join Free Today</span>
+                            <span className="relative z-10 uppercase tracking-widest text-sm">Join Free Today</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                         </Link>
                         <Link
                             href="/login"
-                            className="px-12 py-5 bg-white/5 backdrop-blur-xl text-white border-2 border-white/40 rounded-full font-bold hover:bg-white/10 transition-all hover:border-white/60"
+                            className="px-12 py-5 bg-white/10 backdrop-blur-xl text-white border border-white/30 rounded-full font-bold hover:bg-white/20 transition-all uppercase tracking-widest text-sm"
                         >
                             Member Login
                         </Link>
@@ -93,19 +93,19 @@ export default function Hero() {
 
                     {/* Search Section */}
                     <div className="mt-16 max-w-5xl mx-auto">
-                        <div className="bg-white/10 backdrop-blur-2xl p-4 sm:p-6 rounded-3xl border border-white/20 shadow-2xl">
-                            <h3 className="text-white text-lg font-bold mb-4 flex items-center justify-center gap-2">
-                                <Search className="w-5 h-5 text-rose-400" />
+                        <div className="bg-white/10 backdrop-blur-xl p-4 sm:p-6 rounded-3xl border border-white/20 shadow-2xl">
+                            <h3 className="text-white text-lg font-bold mb-4 flex items-center justify-center gap-2 font-serif">
+                                <Search className="w-5 h-5 text-rose-300" />
                                 Search Profile
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                                 {/* Gender Filter */}
                                 <div className="space-y-1.5 text-left">
-                                    <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">I am looking for</label>
+                                    <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">I am looking for</label>
                                     <select
                                         value={searchData.gender}
                                         onChange={(e) => setSearchData({ ...searchData, gender: e.target.value })}
-                                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                     >
                                         <option value="FEMALE" className="bg-slate-900">Bride</option>
                                         <option value="MALE" className="bg-slate-900">Groom</option>
@@ -114,11 +114,11 @@ export default function Hero() {
 
                                 {/* Age Filter */}
                                 <div className="space-y-1.5 text-left">
-                                    <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Age Range</label>
+                                    <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Age Range</label>
                                     <select
                                         value={searchData.age}
                                         onChange={(e) => setSearchData({ ...searchData, age: e.target.value })}
-                                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                     >
                                         <option value="" className="bg-slate-900">Any Age</option>
                                         <option value="18-25" className="bg-slate-900">18 - 25</option>
@@ -132,11 +132,11 @@ export default function Hero() {
 
                                 {/* Religion Filter */}
                                 <div className="space-y-1.5 text-left">
-                                    <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Religion</label>
+                                    <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Religion</label>
                                     <select
                                         value={searchData.religion}
                                         onChange={(e) => setSearchData({ ...searchData, religion: e.target.value, caste: '', dosham: '', denomination: '' })}
-                                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                     >
                                         <option value="" className="bg-slate-900">Any Religion</option>
                                         <option value="Hindu" className="bg-slate-900">Hindu</option>
@@ -151,11 +151,11 @@ export default function Hero() {
                                 {searchData.religion === 'Hindu' && (
                                     <>
                                         <div className="space-y-1.5 text-left">
-                                            <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Caste</label>
+                                            <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Caste</label>
                                             <select
                                                 value={searchData.caste}
                                                 onChange={(e) => setSearchData({ ...searchData, caste: e.target.value })}
-                                                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                             >
                                                 <option value="" className="bg-slate-900">Select Caste</option>
                                                 <option value="Nair" className="bg-slate-900">Nair</option>
@@ -170,11 +170,11 @@ export default function Hero() {
                                             </select>
                                         </div>
                                         <div className="space-y-1.5 text-left">
-                                            <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Dosham</label>
+                                            <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Dosham</label>
                                             <select
                                                 value={searchData.dosham}
                                                 onChange={(e) => setSearchData({ ...searchData, dosham: e.target.value })}
-                                                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                             >
                                                 <option value="" className="bg-slate-900">Any</option>
                                                 <option value="No" className="bg-slate-900">No Dosham</option>
@@ -188,11 +188,11 @@ export default function Hero() {
                                 {/* Conditional Christian Fields */}
                                 {searchData.religion === 'Christian' && (
                                     <div className="space-y-1.5 text-left">
-                                        <label className="text-xs font-bold text-rose-200 uppercase tracking-widest pl-1">Denomination</label>
+                                        <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Denomination</label>
                                         <select
                                             value={searchData.denomination}
                                             onChange={(e) => setSearchData({ ...searchData, denomination: e.target.value })}
-                                            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer"
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all appearance-none cursor-pointer hover:bg-black/50"
                                         >
                                             <option value="" className="bg-slate-900">Select Denomination</option>
                                             <option value="Latin Catholic" className="bg-slate-900">Latin Catholic</option>

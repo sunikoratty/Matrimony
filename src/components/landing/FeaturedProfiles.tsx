@@ -39,18 +39,22 @@ export default function FeaturedProfiles({
         ? (userGender === 'MALE' ? 'FEMALE' : 'MALE')
         : gender;
     return (
-        <section className="py-20 px-4 bg-white">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex justify-between items-end mb-12">
+        <section className="py-24 px-4 bg-white relative overflow-hidden">
+            {/* Decorative background bloom */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="flex justify-between items-end mb-16">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">{title}</h2>
-                        <p className="text-slate-500">{subtitle}</p>
+                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 mb-4">{title}</h2>
+                        <p className="text-slate-500 text-lg font-light">{subtitle}</p>
                     </div>
                     <Link
                         href={`/matches?gender=${targetGender}`}
-                        className="text-rose-600 font-semibold hover:text-rose-700 transition-colors flex items-center gap-1"
+                        className="text-rose-600 font-bold hover:text-rose-700 transition-colors flex items-center gap-2 group"
                     >
-                        View All {gender === 'FEMALE' ? 'Brides' : 'Grooms'} &rarr;
+                        View All {gender === 'FEMALE' ? 'Brides' : 'Grooms'}
+                        <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                     </Link>
                 </div>
 
@@ -72,32 +76,39 @@ export default function FeaturedProfiles({
                                 className="group cursor-pointer"
                             >
                                 <Link href={`/matches?gender=${targetGender}`}>
-                                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-4 shadow-lg group-hover:shadow-xl transition-all">
+                                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-lg group-hover:shadow-2xl transition-all duration-500">
                                         {user.profile?.photoUrl ? (
                                             <img
                                                 src={user.profile.photoUrl}
                                                 alt={user.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">
                                                 <User size={64} />
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                                <p className="text-white font-serif text-2xl font-bold">{user.name}</p>
+                                                <p className="text-rose-200 text-sm font-medium">{locationText}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-rose-600 transition-colors truncate">
-                                        {user.name}
-                                    </h3>
-                                    <div className="space-y-0.5 mt-1">
-                                        <p className="text-xs font-bold text-rose-600 uppercase tracking-wider truncate">
+
+                                    <div className="space-y-1">
+                                        <h3 className="text-xl font-serif font-bold text-slate-900 group-hover:text-rose-600 transition-colors truncate">
+                                            {user.name}
+                                        </h3>
+                                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                                            <span className="font-semibold text-rose-600">
+                                                <AgeDisplay dob={user.profile?.dob} />
+                                            </span>
+                                            <span>•</span>
+                                            <span>{user.profile?.religion || 'Religion N/A'}</span>
+                                        </div>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider truncate">
                                             {user.profile?.qualification || 'Qualification N/A'}
-                                        </p>
-                                        <p className="text-slate-500 text-sm">
-                                            <AgeDisplay dob={user.profile?.dob} /> • {user.profile?.religion || 'Religion N/A'}
-                                        </p>
-                                        <p className="text-slate-400 text-xs truncate">
-                                            {locationText}
                                         </p>
                                     </div>
                                 </Link>

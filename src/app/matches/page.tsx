@@ -78,22 +78,28 @@ export default async function MatchesPage({
             <div className="pt-20">
                 {/* Hero Section */}
                 <div className="relative h-64 sm:h-80 bg-rose-900 overflow-hidden mb-8">
-                    <img
-                        src="/images/KeralaCouple.png"
-                        alt="Matches"
-                        className="w-full h-full object-cover"
-                    />
+                    <picture className="w-full h-full block">
+                        <source media="(min-width: 640px)" srcSet="/images/KeralaCoupleLarge.png" />
+                        <img
+                            src="/images/KeralaCouple.png"
+                            alt="Matches Banner"
+                            className="w-full h-full object-cover object-top"
+                        />
+                    </picture>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
                         <Link
                             href="/"
-                            className="absolute top-8 left-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-sm font-medium"
+                            className="absolute top-4 left-4 sm:top-8 sm:left-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/30 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-xs sm:text-sm font-medium z-10 hover:bg-black/40"
                         >
                             <ArrowLeft size={16} />
                             Back to Home
                         </Link>
-                        <div className="max-w-2xl">
-                            <h1 className="text-4xl sm:text-5xl font-serif font-bold text-white mb-4">Discover Your Match.</h1>
-                            <p className="text-rose-100 text-lg">
+                        <div className="max-w-2xl relative z-10 mt-8 sm:mt-0">
+                            <h1 className="text-4xl sm:text-5xl font-serif font-bold text-white mb-2 sm:mb-4 drop-shadow-lg">Discover Your Match.</h1>
+                            <p className="text-rose-100/90 text-sm sm:text-lg font-light drop-shadow-md">
                                 "Handpicked profiles curated just for you. Your forever begins here."
                             </p>
                         </div>

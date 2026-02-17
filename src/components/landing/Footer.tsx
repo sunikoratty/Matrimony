@@ -49,14 +49,14 @@ export default function Footer() {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <span className="mt-0.5 text-lg">📧</span>
-                                <a href="mailto:admin@matchmatrimnoy.com" className="hover:text-rose-500 transition-colors break-all">
-                                    admin@matchmatrimnoy.com
+                                <a href="mailto:suwytechllp@gmail.com" className="hover:text-rose-500 transition-colors break-all">
+                                    suwytechllp@gmail.com
                                 </a>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-0.5 text-lg">📞</span>
                                 <div>
-                                    <p className="font-medium text-slate-300 mb-1">+91 (Coming Soon)</p>
+                                    <p className="font-medium text-slate-300 mb-1">+91 9037246845</p>
                                     <p className="text-xs text-slate-500">Available Mon-Sat, 9AM - 6PM IST</p>
                                 </div>
                             </li>

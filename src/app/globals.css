@@ -2,6 +2,20 @@
 
 @theme {
   --animate-spin-slow: spin 8s linear infinite;
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+  
+  --color-rose-50: #fff1f2;
+  --color-rose-100: #ffe4e6;
+  --color-rose-200: #fecdd3;
+  --color-rose-300: #fda4af;
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-rose-600: #e11d48;
+  --color-rose-700: #be123c;
+  --color-rose-800: #9f1239;
+  --color-rose-900: #881337;
+  --color-rose-950: #4c0519;
 }
 
 :root {
@@ -9,26 +23,17 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
-
 ::selection {
-  background-color: #ffe4e6; /* rose-100 */
-  color: #881337; /* rose-900 */
+  background-color: var(--color-rose-100);
+  color: var(--color-rose-900);
 }
