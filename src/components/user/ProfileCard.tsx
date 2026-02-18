@@ -136,7 +136,10 @@ export default function ProfileCard({
                                         <Lock size={20} />
                                     </div>
                                     <p className="text-xs font-bold text-slate-700">Contact Locked</p>
-                                    <Link href="/pricing" className="text-[11px] text-rose-600 hover:underline font-semibold block">
+                                    <Link
+                                        href={`/pricing?interested_in=${encodeURIComponent(profile.name)}`}
+                                        className="text-[11px] text-rose-600 hover:underline font-semibold block"
+                                    >
                                         Upgrade to Unlock
                                     </Link>
                                 </div>

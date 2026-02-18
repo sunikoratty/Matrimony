@@ -12,7 +12,7 @@ export default function Footer() {
                                 ❤️Match
                             </span>
                         </Link>
-                        <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                        <p className="text-sm text-slate-100 leading-relaxed mb-6">
                             Connecting hearts with trust and tradition. Your journey to a perfect partner starts here.
                         </p>
                     </div>

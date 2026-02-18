@@ -43,7 +43,7 @@ export default function Hero() {
                     priority
                 />
                 {/* Gradient Overlay for text readability */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
@@ -58,7 +58,7 @@ export default function Hero() {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="inline-block px-6 py-2 rounded-full bg-white/10 text-rose-50 backdrop-blur-xl font-medium text-sm border border-white/20 uppercase tracking-[0.2em] mb-6"
+                            className="inline-block px-6 py-2 rounded-full text-white bg-white/10 backdrop-blur-xl font-medium text-sm border border-white/20 uppercase tracking-[0.2em] mb-6"
                         >
                             #1 Trusted Matrimony Platform
                         </motion.span>
