@@ -52,9 +52,15 @@ export async function sendOTPCode(mobile: string) {
 }
 
 export async function verifyOTPCode(mobile: string, code: string) {
-    // If FORCE_MOCK is on or credentials missing, or it's a bypass number, allow 123456
-    if (FORCE_MOCK || !accountSid || !authToken || !verifySid || BYPASS_NUMBERS.includes(mobile)) {
+    // 1. Check for missing credentials or force mock
+    if (FORCE_MOCK || !accountSid || !authToken || !verifySid) {
         if (code === '123456') return { success: true, mock: true }
+        return { success: false, error: 'Twilio disabled or credentials missing. Use 123456.' }
+    }
+
+    // 2. Proactive bypass for specific numbers
+    if (BYPASS_NUMBERS.includes(mobile) && code === '123456') {
+        return { success: true, mock: true }
     }
 
     try {
