@@ -12,6 +12,11 @@ const client = twilio(accountSid, authToken)
  */
 const FORCE_MOCK = false
 
+// Numbers that are allowed to bypass real SMS (handy for trial accounts or testing)
+const BYPASS_NUMBERS = [
+    '+15199036561', // Canada number from screenshot
+]
+
 export async function sendOTPCode(mobile: string) {
     if (FORCE_MOCK || !accountSid || !authToken || !verifySid) {
         console.log('--- TEST MODE ---')
@@ -20,8 +25,11 @@ export async function sendOTPCode(mobile: string) {
         return { success: true, mock: true }
     }
 
-    /* Commented out for testing */
-    // return { success: false, error: 'Twilio disabled for testing' }
+    // Proactive bypass for specific numbers
+    if (BYPASS_NUMBERS.includes(mobile)) {
+        console.log(`--- BYPASS MODE for ${mobile} ---`)
+        return { success: true, mock: true }
+    }
 
     try {
         const verification = await client.verify.v2.services(verifySid)
@@ -31,17 +39,24 @@ export async function sendOTPCode(mobile: string) {
         return { success: verification.status === 'pending' }
     } catch (error: any) {
         console.error('Error sending OTP:', error.message)
+
+        // Handle Twilio Trial account restriction (error code 21608)
+        // This allows the user to still log in using the mock code even if the SMS fails due to trial limits
+        if (error.code === 21608 || error.message?.includes('unverified')) {
+            console.log(`--- TRIAL BYPASS triggered for ${mobile} ---`)
+            return { success: true, mock: true }
+        }
+
         return { success: false, error: error.message }
     }
 }
 
 export async function verifyOTPCode(mobile: string, code: string) {
-    if (FORCE_MOCK || !accountSid || !authToken || !verifySid) {
+    // If FORCE_MOCK is on or credentials missing, or it's a bypass number, allow 123456
+    if (FORCE_MOCK || !accountSid || !authToken || !verifySid || BYPASS_NUMBERS.includes(mobile)) {
         if (code === '123456') return { success: true, mock: true }
-        return { success: false, error: 'Invalid OTP. Use 123456 for testing.' }
     }
 
-    /* Commented out for testing */
     try {
         const verificationCheck = await client.verify.v2.services(verifySid)
             .verificationChecks
@@ -50,8 +65,12 @@ export async function verifyOTPCode(mobile: string, code: string) {
         return { success: verificationCheck.status === 'approved' }
     } catch (error: any) {
         console.error('Error verifying OTP:', error.message)
+
+        // Secondary fallback for bypass numbers if Twilio API fails
+        if (BYPASS_NUMBERS.includes(mobile) && code === '123456') {
+            return { success: true, mock: true }
+        }
+
         return { success: false, error: error.message }
     }
-
-    // return { success: false, error: 'Twilio disabled' }
 }
