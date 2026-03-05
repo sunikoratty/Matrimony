@@ -3,12 +3,12 @@ import { getReceivedInterests, getInterestUpdates, respondToInterest } from '@/l
 import { getProfile } from '@/lib/user-actions'
 import Header from '@/components/landing/Header'
 import Link from 'next/link'
-import { Check, X, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { Check, X, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import MarkSeenTrigger from '@/components/user/MarkSeenTrigger'
 
 export const metadata = {
-    title: 'Interests - Match',
+    title: 'Interests - True Match',
     description: 'View and manage your interest requests.'
 }
 
@@ -27,7 +27,15 @@ export default async function InterestsPage() {
             <MarkSeenTrigger />
 
             <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto space-y-12">
+                <div className="max-w-4xl mx-auto space-y-8">
+                    {/* Back Button */}
+                    <Link
+                        href="/profile/view"
+                        className="inline-flex items-center gap-2 text-slate-500 hover:text-rose-600 transition-colors font-medium text-sm mb-4"
+                    >
+                        <ArrowLeft size={16} />
+                        Back to Profile
+                    </Link>
 
                     {/* Received Requests Section */}
                     <section>

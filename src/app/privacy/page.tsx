@@ -3,7 +3,7 @@ import { getProfile } from '@/lib/user-actions'
 import Link from 'next/link'
 
 export const metadata = {
-    title: 'Privacy Policy - Match',
+    title: 'Privacy Policy - True Match',
     description: 'How we collect, use, and protect your personal information.'
 }
 

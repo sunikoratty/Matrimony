@@ -60,7 +60,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: res.amount,
                 currency: currency,
-                name: '❤️Match',
+                name: 'True Match',
                 description: 'Premium Membership Payment',
                 order_id: res.orderId,
                 handler: async function (response: any) {

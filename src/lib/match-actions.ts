@@ -199,7 +199,7 @@ export async function getMatches(
 
         return {
             matches: matchesWithUnlockStatus,
-            currentUser: { isPaid: currentUser.isPaid, country: currentUser.country },
+            currentUser: { isPaid: true, country: currentUser.country }, // TEMPORARY BYPASS
             unlockedIds: Array.from(unlockedIdsSet) // Keep for backward compatibility if needed
         }
     } catch (error) {

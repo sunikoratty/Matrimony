@@ -3,7 +3,7 @@ import Header from '@/components/landing/Header'
 import { getProfile } from '@/lib/user-actions'
 
 export const metadata = {
-    title: 'About Us - Match',
+    title: 'About Us - True Match',
     description: 'Learn more about our mission to bring genuine profiles together.'
 }
 

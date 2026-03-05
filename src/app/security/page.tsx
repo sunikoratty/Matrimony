@@ -4,7 +4,7 @@ import { ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
-    title: 'Security - Match',
+    title: 'Security - True Match',
     description: 'Our commitment to data protection and platform security.'
 }
 

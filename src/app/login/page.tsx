@@ -52,7 +52,7 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex bg-white">
+        <div className="min-h-screen flex bg-rose-50/50">
             {/* Left Side - Image Board */}
             <div className="hidden lg:block lg:w-1/2 relative">
                 <div className="absolute inset-0 bg-black/5 z-10" />
@@ -64,8 +64,11 @@ export default function Login() {
                     priority
                 />
                 <div className="absolute bottom-0 left-0 right-0 z-20 p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
-                    <div className="flex items-center gap-2 mb-4">
-                        <span className="text-3xl font-bold text-white">❤️Match</span>
+                    <div className="flex items-center gap-3 mb-8">
+                        <Heart size={48} className="text-rose-500 fill-rose-500 shadow-2xl" />
+                        <h1 className="text-5xl font-serif font-bold text-white tracking-tight">
+                            True Match
+                        </h1>
                     </div>
                     <h2 className="text-4xl font-serif font-bold mb-4">Starts Here.</h2>
                     <p className="text-lg text-rose-100 max-w-md">
@@ -75,7 +78,7 @@ export default function Login() {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-transparent">
                 <div className="max-w-md w-full">
                     <div className="mb-8">
                         <Link href="/" className="inline-flex items-center text-slate-500 hover:text-rose-600 transition-colors mb-6 text-sm font-medium">
@@ -92,12 +95,12 @@ export default function Login() {
                                 <div className="flex gap-2">
                                     <div className="relative w-28 shrink-0">
                                         <select
+                                            disabled
                                             value={countryCode}
                                             onChange={(e) => setCountryCode(e.target.value)}
-                                            className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer text-slate-900 font-medium"
+                                            className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-100 appearance-none cursor-not-allowed text-slate-500 font-medium"
                                         >
                                             <option value="+91">+91 (IN)</option>
-                                            <option value="+1">+1 (CA)</option>
                                         </select>
                                         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                             <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>

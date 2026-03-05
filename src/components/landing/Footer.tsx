@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Heart } from 'lucide-react'
 
 export default function Footer() {
     return (
@@ -7,9 +8,10 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {/* Brand Column */}
                     <div>
-                        <Link href="/" className="inline-block mb-4">
-                            <span className="text-2xl font-bold bg-gradient-to-r from-rose-500 to-orange-500 bg-clip-text text-transparent">
-                                ❤️Match
+                        <Link href="/" className="flex items-center gap-1.5 mb-4 group">
+                            <Heart size={20} className="text-rose-500 fill-rose-500" />
+                            <span className="text-xl font-serif font-bold text-white">
+                                True Match
                             </span>
                         </Link>
                         <p className="text-sm text-slate-100 leading-relaxed mb-6">
@@ -65,7 +67,7 @@ export default function Footer() {
                 </div>
 
                 <div className="pt-8 border-t border-slate-800 text-center text-sm text-slate-600">
-                    <p>© {new Date().getFullYear()} ❤️Match Matrimony. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} True Match. All rights reserved.</p>
                 </div>
             </div>
         </footer>

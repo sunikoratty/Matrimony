@@ -10,7 +10,7 @@ const client = twilio(accountSid, authToken)
  * MOCK OTP: 123456
  * Set this to true to force testing mode even if credentials exist.
  */
-const FORCE_MOCK = false
+const FORCE_MOCK = true
 
 // Numbers that are allowed to bypass real SMS (handy for trial accounts or testing)
 const BYPASS_NUMBERS = [

@@ -60,13 +60,13 @@ export default function ProfileCard({
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
 
-                    {!isPaid && (
+                    {/* {!isPaid && (
                         <div className="absolute inset-0 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                             <p className="px-4 py-2 bg-black/60 text-white rounded-full text-xs font-semibold backdrop-blur-md border border-white/20">
                                 Upgrade to View Full Photo
                             </p>
                         </div>
-                    )}
+                    )} */}
                 </div>
 
                 <div className="p-5 flex-grow">
@@ -97,7 +97,7 @@ export default function ProfileCard({
             {/* Contact Reveal Area - Persistent at the bottom */}
             <div className="px-5 pb-5 pt-0 mt-auto">
                 <div className="border-t border-slate-100 pt-4">
-                    {isUnlocked ? (
+                    {true ? ( // TEMPORARY BYPASS
                         <div className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
                             <div className="flex items-center gap-2">
                                 <Smartphone size={14} className="text-rose-600" />

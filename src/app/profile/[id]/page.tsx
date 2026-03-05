@@ -27,7 +27,7 @@ export default async function ProfileByIdView({
         ? new Date().getFullYear() - new Date(viewedUser.profile.dob).getFullYear()
         : null
 
-    const isPaid = currentUser?.isPaid || false
+    const isPaid = true // TEMPORARY BYPASS
     const isLoggedIn = !!currentUser
     const isOwnProfile = currentUser?.id === viewedUser.id
 
@@ -36,8 +36,8 @@ export default async function ProfileByIdView({
         ? await getInterestStatus(viewedUser.id)
         : null
 
-    // Check if contact is unlocked (only relevant if not own profile and user is paid)
-    const isUnlocked = isOwnProfile || (isLoggedIn && isPaid && await hasUnlockedContact(currentUser.id, viewedUser.id))
+    // Check if contact is unlocked (TEMPORARY: Always unlock for logged-in users)
+    const isUnlocked = isOwnProfile || isLoggedIn
 
     async function handleUnlock() {
         'use server'
@@ -100,7 +100,7 @@ export default async function ProfileByIdView({
                                             <InterestButton
                                                 targetId={viewedUser.id}
                                                 initialStatus={initialInterestStatus}
-                                                isPaid={isPaid}
+                                                isProfileCompleted={!!currentUser.isProfileCompleted}
                                             />
                                         )}
                                     </div>

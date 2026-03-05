@@ -3,7 +3,7 @@ import { getProfile } from '@/lib/user-actions'
 import Link from 'next/link'
 
 export const metadata = {
-    title: 'Terms of Service - Match',
+    title: 'Terms of Service - True Match',
     description: 'Terms and conditions for using our platform.'
 }
 

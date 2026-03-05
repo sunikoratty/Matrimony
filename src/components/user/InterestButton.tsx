@@ -8,17 +8,17 @@ import { useToast } from '@/components/ui/Toast'
 interface InterestButtonProps {
     targetId: string
     initialStatus: string | null
-    isPaid: boolean
+    isProfileCompleted: boolean
 }
 
-export default function InterestButton({ targetId, initialStatus, isPaid }: InterestButtonProps) {
+export default function InterestButton({ targetId, initialStatus, isProfileCompleted }: InterestButtonProps) {
     const [status, setStatus] = useState<string | null>(initialStatus)
     const [loading, setLoading] = useState(false)
     const { showToast } = useToast()
 
     const handleSendInterest = async () => {
-        if (!isPaid) {
-            showToast('Please upgrade to Premium to send interest requests.', 'error')
+        if (!isProfileCompleted) {
+            showToast('Please complete your profile to send interest requests.', 'error')
             return
         }
 
