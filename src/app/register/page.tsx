@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { registerUser } from '@/lib/user-actions'
 import Link from 'next/link'
@@ -10,6 +11,7 @@ import { useToast } from '@/components/ui/Toast'
 
 export default function Register() {
     const { showToast } = useToast()
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
@@ -68,7 +70,8 @@ export default function Register() {
                             showToast(res.error, 'error')
                             setLoading(false)
                         } else {
-                            showToast('Welcome to Kalyanam! Let\'s setup your profile.', 'success')
+                            showToast('Welcome to True Match! Let\'s setup your profile.', 'success')
+                            router.push('/profile/setup')
                         }
                     }} className="space-y-5">
                         <div className="space-y-5">
@@ -81,9 +84,9 @@ export default function Register() {
                                 <label className="block text-sm font-medium text-slate-900 mb-1.5">Mobile Number</label>
                                 <div className="flex gap-2">
                                     <div className="relative w-28 shrink-0">
+                                        <input type="hidden" name="countryCode" value="+91" />
                                         <select
                                             disabled
-                                            name="countryCode"
                                             className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-100 appearance-none cursor-not-allowed text-slate-500 font-medium"
                                         >
                                             <option value="+91">+91 (IN)</option>
@@ -95,9 +98,12 @@ export default function Register() {
                                     <input
                                         name="mobile"
                                         required
-                                        pattern="[0-9]{7,15}"
+                                        pattern="[0-9]{10}"
+                                        title="Please enter a valid 10-digit mobile number"
+                                        maxLength={10}
+                                        minLength={10}
                                         className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium"
-                                        placeholder="Mobile Number"
+                                        placeholder="Mobile Number (10 digits)"
                                     />
                                 </div>
                             </div>

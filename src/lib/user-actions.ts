@@ -9,7 +9,7 @@ import { sendOTPCode, verifyOTPCode } from './sms-utils'
 const RegisterSchema = z.object({
     name: z.string().min(2),
     countryCode: z.string().startsWith('+'),
-    mobile: z.string().min(7),
+    mobile: z.string().regex(/^[0-9]{10}$/, 'Indian mobile number must be exactly 10 digits'),
     gender: z.string(),
     motherTongue: z.string(),
     country: z.string(),
@@ -48,6 +48,7 @@ export async function registerUser(formData: FormData) {
             maxAge: 60 * 60 * 24 * 7,
             path: '/',
         })
+        return { success: true }
     } catch (e: any) {
         if (e.message?.includes('NEXT_REDIRECT')) throw e
         console.error('Registration error:', e.message)
@@ -56,7 +57,6 @@ export async function registerUser(formData: FormData) {
         }
         return { error: `Registration failed. Please try again later.` }
     }
-    redirect('/profile/view')
 }
 
 export async function sendOTP(mobile: string) {
