@@ -131,7 +131,7 @@ export async function getMatches(
                         if (filters.dosham) currentWhere.profile.dosham = filters.dosham
                     } else if (filters?.religion === 'Christian') {
                         if (filters.denomination) currentWhere.profile.denomination = filters.denomination
-                    } else if (filters?.religion !== 'Hindu' && filters?.religion !== 'Christian' && filters?.religion !== 'Muslim' && filters?.religion !== 'Sikh') {
+                    } else if (filters?.religion !== 'Hindu' && filters?.religion !== 'Christian' && filters?.religion !== 'Muslim') {
                         // For custom religions searched explicitly (from search string)
                         currentWhere.profile.religion = { contains: religion, mode: 'insensitive' }
                     }
@@ -145,7 +145,7 @@ export async function getMatches(
                     } else if (religion === 'Christian') {
                         if (denomination?.trim()) religionConditions.push({ religion, denomination: denomination.trim() })
                         religionConditions.push({ religion })
-                    } else if (religion === 'Muslim' || religion === 'Sikh') {
+                    } else if (religion === 'Muslim') {
                         religionConditions.push({ religion })
                     } else {
                         // Custom user profile religion logic

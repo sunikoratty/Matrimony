@@ -145,7 +145,6 @@ export default function Hero() {
                                         <option value="Hindu" className="bg-slate-900">Hindu</option>
                                         <option value="Christian" className="bg-slate-900">Christian</option>
                                         <option value="Muslim" className="bg-slate-900">Muslim</option>
-                                        <option value="Sikh" className="bg-slate-900">Sikh</option>
                                         <option value="Others" className="bg-slate-900">Others</option>
                                     </select>
                                 </div>
