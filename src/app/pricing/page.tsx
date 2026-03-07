@@ -63,7 +63,7 @@ function PricingContent() {
 
 export default function PricingPage() {
     return (
-        <div className="min-h-screen bg-rose-50 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4">
             <Suspense fallback={
                 <div className="bg-white max-w-md w-full rounded-2xl shadow-xl overflow-hidden p-8 flex items-center justify-center h-[500px]">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>

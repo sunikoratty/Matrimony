@@ -16,7 +16,7 @@ export default function Register() {
     const [error, setError] = useState('')
 
     return (
-        <div className="min-h-screen flex bg-rose-50/50">
+        <div className="min-h-screen flex">
             {/* Left Side - Image Board */}
             <div className="hidden lg:block lg:w-1/2 relative bg-rose-50">
                 <div className="absolute inset-0 bg-black/5 z-10" />

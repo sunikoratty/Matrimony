@@ -11,7 +11,7 @@ export default async function PrivacyPage() {
     const user = await getProfile()
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen">
             <Header user={user} />
 
             <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">

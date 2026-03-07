@@ -11,7 +11,7 @@ export default async function ProfileSetup() {
     }
 
     return (
-        <div className="min-h-screen flex bg-white">
+        <div className="min-h-screen flex">
             {/* Left Side - Image Board */}
             <div className="hidden lg:block lg:w-1/3 relative bg-rose-50">
                 <div className="absolute inset-0 bg-rose-900/20 z-10" />

@@ -73,7 +73,7 @@ export default async function MatchesPage({
     const userWithCountry = { ...currentUser, country: currentUser.country || 'INDIA' }
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen">
             <Header user={user} />
             <div className="pt-20">
                 {/* Hero Section */}

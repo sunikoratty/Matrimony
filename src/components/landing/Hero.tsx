@@ -13,6 +13,7 @@ export default function Hero() {
         gender: 'FEMALE',
         age: '',
         religion: '',
+        customReligion: '',
         caste: '',
         dosham: '',
         denomination: ''
@@ -23,7 +24,9 @@ export default function Hero() {
         params.set('mode', 'recommended') // Default search behavior
         if (searchData.gender) params.set('gender', searchData.gender)
         if (searchData.age) params.set('age', searchData.age)
-        if (searchData.religion) params.set('religion', searchData.religion)
+        if (searchData.religion) {
+            params.set('religion', searchData.religion === 'Others' ? searchData.customReligion.trim() : searchData.religion)
+        }
         if (searchData.caste) params.set('caste', searchData.caste)
         if (searchData.dosham) params.set('dosham', searchData.dosham)
         if (searchData.denomination) params.set('denomination', searchData.denomination)
@@ -143,9 +146,23 @@ export default function Hero() {
                                         <option value="Christian" className="bg-slate-900">Christian</option>
                                         <option value="Muslim" className="bg-slate-900">Muslim</option>
                                         <option value="Sikh" className="bg-slate-900">Sikh</option>
-                                        <option value="Other" className="bg-slate-900">Other</option>
+                                        <option value="Others" className="bg-slate-900">Others</option>
                                     </select>
                                 </div>
+
+                                {/* Custom Religion Field */}
+                                {searchData.religion === 'Others' && (
+                                    <div className="space-y-1.5 text-left">
+                                        <label className="text-xs font-bold text-rose-100 uppercase tracking-widest pl-1">Custom Religion</label>
+                                        <input
+                                            type="text"
+                                            value={searchData.customReligion}
+                                            onChange={(e) => setSearchData({ ...searchData, customReligion: e.target.value })}
+                                            className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-rose-500/50 transition-all placeholder:text-slate-400"
+                                            placeholder="Type religion"
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Conditional Hindu Fields */}
                                 {searchData.religion === 'Hindu' && (
@@ -207,7 +224,7 @@ export default function Hero() {
                                 )}
 
                                 {/* Search Button */}
-                                <div className={searchData.religion === 'Hindu' ? "lg:col-span-4 mt-2" : searchData.religion === 'Christian' ? "" : "lg:col-span-2"}>
+                                <div className={searchData.religion === 'Hindu' || searchData.religion === 'Others' ? "lg:col-span-4 mt-2" : searchData.religion === 'Christian' ? "" : "lg:col-span-2"}>
                                     <button
                                         onClick={handleSearch}
                                         className="w-full h-[50px] bg-gradient-to-r from-rose-600 to-orange-500 text-white rounded-xl font-bold shadow-xl hover:shadow-rose-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"

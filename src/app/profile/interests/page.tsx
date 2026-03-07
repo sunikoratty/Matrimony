@@ -22,7 +22,7 @@ export default async function InterestsPage() {
     ])
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen">
             <Header user={user ? JSON.parse(JSON.stringify(user)) : null} />
             <MarkSeenTrigger />
 

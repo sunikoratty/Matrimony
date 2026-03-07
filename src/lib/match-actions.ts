@@ -131,6 +131,9 @@ export async function getMatches(
                         if (filters.dosham) currentWhere.profile.dosham = filters.dosham
                     } else if (filters?.religion === 'Christian') {
                         if (filters.denomination) currentWhere.profile.denomination = filters.denomination
+                    } else if (filters?.religion !== 'Hindu' && filters?.religion !== 'Christian' && filters?.religion !== 'Muslim' && filters?.religion !== 'Sikh') {
+                        // For custom religions searched explicitly (from search string)
+                        currentWhere.profile.religion = { contains: religion, mode: 'insensitive' }
                     }
                 } else {
                     // Default Recommended logic (OR fallback for members)
@@ -142,10 +145,14 @@ export async function getMatches(
                     } else if (religion === 'Christian') {
                         if (denomination?.trim()) religionConditions.push({ religion, denomination: denomination.trim() })
                         religionConditions.push({ religion })
-                    } else {
+                    } else if (religion === 'Muslim' || religion === 'Sikh') {
                         religionConditions.push({ religion })
+                    } else {
+                        // Custom user profile religion logic
+                        religionConditions.push({ religion: { contains: religion, mode: 'insensitive' } })
                     }
                     currentWhere.profile.OR = religionConditions
+                    delete currentWhere.profile.religion // Unset exact string match so OR takes over
                 }
 
                 matches = await prisma.user.findMany({
