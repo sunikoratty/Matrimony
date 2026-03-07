@@ -9,9 +9,9 @@ export default async function Home() {
 
     return (
         <LandingPageContent
-            user={user}
-            brides={brides}
-            grooms={grooms}
+            user={user ? JSON.parse(JSON.stringify(user)) : null}
+            brides={brides ? JSON.parse(JSON.stringify(brides)) : []}
+            grooms={grooms ? JSON.parse(JSON.stringify(grooms)) : []}
         />
     )
 }

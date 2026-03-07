@@ -117,7 +117,7 @@ export default async function AdminDashboard({
                                 Showing: <span className="font-semibold capitalize text-blue-600">{currentFilter}</span>
                             </div>
                         </div>
-                        <UserTable users={users} filter={currentFilter} />
+                        <UserTable users={users ? JSON.parse(JSON.stringify(users)) : []} filter={currentFilter} />
                     </div>
                 </div>
             </div>

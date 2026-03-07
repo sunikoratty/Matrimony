@@ -108,8 +108,8 @@ export default async function MatchesPage({
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
                     <MatchesList
-                        matches={matches}
-                        currentUser={userWithCountry}
+                        matches={matches ? JSON.parse(JSON.stringify(matches)) : []}
+                        currentUser={userWithCountry ? JSON.parse(JSON.stringify(userWithCountry)) : null}
                         isGuest={isGuest}
                         gender={gender}
                         unlockedIds={matchesResult.unlockedIds as string[]}
