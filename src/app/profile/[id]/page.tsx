@@ -50,7 +50,7 @@ export default async function ProfileByIdView({
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <Header user={currentUser} />
+            <Header user={currentUser ? JSON.parse(JSON.stringify(currentUser)) : null} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
                     {/* Back Link */}
@@ -113,12 +113,12 @@ export default async function ProfileByIdView({
                                             {isUnlocked ? (
                                                 <>
                                                     <div>
-                                                        <p className="text-xs text-slate-400">Mobile</p>
-                                                        <p className="font-medium text-slate-700">{viewedUser.mobile}</p>
+                                                        <p className="text-xs text-slate-400 mb-1">Mobile</p>
+                                                        <p className="text-xl font-bold text-slate-900 tracking-wide">{viewedUser.mobile}</p>
                                                     </div>
-                                                    <div>
-                                                        <p className="text-xs text-slate-400">Email</p>
-                                                        <p className="font-medium text-slate-700">{viewedUser.email || 'Email not set'}</p>
+                                                    <div className="mt-4">
+                                                        <p className="text-xs text-slate-400 mb-1">Email</p>
+                                                        <p className="text-base font-semibold text-rose-600">{viewedUser.email || 'Email not set'}</p>
                                                     </div>
                                                 </>
                                             ) : (

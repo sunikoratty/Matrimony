@@ -127,9 +127,8 @@ export async function updateProfile(formData: FormData) {
         const consent = formData.get('consent') === 'on'
         const maritalStatus = formData.get('maritalStatus') as string
 
-        // Check for profile completion (as per user request: qualification mandatory, occupation optional)
+        // Check for profile completion (as per user request: qualification mandatory, occupation optional, bio optional)
         const isComplete = !!(
-            bio?.trim() &&
             dob &&
             religion?.trim() &&
             currentResidence &&

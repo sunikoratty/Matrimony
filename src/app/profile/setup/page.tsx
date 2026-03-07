@@ -41,7 +41,7 @@ export default async function ProfileSetup() {
                     </div>
                     <p className="text-slate-500 mb-8">Update your details to find better matches.</p>
 
-                    <ProfileSetupForm user={user} />
+                    <ProfileSetupForm user={JSON.parse(JSON.stringify(user))} />
                 </div>
             </div>
         </div>

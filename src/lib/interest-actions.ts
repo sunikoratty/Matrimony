@@ -13,9 +13,19 @@ export async function sendInterest(targetId: string) {
     const userId = await getSession()
     if (!userId) throw new Error('Unauthorized')
 
-    // Create Interest
-    await prisma.interest.create({
-        data: {
+    // Create or Update Interest (to allow resending after rejection)
+    await prisma.interest.upsert({
+        where: {
+            senderId_targetId: {
+                senderId: userId,
+                targetId: targetId
+            }
+        },
+        update: {
+            status: 'PENDING',
+            isSeenBySender: false
+        },
+        create: {
             senderId: userId,
             targetId: targetId,
             status: 'PENDING'

@@ -12,7 +12,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
     // Controlled States for all fields
-    const [religion, setReligion] = useState(user.profile?.religion?.trim() || '')
+    const religions = ['Hindu', 'Christian', 'Muslim', 'Others']
+    const initIsCustomReligion = user.profile?.religion && !religions.includes(user.profile.religion.trim())
+    const [religion, setReligion] = useState(initIsCustomReligion ? 'Others' : (user.profile?.religion?.trim() || ''))
+    const [customReligion, setCustomReligion] = useState(initIsCustomReligion ? user.profile.religion : '')
 
     const castes = ['Nair', 'Ezhava', 'Vishwakarma', 'Brahmin', 'Pulaya', 'Vettuva', 'Kaniyan', 'Dheevara', 'Others']
     const initIsCustomCaste = user.profile?.caste && !castes.includes(user.profile.caste.trim())
@@ -176,17 +179,26 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Religion *</label>
                     <select
-                        name="religion"
-                        required
                         value={religion}
                         onChange={(e) => setReligion(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
+                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900"
                     >
                         <option value="">Select Religion</option>
-                        <option value="Hindu">Hindu</option>
-                        <option value="Christian">Christian</option>
-                        <option value="Muslim">Muslim</option>
+                        {religions.filter(r => r !== 'Others').map(r => (
+                            <option key={r} value={r}>{r}</option>
+                        ))}
+                        <option value="Others">Others</option>
                     </select>
+                    {religion === 'Others' && (
+                        <input
+                            required
+                            value={customReligion}
+                            onChange={(e) => setCustomReligion(e.target.value)}
+                            className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
+                            placeholder="Type your religion"
+                        />
+                    )}
+                    <input type="hidden" name="religion" value={religion === 'Others' ? customReligion : religion} />
                 </div>
 
                 {religion === 'Hindu' && (
@@ -289,11 +301,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Bio *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Bio (Optional)</label>
                 <textarea
                     name="bio"
                     rows={4}
-                    required
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"

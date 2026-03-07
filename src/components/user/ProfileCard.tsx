@@ -1,6 +1,6 @@
 'use client'
 
-import { Lock, Smartphone, Mail, MapPin, ExternalLink } from 'lucide-react'
+import { Lock, Smartphone, Mail, MapPin, Heart } from 'lucide-react'
 import Link from 'next/link'
 import AgeDisplay from '../ui/AgeDisplay'
 
@@ -75,11 +75,12 @@ export default function ProfileCard({
                             <h3 className="font-serif font-bold text-xl text-slate-900 group-hover:text-rose-600 transition-colors truncate">
                                 {profile.name}, <AgeDisplay dob={profile.profile.dob} />
                             </h3>
-                            <p className="text-xs font-bold text-rose-600 uppercase tracking-widest mt-1">
+                            <p className="text-xs font-bold text-rose-600 uppercase tracking-widest mt-1 truncate">
                                 {profile.profile.qualification || 'Qualification N/A'}
+                                {profile.profile.occupation ? ` • ${profile.profile.occupation}` : ''}
                             </p>
                         </div>
-                        <ExternalLink size={16} className="text-slate-300 group-hover:text-rose-400 transition-colors flex-shrink-0 ml-2" />
+                        <Heart size={18} className="text-slate-300 group-hover:text-rose-400 transition-colors flex-shrink-0 ml-2" />
                     </div>
 
                     <div className="space-y-1">
@@ -98,21 +99,10 @@ export default function ProfileCard({
             <div className="px-5 pb-5 pt-0 mt-auto">
                 <div className="border-t border-slate-100 pt-4">
                     {true ? ( // TEMPORARY BYPASS
-                        <div className="space-y-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                            <div className="flex items-center gap-2">
-                                <Smartphone size={14} className="text-rose-600" />
-                                <span className="font-medium">{profile.mobile}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Mail size={14} className="text-rose-600" />
-                                <span className="truncate">{profile.email || 'No Email'}</span>
-                            </div>
-                            {profile.profile.occupation && (
-                                <div className="flex items-center gap-2">
-                                    <MapPin size={14} className="text-slate-400" />
-                                    <span>{profile.profile.occupation}</span>
-                                </div>
-                            )}
+                        <div className="text-center">
+                            <Link href={`/profile/${profile.id}`} className="inline-block px-6 py-2 bg-rose-50 text-rose-600 text-sm font-bold rounded-full hover:bg-rose-100 transition-colors">
+                                View Full Profile
+                            </Link>
                         </div>
                     ) : (
                         <div className={`${isPaid ? 'bg-rose-50/50 border-rose-100' : 'bg-slate-50 border-slate-100'} p-4 rounded-xl border text-center transition-colors`}>
