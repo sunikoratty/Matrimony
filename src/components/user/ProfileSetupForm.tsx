@@ -53,8 +53,37 @@ export default function ProfileSetupForm({ user }: { user: any }) {
         const file = e.target.files?.[0]
         if (file) {
             const reader = new FileReader()
-            reader.onloadend = () => {
-                setPreview(reader.result as string)
+            reader.onloadend = (event) => {
+                const img = new Image()
+                img.onload = () => {
+                    const canvas = document.createElement('canvas')
+                    const maxWidth = 800
+                    const maxHeight = 800
+                    let width = img.width
+                    let height = img.height
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width
+                            width = maxWidth
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height
+                            height = maxHeight
+                        }
+                    }
+
+                    canvas.width = width
+                    canvas.height = height
+                    const ctx = canvas.getContext('2d')
+                    ctx?.drawImage(img, 0, 0, width, height)
+                    
+                    // Compress to JPEG with 0.7 quality
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7)
+                    setPreview(compressedBase64)
+                }
+                img.src = event.target?.result as string
             }
             reader.readAsDataURL(file)
         }
@@ -132,6 +161,16 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     >
                         <option value="INDIA">India</option>
                         <option value="CANADA">Canada</option>
+                        <option value="UK">UK</option>
+                        <option value="USA">USA</option>
+                        <option value="AUSTRALIA">Australia</option>
+                        <option value="GERMANY">Germany</option>
+                        <option value="ITALY">Italy</option>
+                        <option value="IRELAND">Ireland</option>
+                        <option value="MALTA">Malta</option>
+                        <option value="NEW_ZEALAND">New Zealand</option>
+                        <option value="JAPAN">Japan</option>
+                        <option value="CHINA">China</option>
                     </select>
                 </div>
             </div>
