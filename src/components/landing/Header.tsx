@@ -40,7 +40,8 @@ export default function Header({ user }: { user?: any }) {
 
                 <div className="flex items-center gap-4 sm:gap-6">
                     {isLoggedIn ? (
-                        <>
+                        <div className="flex items-center gap-4 sm:gap-6">
+                            {/* Interest Requests */}
                             <Link href="/profile/interests" className="relative p-2 text-slate-400 hover:text-rose-600 transition-colors group" title="Interest Requests">
                                 <Heart size={24} className="group-hover:fill-rose-50" />
                                 {(user._count?.receivedInterests > 0 || user._count?.sentInterests > 0) && (
@@ -49,6 +50,22 @@ export default function Header({ user }: { user?: any }) {
                                     </span>
                                 )}
                             </Link>
+
+                            {/* Added buttons for logged-in users as per requirement */}
+                            <div className="hidden md:flex items-center gap-4">
+                                <button 
+                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                                    className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider"
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                                    className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
+                                >
+                                    Register
+                                </button>
+                            </div>
 
                             {/* Profile Dropdown */}
                             <div className="relative" ref={dropdownRef}>
@@ -75,7 +92,7 @@ export default function Header({ user }: { user?: any }) {
                                             </div>
                                         )}
                                     </div>
-                                    <span className="hidden sm:block font-medium text-slate-700 group-hover:text-rose-600 transition-colors">
+                                    <span className="hidden lg:block font-medium text-slate-700 group-hover:text-rose-600 transition-colors">
                                         {user.name.split(' ')[0]}
                                     </span>
                                     <ChevronDown size={14} className={`text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -113,21 +130,18 @@ export default function Header({ user }: { user?: any }) {
                                     </motion.div>
                                 )}
                             </div>
-                        </>
+                        </div>
                     ) : (
                         <div className="flex items-center gap-4 sm:gap-6">
-                            <button 
-                                onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
-                                className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider"
-                            >
+                            <Link href="/login" className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider">
                                 Login
-                            </button>
-                            <button
-                                onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                            </Link>
+                            <Link
+                                href="/register"
                                 className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
                             >
                                 Register
-                            </button>
+                            </Link>
                         </div>
                     )}
                 </div>
