@@ -51,21 +51,6 @@ export default function Header({ user }: { user?: any }) {
                                 )}
                             </Link>
 
-                            {/* Added buttons for logged-in users as per requirement */}
-                            <div className="hidden md:flex items-center gap-4">
-                                <button 
-                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
-                                    className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider"
-                                >
-                                    Login
-                                </button>
-                                <button
-                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
-                                    className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
-                                >
-                                    Register
-                                </button>
-                            </div>
 
                             {/* Profile Dropdown */}
                             <div className="relative" ref={dropdownRef}>
