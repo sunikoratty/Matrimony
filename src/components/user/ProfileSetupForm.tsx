@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
-import { Camera } from 'lucide-react'
+import { Camera, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/components/ui/Toast'
+import { useRouter } from 'next/navigation'
 
 export default function ProfileSetupForm({ user }: { user: any }) {
     const { showToast } = useToast()
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
@@ -100,8 +102,9 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             setLoading(false)
             if (res?.error) {
                 showToast(res.error, 'error')
-            } else {
+            } else if (res?.success) {
                 showToast('Profile updated successfully!', 'success')
+                router.push('/profile/view')
             }
         }} className="space-y-6">
             {/* Photo Upload */}
@@ -370,8 +373,9 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 </div>
             </div>
 
-            <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400">
-                {loading ? 'Saving...' : 'Save Profile'}
+            <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400 flex items-center justify-center gap-2">
+                {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+                {loading ? 'Saving Profile...' : 'Save Profile'}
             </button>
         </form>
     )

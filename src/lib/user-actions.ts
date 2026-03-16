@@ -177,7 +177,7 @@ export async function updateProfile(formData: FormData) {
         console.error('Update profile error:', e.message)
         return { error: 'Update failed. Check your connection.' }
     }
-    redirect('/profile/view')
+    return { success: true }
 }
 
 export async function getProfileById(id: string) {
