@@ -3,6 +3,12 @@
 import { prisma } from '@/lib/db'
 import { cookies } from 'next/headers'
 
+function getEighteenYearsAgo() {
+    const date = new Date()
+    date.setFullYear(date.getFullYear() - 18)
+    return date
+}
+
 export async function getMatches(
     mode: 'broad' | 'matching' | 'recommended' = 'broad',
     skip: number = 0,
@@ -18,6 +24,7 @@ export async function getMatches(
     }
 ) {
     try {
+        const eighteenYearsAgo = getEighteenYearsAgo()
         const cookieStore = await cookies()
         const userSession = cookieStore.get('user_session')?.value
 
@@ -26,13 +33,14 @@ export async function getMatches(
             console.log(`[Matchmaking] Guest Mode - fetching all ${guestGender || 'FEMALE'}s globally`)
 
             // Age to DOB translation
-            let dobFilter = {}
+            let dobFilter: any = { lte: eighteenYearsAgo } // Global 18+ restriction
             if (filters?.minAge || filters?.maxAge) {
                 const now = new Date()
                 const maxDob = filters.minAge ? new Date(now.getFullYear() - filters.minAge, now.getMonth(), now.getDate()) : undefined
                 const minDob = filters.maxAge ? new Date(now.getFullYear() - (filters.maxAge + 1), now.getMonth(), now.getDate() + 1) : undefined
 
                 dobFilter = {
+                    ...dobFilter,
                     ...(minDob ? { gte: minDob } : {}),
                     ...(maxDob ? { lte: maxDob } : {})
                 }
@@ -50,7 +58,7 @@ export async function getMatches(
                         ...(filters?.caste ? { caste: filters.caste } : {}),
                         ...(filters?.dosham ? { dosham: filters.dosham } : {}),
                         ...(filters?.denomination ? { denomination: filters.denomination } : {}),
-                        ...(Object.keys(dobFilter).length > 0 ? { dob: dobFilter } : {})
+                        dob: dobFilter
                     }
                 },
                 include: { profile: true },
@@ -84,7 +92,8 @@ export async function getMatches(
             status: 'ACTIVE',
             isProfileCompleted: true, // Only show completed profiles
             profile: {
-                maritalStatus: { not: 'MARRIED' }
+                maritalStatus: { not: 'MARRIED' },
+                dob: { lte: eighteenYearsAgo } // Global 18+ restriction
             }
         }
 
@@ -101,12 +110,13 @@ export async function getMatches(
             const denomination = filters?.denomination || profile?.denomination as string | undefined
 
             // Age Filter for User Mode
-            let dobFilter = {}
+            let dobFilter: any = { lte: eighteenYearsAgo } // Global 18+ restriction
             if (filters?.minAge || filters?.maxAge) {
                 const now = new Date()
                 const maxDob = filters.minAge ? new Date(now.getFullYear() - filters.minAge, now.getMonth(), now.getDate()) : undefined
                 const minDob = filters.maxAge ? new Date(now.getFullYear() - (filters.maxAge + 1), now.getMonth(), now.getDate() + 1) : undefined
                 dobFilter = {
+                    ...dobFilter,
                     ...(minDob ? { gte: minDob } : {}),
                     ...(maxDob ? { lte: maxDob } : {})
                 }
@@ -217,13 +227,15 @@ export async function getMatches(
 
 export async function getPublicProfiles(gender?: 'MALE' | 'FEMALE', limit: number = 10, random: boolean = false) {
     try {
+        const eighteenYearsAgo = getEighteenYearsAgo()
         const commonCriteria = {
             role: 'USER', // Ensure only USER role profiles are shown
             status: 'ACTIVE',
             isProfileCompleted: true, // Only show completed profiles
             ...(gender ? { gender } : {}),
             profile: {
-                maritalStatus: { not: 'MARRIED' }
+                maritalStatus: { not: 'MARRIED' },
+                dob: { lte: eighteenYearsAgo } // Global 18+ restriction
             }
         }
 

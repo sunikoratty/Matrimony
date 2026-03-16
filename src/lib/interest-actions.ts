@@ -9,6 +9,12 @@ async function getSession() {
     return cookieStore.get('user_session')?.value
 }
 
+function getEighteenYearsAgo() {
+    const date = new Date()
+    date.setFullYear(date.getFullYear() - 18)
+    return date
+}
+
 export async function sendInterest(targetId: string) {
     const userId = await getSession()
     if (!userId) throw new Error('Unauthorized')
@@ -56,10 +62,16 @@ export async function getReceivedInterests() {
     const userId = await getSession()
     if (!userId) return []
 
+    const eighteenYearsAgo = getEighteenYearsAgo()
     const interests = await prisma.interest.findMany({
         where: {
             targetId: userId,
-            status: 'PENDING'
+            status: 'PENDING',
+            sender: {
+                profile: {
+                    dob: { lte: eighteenYearsAgo }
+                }
+            }
         },
         include: {
             sender: {
@@ -81,11 +93,17 @@ export async function getInterestUpdates() {
     if (!userId) return []
 
     // Fetch sent interests that are accepted or rejected
+    const eighteenYearsAgo = getEighteenYearsAgo()
     const interests = await prisma.interest.findMany({
         where: {
             senderId: userId,
             status: {
                 in: ['ACCEPTED', 'REJECTED']
+            },
+            target: {
+                profile: {
+                    dob: { lte: eighteenYearsAgo }
+                }
             }
         },
         include: {
