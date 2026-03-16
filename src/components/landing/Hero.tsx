@@ -6,8 +6,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/ui/Toast'
 
-export default function Hero() {
+export default function Hero({ user }: { user?: any }) {
+    const { showToast } = useToast()
     const router = useRouter()
     const [searchData, setSearchData] = useState({
         gender: 'FEMALE',
@@ -79,19 +81,39 @@ export default function Hero() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-6 pt-10 justify-center items-center">
-                        <Link
-                            href="/register"
-                            className="group relative px-12 py-5 bg-rose-600 text-white rounded-full font-bold shadow-2xl hover:bg-rose-700 transition-all overflow-hidden"
-                        >
-                            <span className="relative z-10 uppercase tracking-widest text-sm">Join Free Today</span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        </Link>
-                        <Link
-                            href="/login"
-                            className="px-12 py-5 bg-white/10 backdrop-blur-xl text-white border border-white/30 rounded-full font-bold hover:bg-white/20 transition-all uppercase tracking-widest text-sm"
-                        >
-                            Member Login
-                        </Link>
+                        {user ? (
+                            <>
+                                <button
+                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                                    className="group relative px-12 py-5 bg-rose-600 text-white rounded-full font-bold shadow-2xl hover:bg-rose-700 transition-all overflow-hidden"
+                                >
+                                    <span className="relative z-10 uppercase tracking-widest text-sm">Join Free Today</span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                </button>
+                                <button
+                                    onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                                    className="px-12 py-5 bg-white/10 backdrop-blur-xl text-white border border-white/30 rounded-full font-bold hover:bg-white/20 transition-all uppercase tracking-widest text-sm"
+                                >
+                                    Member Login
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/register"
+                                    className="group relative px-12 py-5 bg-rose-600 text-white rounded-full font-bold shadow-2xl hover:bg-rose-700 transition-all overflow-hidden"
+                                >
+                                    <span className="relative z-10 uppercase tracking-widest text-sm">Join Free Today</span>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                </Link>
+                                <Link
+                                    href="/login"
+                                    className="px-12 py-5 bg-white/10 backdrop-blur-xl text-white border border-white/30 rounded-full font-bold hover:bg-white/20 transition-all uppercase tracking-widest text-sm"
+                                >
+                                    Member Login
+                                </Link>
+                            </>
+                        )}
                     </div>
 
                     {/* Search Section */}

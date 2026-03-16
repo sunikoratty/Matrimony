@@ -34,7 +34,7 @@ export default function LandingPageContent({
         <div className="min-h-screen bg-white">
             <Header user={user} />
             <main>
-                <Hero />
+                <Hero user={user} />
                 <FeaturedProfiles
                     title="Featured Brides"
                     subtitle="Explore a selection of beautiful brides looking for their life partners"

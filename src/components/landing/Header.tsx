@@ -5,8 +5,10 @@ import { motion } from 'framer-motion'
 import { signOut } from '@/lib/user-actions'
 import { useState, useRef, useEffect } from 'react'
 import { Heart, User as UserIcon, ChevronDown, LogOut } from 'lucide-react'
+import { useToast } from '@/components/ui/Toast'
 
 export default function Header({ user }: { user?: any }) {
+    const { showToast } = useToast()
     const isLoggedIn = !!user
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
@@ -113,17 +115,20 @@ export default function Header({ user }: { user?: any }) {
                             </div>
                         </>
                     ) : (
-                        <>
-                            <Link href="/login" className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider">
+                        <div className="flex items-center gap-4 sm:gap-6">
+                            <button 
+                                onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
+                                className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider"
+                            >
                                 Login
-                            </Link>
-                            <Link
-                                href="/register"
+                            </button>
+                            <button
+                                onClick={() => showToast('You are already logged in. Kindly logout to perform this operation.', 'error')}
                                 className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
                             >
                                 Register
-                            </Link>
-                        </>
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export default async function RegisterLayout({
+export default async function LoginLayout({
   children,
 }: {
   children: React.ReactNode
