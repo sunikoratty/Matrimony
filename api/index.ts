@@ -50,7 +50,10 @@ const authMiddleware = (req: any, res: any, next: any) => {
 // --- Routes ---
 
 // Health Check
-app.get('/api/health', (req, res) => res.json({ status: 'ok', environment: 'vercel' }));
+app.get('/api/health', (req, res) => {
+    console.log('Health check called');
+    res.json({ status: 'ok', environment: 'vercel' });
+});
 
 // Auth & OTP
 app.post('/api/otp/send', async (req, res) => {
