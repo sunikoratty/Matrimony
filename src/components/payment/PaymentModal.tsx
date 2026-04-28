@@ -5,6 +5,7 @@ import { createOrder, verifyPayment } from '@/lib/payment-actions'
 import { CreditCard, Globe, X, Lock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
+import CircularLoader from '@/components/ui/CircularLoader'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
 declare global {
@@ -169,7 +170,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                 >
                     {loading ? (
                         <div className="flex items-center justify-center gap-2">
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <CircularLoader size="sm" color="white" />
                             <span>Processing...</span>
                         </div>
                     ) : `Pay Now`}
@@ -177,7 +178,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
 
                 {loading && (
                     <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
-                        <LoadingSpinner />
+                        <CircularLoader size="lg" />
                     </div>
                 )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import ProfileSetupForm from '@/components/user/ProfileSetupForm'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function ProfileSetupPage() {
     const navigate = useNavigate();
@@ -28,7 +29,7 @@ export default function ProfileSetupPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         );
     }

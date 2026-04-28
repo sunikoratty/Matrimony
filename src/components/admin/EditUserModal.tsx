@@ -1,10 +1,11 @@
 
 
 import { useState, useEffect } from 'react'
-import { X, Save, Loader2 } from 'lucide-react'
+import { X, Save } from 'lucide-react'
 import { adminUpdateUser } from '@/lib/actions'
 import { useToast } from '@/components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function EditUserModal({ user, onClose, onRefresh }: { user: any, onClose: () => void, onRefresh: () => void }) {
     const { showToast } = useToast()
@@ -210,7 +211,7 @@ export default function EditUserModal({ user, onClose, onRefresh }: { user: any,
                         Cancel
                     </button>
                     <button form="admin-edit-form" type="submit" disabled={loading} className="px-8 py-2 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200 flex items-center gap-2">
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+                        {loading ? <CircularLoader size="sm" color="white" /> : <Save size={20} />}
                         {loading ? 'Updating...' : 'Save Changes'}
                     </button>
                 </div>

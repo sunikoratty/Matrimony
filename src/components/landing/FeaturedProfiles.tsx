@@ -49,7 +49,7 @@ export default function FeaturedProfiles({
                         <p className="text-slate-500 text-xl font-light leading-relaxed">{subtitle}</p>
                     </div>
                     <Link
-                        to={`/matches?gender=${targetGender}`}
+                        to={`/profile/view?gender=${gender}`}
                         className="text-rose-600 font-bold hover:text-rose-700 transition-colors flex items-center gap-2 group"
                     >
                         View All {gender === 'FEMALE' ? 'Brides' : 'Grooms'}
@@ -74,7 +74,7 @@ export default function FeaturedProfiles({
                                 viewport={{ once: true }}
                                 className="group cursor-pointer"
                             >
-                                <Link to={`/matches?gender=${targetGender}`}>
+                                <Link to={`/profile/${user.id}`}>
                                     <div className="relative aspect-[3/4] rounded-3xl overflow-hidden mb-6 shadow-xl group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500 bg-slate-100">
                                          {user.profile?.photoUrl ? (
                                              <img

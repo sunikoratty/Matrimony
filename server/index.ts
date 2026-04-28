@@ -111,6 +111,45 @@ app.post('/api/otp/verify', async (req, res) => {
     res.status(400).json({ error: 'Invalid OTP' });
 });
 
+app.post('/api/register', async (req, res) => {
+    try {
+        const { name, mobile, gender, motherTongue, country = 'INDIA' } = req.body;
+        
+        // 1. Check if user already exists
+        const existingUser = await prisma.user.findUnique({ where: { mobile } });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Mobile number already registered' });
+        }
+
+        // 2. Create User and empty Profile
+        const user = await prisma.user.create({
+            data: {
+                name,
+                mobile,
+                gender,
+                motherTongue,
+                country,
+                profile: {
+                    create: {} // Create an empty profile linked to the user
+                }
+            }
+        });
+
+        // 3. Set Session Cookie
+        res.cookie('user_session', user.id, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 24 * 7 * 1000,
+            path: '/',
+        });
+
+        res.json({ success: true, userId: user.id });
+    } catch (e) {
+        console.error('Registration Error:', e);
+        res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
+});
+
 app.post('/api/auth/signout', (req, res) => {
     res.clearCookie('user_session');
     res.json({ success: true });
@@ -158,12 +197,21 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
             await prisma.user.update({ where: { id: req.userId }, data: { email } });
         }
 
-        await prisma.profile.update({
+        // Use upsert-like behavior to ensure profile exists
+        const profileData = {
+            bio, 
+            dob: dob ? new Date(dob) : undefined, 
+            religion, caste, denomination, dosham,
+            currentResidence, location, occupation, birthStar, qualification, 
+            consent: consent === 'on' || consent === true || consent === 'true', 
+            photoUrl, 
+            maritalStatus
+        };
+
+        await prisma.profile.upsert({
             where: { userId: req.userId },
-            data: {
-                bio, dob: dob ? new Date(dob) : undefined, religion, caste, denomination, dosham,
-                currentResidence, location, occupation, birthStar, qualification, consent, photoUrl, maritalStatus
-            } as any
+            update: profileData as any,
+            create: { ...profileData, userId: req.userId } as any
         });
 
         // Simple completion check
@@ -173,7 +221,10 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
         }
 
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: 'Update failed' }); }
+    } catch (e) {
+        console.error('Profile Update Error:', e);
+        res.status(500).json({ error: 'Update failed. Check server logs for details.' });
+    }
 });
 
 // Matches
@@ -204,7 +255,19 @@ app.get('/api/matches', async (req, res) => {
                 maritalStatus: { not: 'MARRIED' },
                 ...(religion ? { religion: religion as string } : {}),
                 ...(caste ? { caste: caste as string } : {}),
-                ...(dosham ? { dosham: dosham as string } : {}),
+                ...(dosham === 'No' ? { 
+                    OR: [
+                        { dosham: null },
+                        { dosham: '' },
+                        { dosham: 'No' }
+                    ]
+                } : dosham === 'Yes' ? {
+                    AND: [
+                        { dosham: { not: null } },
+                        { dosham: { not: '' } },
+                        { dosham: { not: 'No' } }
+                    ]
+                } : {}),
                 ...(denomination ? { denomination: denomination as string } : {}),
             }
         };

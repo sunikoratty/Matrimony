@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Header from '@/components/landing/Header'
 import InterestButton from '@/components/user/InterestButton'
 import MembershipSection from '@/components/user/MembershipSection'
 import { getProfileById, getProfile, unlockContact } from '@/lib/user-actions'
 import { getInterestStatus } from '@/lib/interest-actions'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function ProfileByIdPage() {
     const { id } = useParams()
@@ -15,6 +16,7 @@ export default function ProfileByIdPage() {
     const [currentUser, setCurrentUser] = useState<any>(null)
     const [interestStatus, setInterestStatus] = useState<any>(null)
     const [isUnlocked, setIsUnlocked] = useState(false)
+    const guestCtaRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,6 +52,12 @@ export default function ProfileByIdPage() {
 
     const handleUnlock = async () => {
         if (!viewedUser) return
+        
+        if (!isLoggedIn) {
+            guestCtaRef.current?.scrollIntoView({ behavior: 'smooth' })
+            return
+        }
+
         const result = await unlockContact(viewedUser.id)
         if ('success' in result) {
             setIsUnlocked(true)
@@ -59,7 +67,7 @@ export default function ProfileByIdPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-rose-600 animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         )
     }
@@ -81,11 +89,11 @@ export default function ProfileByIdPage() {
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-6">
                         <Link
-                            to={`/matches?gender=${viewedUser.gender}`}
+                            to={isLoggedIn ? "/profile/view" : "/"}
                             className="inline-flex items-center gap-2 text-slate-500 hover:text-rose-600 transition-colors font-medium text-sm group"
                         >
                             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                            Back to Matches
+                            {isLoggedIn ? "Back to Profiles" : "Back to Home"}
                         </Link>
                     </div>
 
@@ -259,7 +267,7 @@ export default function ProfileByIdPage() {
                     )}
 
                     {!isLoggedIn && (
-                        <div className="mt-12 bg-rose-50 p-10 rounded-3xl border border-rose-100 text-center shadow-sm">
+                        <div ref={guestCtaRef} className="mt-12 bg-rose-50 p-10 rounded-3xl border border-rose-100 text-center shadow-sm">
                             <h2 className="text-2xl font-serif font-bold text-rose-900 mb-3">Interested in {viewedUser.name}?</h2>
                             <p className="text-rose-700 mb-8 max-w-md mx-auto">"Join our community today to connect with your perfect match and view full profile details."</p>
                             <div className="flex justify-center gap-4">

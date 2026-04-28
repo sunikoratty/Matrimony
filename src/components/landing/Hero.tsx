@@ -72,7 +72,7 @@ export default function Hero({ user }: { user?: any }) {
                             </>
                         ) : (
                             <Link
-                                to="/matches"
+                                to="/profile/view"
                                 className="px-10 py-5 bg-rose-600 text-white rounded-2xl font-bold shadow-2xl shadow-rose-200 hover:bg-rose-700 transition-all uppercase tracking-widest text-sm text-center"
                             >
                                 Go to Matches

@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Lock, UserPlus } from 'lucide-react'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 function PricingContent() {
     const [searchParams] = useSearchParams()
@@ -63,7 +64,7 @@ export default function PricingPage() {
         <div className="min-h-screen flex flex-col items-center justify-center p-4">
             <Suspense fallback={
                 <div className="bg-white max-w-md w-full rounded-2xl shadow-xl overflow-hidden p-8 flex items-center justify-center h-[500px]">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-600"></div>
+                    <CircularLoader size="lg" />
                 </div>
             }>
                 <PricingContent />

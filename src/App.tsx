@@ -4,7 +4,6 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
-import MatchesPage from '@/pages/MatchesPage';
 import ProfileViewPage from '@/pages/ProfileViewPage';
 import ProfileSetupPage from '@/pages/ProfileSetupPage';
 import InterestsPage from '@/pages/InterestsPage';
@@ -25,7 +24,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/matches" element={<ProfileViewPage />} />
           <Route path="/profile/view" element={<ProfileViewPage />} />
           <Route path="/profile/setup" element={<ProfileSetupPage />} />
           <Route path="/profile/interests" element={<InterestsPage />} />

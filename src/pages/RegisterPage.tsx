@@ -2,12 +2,22 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Heart, Sparkles } from 'lucide-react'
 import { useToast } from '@/components/ui/Toast'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function RegisterPage() {
     const { showToast } = useToast()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+
+    React.useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError('')
+            }, 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [error])
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -147,7 +157,8 @@ export default function RegisterPage() {
 
                         {error && <p className="text-rose-600 text-sm bg-rose-50 p-3 rounded-lg border border-rose-100">{error}</p>}
 
-                        <button disabled={loading} className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-rose-200 hover:shadow-rose-300 transform hover:-translate-y-0.5 mt-4">
+                        <button disabled={loading} className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-rose-200 hover:shadow-rose-300 transform hover:-translate-y-0.5 mt-4 flex items-center justify-center gap-2">
+                            {loading && <CircularLoader size="sm" color="white" />}
                             {loading ? 'Creating Account...' : 'Register'}
                         </button>
                     </form>

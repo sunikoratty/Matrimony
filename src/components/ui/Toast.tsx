@@ -48,7 +48,7 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
     useEffect(() => {
         const timer = setTimeout(() => {
             onRemove(toast.id)
-        }, 5000)
+        }, 3000)
         return () => clearTimeout(timer)
     }, [toast.id, onRemove])
 

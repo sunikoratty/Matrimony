@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import CircularLoader from '@/components/ui/CircularLoader'
 import { Search } from 'lucide-react'
 
 type Profile = {
@@ -118,42 +119,44 @@ export default function MatchesList({
 
     return (
         <>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-900">
-                        {currentMode === 'matching' ? 'Your Matching Profiles' :
-                            currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
-                    </h1>
-                    <p className="text-slate-500 mt-1">
-                        {currentMode === 'recommended' ? 'Strict matches based on your profile' : 'Exploring all eligible members'}
-                    </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setMode('recommended')}
-                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'recommended'
-                            ? 'bg-rose-600 text-white shadow-lg'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
-                            }`}
-                    >
-                        Recommended
-                    </button>
+            {!isGuest && (
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-900">
+                            {currentMode === 'matching' ? 'Your Matching Profiles' :
+                                currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
+                        </h1>
+                        <p className="text-slate-500 mt-1">
+                            {currentMode === 'recommended' ? 'Strict matches based on your profile' : 'Exploring all eligible members'}
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setMode('recommended')}
+                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'recommended'
+                                ? 'bg-rose-600 text-white shadow-lg'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
+                                }`}
+                        >
+                            Recommended
+                        </button>
 
-                    <button
-                        onClick={() => setMode('broad')}
-                        className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
-                            ? 'bg-rose-600 text-white shadow-lg'
-                            : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
-                            }`}
-                    >
-                        Browse All
-                    </button>
+                        <button
+                            onClick={() => setMode('broad')}
+                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
+                                ? 'bg-rose-600 text-white shadow-lg'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
+                                }`}
+                        >
+                            Browse All
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {isLoadingMatches ? (
-                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] flex items-center justify-center">
-                    <LoadingSpinner />
+                <div className="flex items-center justify-center py-20">
+                    <CircularLoader size="lg" />
                 </div>
             ) : (
                 <>
@@ -228,7 +231,7 @@ export default function MatchesList({
                             >
                                 {loading ? (
                                     <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-rose-600 border-t-transparent rounded-full animate-spin"></div>
+                                        <CircularLoader size="sm" color="rose" />
                                         <span>Loading...</span>
                                     </div>
                                 ) : (

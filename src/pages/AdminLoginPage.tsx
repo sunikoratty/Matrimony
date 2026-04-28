@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { RocketIcon, Loader2, ArrowLeft } from 'lucide-react'
+import { RocketIcon, ArrowLeft } from 'lucide-react'
 import { adminLogin } from '@/lib/actions'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function AdminLoginPage() {
     const [error, setError] = useState('')
@@ -74,7 +75,7 @@ export default function AdminLoginPage() {
                         disabled={loading}
                         className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                     >
-                        {loading && <Loader2 className="animate-spin" size={18} />}
+                        {loading && <CircularLoader size="sm" color="white" />}
                         Login to Dashboard
                     </button>
                 </form>

@@ -117,6 +117,46 @@ app.post('/api/otp/verify', async (req, res) => {
     res.status(400).json({ error: 'Invalid OTP' });
 });
 
+app.post('/api/register', async (req, res) => {
+    try {
+        const { name, mobile, gender, motherTongue, country = 'INDIA' } = req.body;
+        
+        // 1. Check if user already exists
+        const existingUser = await prisma.user.findUnique({ where: { mobile } });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Mobile number already registered' });
+        }
+
+        // 2. Create User and empty Profile
+        const user = await prisma.user.create({
+            data: {
+                name,
+                mobile,
+                gender,
+                motherTongue,
+                country,
+                profile: {
+                    create: {} // Create an empty profile linked to the user
+                }
+            }
+        });
+
+        // 3. Set Session Cookie
+        res.cookie('user_session', user.id, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 60 * 60 * 24 * 7 * 1000,
+            path: '/',
+            sameSite: 'none'
+        });
+
+        res.json({ success: true, userId: user.id });
+    } catch (e) {
+        console.error('Registration Error:', e);
+        res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
+});
+
 app.post('/api/auth/signout', (req, res) => {
     res.clearCookie('user_session');
     res.json({ success: true });
@@ -198,7 +238,19 @@ app.get('/api/matches', async (req, res) => {
                 maritalStatus: { not: 'MARRIED' },
                 ...(religion ? { religion: religion as string } : {}),
                 ...(caste ? { caste: caste as string } : {}),
-                ...(dosham ? { dosham: dosham as string } : {}),
+                ...(dosham === 'No' ? { 
+                    OR: [
+                        { dosham: null },
+                        { dosham: '' },
+                        { dosham: 'No' }
+                    ]
+                } : dosham === 'Yes' ? {
+                    AND: [
+                        { dosham: { not: null } },
+                        { dosham: { not: '' } },
+                        { dosham: { not: 'No' } }
+                    ]
+                } : {}),
                 ...(denomination ? { denomination: denomination as string } : {}),
             }
         };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LandingPageContent from '@/components/landing/LandingPageContent';
+import CircularLoader from '@/components/ui/CircularLoader';
 
 export default function HomePage() {
     const [data, setData] = useState({ user: null, brides: [], grooms: [] });
@@ -26,7 +27,7 @@ export default function HomePage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         );
     }

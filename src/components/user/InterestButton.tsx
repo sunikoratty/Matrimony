@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { sendInterest } from '@/lib/interest-actions'
-import { Heart, Loader2, Check } from 'lucide-react'
+import { Heart, Check } from 'lucide-react'
 import { useToast } from '@/components/ui/Toast'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 interface InterestButtonProps {
     targetId: string
@@ -59,7 +60,7 @@ export default function InterestButton({ targetId, initialStatus, isProfileCompl
             className="flex items-center gap-2 justify-center px-6 py-3 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg hover:shadow-rose-200 disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto"
         >
             {loading ? (
-                <Loader2 size={20} className="animate-spin" />
+                <CircularLoader size="sm" color="white" />
             ) : (
                 <Heart size={20} className="fill-current" />
             )}

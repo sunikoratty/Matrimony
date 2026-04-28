@@ -13,6 +13,15 @@ export default function LoginPage() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
+    React.useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError('')
+            }, 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [error])
+
     async function handleSendOTP(e: React.FormEvent) {
         e.preventDefault()
         setLoading(true)

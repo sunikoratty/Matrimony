@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
-import { Camera, Loader2 } from 'lucide-react'
+import { Camera } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function ProfileSetupForm({ user }: { user: any }) {
     const { showToast } = useToast()
@@ -374,7 +375,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             </div>
 
             <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400 flex items-center justify-center gap-2">
-                {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+                {loading && <CircularLoader size="sm" color="white" />}
                 {loading ? 'Saving Profile...' : 'Save Profile'}
             </button>
         </form>

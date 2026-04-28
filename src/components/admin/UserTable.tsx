@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { togglePaidStatus, updateUserStatus } from '@/lib/actions'
 import { Check, X, Shield, Trash2, MoreHorizontal, Pencil } from 'lucide-react'
 import EditUserModal from './EditUserModal'
-
+import CircularLoader from '@/components/ui/CircularLoader'
 import { useNavigate } from 'react-router-dom'
 
 type User = {
@@ -141,24 +141,30 @@ export default function UserTable({ users, filter = 'all', onRefresh }: { users:
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() => setEditingUser(user)}
-                                                className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"
-                                            >
-                                                <Pencil size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleStatusChange(user.id, user.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED')}
-                                                className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
-                                            >
-                                                <Shield size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleStatusChange(user.id, 'DELETED')}
-                                                className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-red-600 transition-colors"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                            {loadingId === user.id ? (
+                                                <CircularLoader size="sm" />
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={() => setEditingUser(user)}
+                                                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors"
+                                                    >
+                                                        <Pencil size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusChange(user.id, user.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED')}
+                                                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
+                                                    >
+                                                        <Shield size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleStatusChange(user.id, 'DELETED')}
+                                                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-red-600 transition-colors"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

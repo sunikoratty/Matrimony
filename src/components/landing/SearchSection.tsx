@@ -27,7 +27,7 @@ export default function SearchSection() {
         if (searchData.dosham) params.set('dosham', searchData.dosham)
         if (searchData.denomination) params.set('denomination', searchData.denomination)
 
-        navigate(`/matches?${params.toString()}`)
+        navigate(`/profile/view?${params.toString()}`)
     }
 
     return (

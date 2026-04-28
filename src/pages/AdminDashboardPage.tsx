@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import CircularLoader from '@/components/ui/CircularLoader'
 import UserTable from '@/components/admin/UserTable'
 import { getUsers, adminLogout } from '@/lib/actions'
 import ErrorState from '@/components/ui/ErrorState'
@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-rose-600 animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         )
     }

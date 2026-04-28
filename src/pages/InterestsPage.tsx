@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from '@/components/landing/Header'
 import { Check, X, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react'
+import CircularLoader from '@/components/ui/CircularLoader'
+import React, { useState, useEffect } from 'react'
 
 export default function InterestsPage() {
     const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function InterestsPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         );
     }

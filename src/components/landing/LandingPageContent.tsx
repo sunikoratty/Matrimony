@@ -1,11 +1,11 @@
 
-
 import { useState, useEffect } from 'react'
 import Header from '@/components/landing/Header'
 import Hero from '@/components/landing/Hero'
 import SearchSection from '@/components/landing/SearchSection'
 import Footer from '@/components/landing/Footer'
 import FeaturedProfiles from '@/components/landing/FeaturedProfiles'
+import CircularLoader from '@/components/ui/CircularLoader'
 
 export default function LandingPageContent({
     user,
@@ -26,7 +26,7 @@ export default function LandingPageContent({
     if (!mounted) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="h-12 w-12 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+                <CircularLoader size="lg" />
             </div>
         )
     }
