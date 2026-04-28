@@ -68,13 +68,16 @@ app.get('/api/health', (req, res) => {
 // Auth & OTP
 app.post('/api/otp/send', async (req, res) => {
     const { mobile } = req.body;
-    if (FORCE_MOCK || !client || !verifySid) {
-        console.log(`[MOCK OTP] for ${mobile} is 123456`);
-        return res.json({ success: true, mock: true });
-    }
     try {
         const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user) return res.status(404).json({ error: 'User not registered' });
+        if (!user || user.role !== 'USER') {
+            return res.status(404).json({ error: 'User not registered' });
+        }
+
+        if (FORCE_MOCK || !client || !verifySid) {
+            console.log(`[MOCK OTP] for ${mobile} is 123456`);
+            return res.json({ success: true, mock: true });
+        }
 
         const verification = await client.verify.v2.services(verifySid)
             .verifications.create({ to: mobile, channel: 'sms' });
@@ -100,7 +103,7 @@ app.post('/api/otp/verify', async (req, res) => {
 
     if (success) {
         const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!user || user.role !== 'USER') return res.status(404).json({ error: 'User not found' });
 
         res.cookie('user_session', user.id, {
             httpOnly: true,
