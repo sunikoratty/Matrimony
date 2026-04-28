@@ -1,7 +1,47 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { prisma, withRetry } from '../src/lib/db';
+import { PrismaClient } from '@prisma/client';
+
+const globalForPrisma = globalThis as unknown as {
+    prisma: PrismaClient | undefined
+}
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    log: ['error'],
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+/**
+ * Retries a database operation with exponential backoff
+ */
+async function withRetry<T>(
+    operation: () => Promise<T>,
+    maxRetries: number = 3,
+    delay: number = 1000
+): Promise<T> {
+    let lastError: any;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            return await operation();
+        } catch (error: any) {
+            lastError = error;
+            const isTransient = 
+                error.message?.includes('connection') || 
+                error.message?.includes('timeout') || 
+                error.code === 'P2024' || 
+                error.code === 'P1001';
+
+            if (!isTransient || i === maxRetries - 1) throw error;
+            
+            console.warn(`DB Operation failed (attempt ${i + 1}/${maxRetries}). Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            delay *= 2;
+        }
+    }
+    throw lastError;
+}
 import { z } from 'zod';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
@@ -64,6 +104,21 @@ const authMiddleware = (req: any, res: any, next: any) => {
 app.get('/api/health', (req, res) => {
     console.log('Health check called');
     res.json({ status: 'ok', environment: 'vercel' });
+});
+
+app.get('/api/debug/db', async (req, res) => {
+    try {
+        const count = await prisma.user.count();
+        res.json({ success: true, userCount: count });
+    } catch (e: any) {
+        logError('Debug DB', e);
+        res.status(500).json({ 
+            success: false, 
+            error: e.message, 
+            code: e.code,
+            stack: e.stack 
+        });
+    }
 });
 
 // Auth & OTP
