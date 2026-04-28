@@ -225,12 +225,23 @@ app.get('/api/matches', async (req, res) => {
             return res.json({ matches, isGuest: true, currentUser: { isPaid: false } });
         }
 
-        const currentUser = await prisma.user.findUnique({ where: { id: userSession } });
+        const currentUser = await prisma.user.findUnique({
+            where: { id: userSession },
+            include: { profile: true }
+        });
         if (!currentUser) return res.status(404).json({ error: 'User not found' });
         
         const finalCriteria = { ...baseCriteria };
         if (!gender && mode !== 'broad') {
             finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
+        }
+
+        // For recommended mode, filter by the current user's religion (if not already filtered)
+        if (mode === 'recommended' && !religion && (currentUser as any).profile?.religion) {
+            finalCriteria.profile = {
+                ...finalCriteria.profile,
+                religion: (currentUser as any).profile.religion,
+            };
         }
 
         const matches = await prisma.user.findMany({
