@@ -232,7 +232,9 @@ app.get('/api/matches', async (req, res) => {
         if (!currentUser) return res.status(404).json({ error: 'User not found' });
         
         const finalCriteria = { ...baseCriteria };
-        if (!gender && mode !== 'broad') {
+
+        // Always show opposite gender unless explicitly filtered
+        if (!gender) {
             finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
         }
 

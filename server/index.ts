@@ -244,8 +244,8 @@ app.get('/api/matches', async (req, res) => {
 
         const finalCriteria = { ...baseCriteria };
 
-        // If no explicit gender search, default to opposite of current user
-        if (!gender && mode !== 'broad') {
+        // Always show opposite gender unless explicitly filtered
+        if (!gender) {
             finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
         }
 
