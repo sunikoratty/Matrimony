@@ -33,14 +33,16 @@ export default function MatchesList({
     isGuest = false,
     layout = 'cards',
     gender,
-    unlockedIds: initialUnlockedIds = STABLE_EMPTY_ARRAY
+    unlockedIds: initialUnlockedIds = STABLE_EMPTY_ARRAY,
+    isLoadingMatches = false
 }: {
     matches: any[],
     currentUser: any,
     isGuest?: boolean,
     layout?: 'cards' | 'simple',
     gender?: 'MALE' | 'FEMALE',
-    unlockedIds?: string[]
+    unlockedIds?: string[],
+    isLoadingMatches?: boolean
 }) {
     const { showToast } = useToast()
     const [allMatches, setAllMatches] = useState(initialMatches)
@@ -51,7 +53,6 @@ export default function MatchesList({
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(initialMatches.length >= 20)
     const [isPaymentOpen, setIsPaymentOpen] = useState(false)
-    const [isNavigating, setIsNavigating] = useState(false)
 
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
@@ -70,7 +71,6 @@ export default function MatchesList({
 
     const setMode = (mode: string) => {
         if (mode === currentMode) return
-        setIsNavigating(true)
         const params = new URLSearchParams(searchParams)
         params.set('mode', mode)
         navigate(`?${params.toString()}`)
@@ -152,7 +152,7 @@ export default function MatchesList({
                 </div>
             </div>
 
-            {isNavigating ? (
+            {isLoadingMatches ? (
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] flex items-center justify-center">
                     <LoadingSpinner />
                 </div>

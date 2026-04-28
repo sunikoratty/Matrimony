@@ -1,45 +1,53 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Header from '@/components/landing/Header'
 import MatchesList from '@/components/user/MatchesList'
 
 export default function ProfileViewPage() {
     const navigate = useNavigate();
-    const [data, setData] = useState<any>(null);
+    const [searchParams] = useSearchParams();
+    const mode = searchParams.get('mode') || 'recommended';
+
+    const [user, setUser] = useState<any>(null);
+    const [matches, setMatches] = useState<any[]>([]);
+    const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+    const [matchesLoading, setMatchesLoading] = useState(false);
 
+    // Fetch user once on mount
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchUser = async () => {
             try {
-                const [user, matchesRes] = await Promise.all([
-                    fetch('/api/profile').then(r => r.json()),
-                    fetch('/api/matches?mode=recommended').then(r => r.json())
-                ]);
-
-                if (!user) {
-                    navigate('/login');
-                    return;
-                }
-
-                if (!user.isProfileCompleted) {
-                    navigate('/profile/setup');
-                    return;
-                }
-
-                setData({
-                    user,
-                    matches: matchesRes.matches || [],
-                    unlockedIds: matchesRes.unlockedIds || []
-                });
+                const u = await fetch('/api/profile').then(r => r.json());
+                if (!u) { navigate('/login'); return; }
+                if (!u.isProfileCompleted) { navigate('/profile/setup'); return; }
+                setUser(u);
             } catch (error) {
-                console.error("Failed to fetch profile data", error);
+                console.error("Failed to fetch user", error);
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchData();
+        fetchUser();
     }, [navigate]);
+
+    // Re-fetch matches whenever mode changes
+    useEffect(() => {
+        if (!user) return; // wait until user is loaded
+        const fetchMatches = async () => {
+            setMatchesLoading(true);
+            try {
+                const res = await fetch(`/api/matches?mode=${mode}`).then(r => r.json());
+                setMatches(res.matches || []);
+                setUnlockedIds(res.unlockedIds || []);
+            } catch (error) {
+                console.error("Failed to fetch matches", error);
+            } finally {
+                setMatchesLoading(false);
+            }
+        };
+        fetchMatches();
+    }, [mode, user]);
 
     if (loading) {
         return (
@@ -49,9 +57,7 @@ export default function ProfileViewPage() {
         );
     }
 
-    if (!data) return null;
-
-    const { user, matches, unlockedIds } = data;
+    if (!user) return null;
 
     return (
         <div className="min-h-screen">
@@ -62,11 +68,12 @@ export default function ProfileViewPage() {
                         <MatchesList
                             matches={matches}
                             currentUser={{
-                                isPaid: true, 
+                                isPaid: true,
                                 country: user.country || 'INDIA'
                             }}
                             unlockedIds={unlockedIds}
                             layout="cards"
+                            isLoadingMatches={matchesLoading}
                         />
                     </div>
                 </div>
