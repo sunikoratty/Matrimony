@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { prisma } from '../src/lib/db';
+import { prisma } from './db';
 import { z } from 'zod';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
