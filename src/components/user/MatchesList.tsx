@@ -58,13 +58,12 @@ export default function MatchesList({
     const [searchParams] = useSearchParams()
     const currentMode = searchParams.get('mode') || 'recommended'
 
-    // Sync state when props change (Server -> Client navigation)
+    // Sync state when props change (parent re-fetched matches)
     useEffect(() => {
         setAllMatches(initialMatches)
         setUnlockedIds(initialUnlockedIds)
         setPage(1)
         setHasMore(initialMatches.length >= 20)
-        setIsNavigating(false)
     }, [initialMatches, initialUnlockedIds])
 
     const userCountry = currentUser.country || 'INDIA'
