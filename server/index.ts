@@ -63,19 +63,22 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 // Auth & OTP
 app.post('/api/otp/send', async (req, res) => {
     const { mobile } = req.body;
-    if (FORCE_MOCK || !client || !verifySid) {
-        console.log(`[MOCK OTP] for ${mobile} is 123456`);
-        return res.json({ success: true, mock: true });
-    }
     try {
         const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user) return res.status(404).json({ error: 'User not registered' });
+        if (!user || user.role !== 'USER') {
+            return res.status(404).json({ error: 'User not registered' });
+        }
+
+        if (FORCE_MOCK || !client || !verifySid) {
+            console.log(`[MOCK OTP] for ${mobile} is 123456`);
+            return res.json({ success: true, mock: true });
+        }
 
         const verification = await client.verify.v2.services(verifySid)
             .verifications.create({ to: mobile, channel: 'sms' });
         res.json({ success: verification.status === 'pending' });
     } catch (e: any) {
-        res.json({ success: true, mock: true, error: e.message }); // Fallback to mock
+        res.json({ success: true, mock: true, error: e.message });
     }
 });
 
@@ -95,7 +98,7 @@ app.post('/api/otp/verify', async (req, res) => {
 
     if (success) {
         const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (!user || user.role !== 'USER') return res.status(404).json({ error: 'User not found' });
 
         res.cookie('user_session', user.id, {
             httpOnly: true,
@@ -233,17 +236,25 @@ app.get('/api/matches', async (req, res) => {
             return res.json({ matches, isGuest: true, currentUser: { isPaid: false } });
         }
 
-        const currentUser = await prisma.user.findUnique({ where: { id: userSession } });
+        const currentUser = await prisma.user.findUnique({
+            where: { id: userSession },
+            include: { profile: true }
+        });
         if (!currentUser) return res.status(404).json({ error: 'User not found' });
 
-        // If mode is 'matching' or 'recommended', we could add more specific criteria here
-        // but for now let's respect the explicit search filters if provided
-        
         const finalCriteria = { ...baseCriteria };
-        
+
         // If no explicit gender search, default to opposite of current user
         if (!gender && mode !== 'broad') {
             finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
+        }
+
+        // For recommended mode, filter by the current user's religion
+        if (mode === 'recommended' && !religion && (currentUser as any).profile?.religion) {
+            finalCriteria.profile = {
+                ...finalCriteria.profile,
+                religion: (currentUser as any).profile.religion,
+            };
         }
 
         const matches = await prisma.user.findMany({
