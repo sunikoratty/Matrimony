@@ -1,13 +1,14 @@
-'use client'
-
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { signOut } from '@/lib/user-actions'
 import { useState, useRef, useEffect } from 'react'
 import { Heart, User as UserIcon, ChevronDown, LogOut } from 'lucide-react'
 import { useToast } from '@/components/ui/Toast'
 
 export default function Header({ user }: { user?: any }) {
+    const signOut = async () => {
+        await fetch('/api/auth/signout', { method: 'POST' });
+        window.location.href = '/';
+    };
     const { showToast } = useToast()
     const isLoggedIn = !!user
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -31,7 +32,7 @@ export default function Header({ user }: { user?: any }) {
             className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-rose-50"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-1.5 group">
+                <Link to="/" className="flex items-center gap-1.5 group">
                     <Heart size={24} className="text-rose-600 fill-rose-600" />
                     <span className="text-2xl font-serif font-bold bg-gradient-to-r from-rose-600 to-rose-400 bg-clip-text text-transparent">
                         True Match
@@ -42,7 +43,7 @@ export default function Header({ user }: { user?: any }) {
                     {isLoggedIn ? (
                         <div className="flex items-center gap-4 sm:gap-6">
                             {/* Interest Requests */}
-                            <Link href="/profile/interests" className="relative p-2 text-slate-400 hover:text-rose-600 transition-colors group" title="Interest Requests">
+                            <Link to="/profile/interests" className="relative p-2 text-slate-400 hover:text-rose-600 transition-colors group" title="Interest Requests">
                                 <Heart size={24} className="group-hover:fill-rose-50" />
                                 {(user._count?.receivedInterests > 0 || user._count?.sentInterests > 0) && (
                                     <span className="absolute top-0 right-0 h-5 w-5 bg-rose-600 text-white text-xs font-bold flex items-center justify-center rounded-full shadow-sm ring-2 ring-white">
@@ -90,7 +91,7 @@ export default function Header({ user }: { user?: any }) {
                                         className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-rose-50 overflow-hidden py-2"
                                     >
                                         <Link
-                                            href="/profile/setup"
+                                            to="/profile/setup"
                                             onClick={() => setIsDropdownOpen(false)}
                                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                                         >
@@ -118,11 +119,11 @@ export default function Header({ user }: { user?: any }) {
                         </div>
                     ) : (
                         <div className="flex items-center gap-4 sm:gap-6">
-                            <Link href="/login" className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider">
+                            <Link to="/login" className="font-medium hover:text-rose-600 transition-colors uppercase text-sm tracking-wider">
                                 Login
                             </Link>
                             <Link
-                                href="/register"
+                                to="/register"
                                 className="px-6 py-2 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
                             >
                                 Register

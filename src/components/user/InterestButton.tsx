@@ -1,4 +1,4 @@
-'use client'
+
 
 import { useState } from 'react'
 import { sendInterest } from '@/lib/interest-actions'

@@ -1,7 +1,7 @@
-'use client'
+
 
 import { Lock, Smartphone, Mail, MapPin, Heart } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import AgeDisplay from '../ui/AgeDisplay'
 
 type Profile = {
@@ -43,7 +43,7 @@ export default function ProfileCard({
             className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 overflow-hidden flex flex-col h-full"
         >
             {/* Clickable Area for Profile Details */}
-            <Link href={`/profile/${profile.id}`} className="block relative">
+            <Link to={`/profile/${profile.id}`} className="block relative">
                 {/* Photo Area */}
                 <div className="aspect-[4/5] bg-slate-100 relative overflow-hidden">
                     {profile.profile.photoUrl ? (
@@ -100,7 +100,7 @@ export default function ProfileCard({
                 <div className="border-t border-slate-100 pt-4">
                     {true ? ( // TEMPORARY BYPASS
                         <div className="text-center">
-                            <Link href={`/profile/${profile.id}`} className="inline-block px-6 py-2 bg-rose-50 text-rose-600 text-sm font-bold rounded-full hover:bg-rose-100 transition-colors">
+                            <Link to={`/profile/${profile.id}`} className="inline-block px-6 py-2 bg-rose-50 text-rose-600 text-sm font-bold rounded-full hover:bg-rose-100 transition-colors">
                                 View Full Profile
                             </Link>
                         </div>
@@ -127,7 +127,7 @@ export default function ProfileCard({
                                     </div>
                                     <p className="text-xs font-bold text-slate-700">Contact Locked</p>
                                     <Link
-                                        href={`/pricing?interested_in=${encodeURIComponent(profile.name)}`}
+                                        to={`/pricing?interested_in=${encodeURIComponent(profile.name)}`}
                                         className="text-[11px] text-rose-600 hover:underline font-semibold block"
                                     >
                                         Upgrade to Unlock

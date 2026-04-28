@@ -1,9 +1,9 @@
-'use client'
+
 
 import { useState, useEffect } from 'react'
 import { createOrder, verifyPayment } from '@/lib/payment-actions'
 import { CreditCard, Globe, X, Lock } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 
@@ -16,7 +16,7 @@ declare global {
 export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boolean, onClose: () => void, country: string }) {
     const { showToast } = useToast()
     const [loading, setLoading] = useState(false)
-    const router = useRouter()
+    const navigate = useNavigate()
 
     useEffect(() => {
         const script = document.createElement('script')
@@ -74,7 +74,7 @@ export default function PaymentModal({ isOpen, onClose, country }: { isOpen: boo
                     if (verification.success) {
                         showToast('Payment Successful! Your account is now Premium.', 'success')
                         onClose()
-                        router.refresh()
+                        window.location.reload()
                     } else {
                         console.error('Verification Error:', verification.error)
                         showToast(verification.error || 'Payment Verification Failed!', 'error')

@@ -1,12 +1,13 @@
-'use client'
+
 
 import { useState, useEffect } from 'react'
 import ProfileCard from '@/components/user/ProfileCard'
 import PaymentModal from '@/components/payment/PaymentModal'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Link } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { Search } from 'lucide-react'
 
 type Profile = {
     id: string
@@ -52,8 +53,8 @@ export default function MatchesList({
     const [isPaymentOpen, setIsPaymentOpen] = useState(false)
     const [isNavigating, setIsNavigating] = useState(false)
 
-    const router = useRouter()
-    const searchParams = useSearchParams()
+    const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
     const currentMode = searchParams.get('mode') || 'recommended'
 
     // Sync state when props change (Server -> Client navigation)
@@ -72,7 +73,7 @@ export default function MatchesList({
         setIsNavigating(true)
         const params = new URLSearchParams(searchParams)
         params.set('mode', mode)
-        router.push(`?${params.toString()}`)
+        navigate(`?${params.toString()}`)
     }
 
     const handleLoadMore = async () => {
@@ -161,7 +162,7 @@ export default function MatchesList({
                         {allMatches.map(profile => (
                             <div key={profile.id}>
                                 {layout === 'simple' ? (
-                                    <Link href={`/profile/${profile.id}`}>
+                                    <Link to={`/profile/${profile.id}`}>
                                         <div className="flex items-center gap-6 p-4 bg-white rounded-xl border border-slate-100 hover:border-rose-200 transition-all hover:shadow-sm">
                                             <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100">
                                                 {profile.profile.photoUrl ? (
@@ -194,13 +195,27 @@ export default function MatchesList({
                     </div>
 
                     {allMatches.length === 0 && (
-                        <div className="py-20 text-center">
-                            <p className="text-slate-400 text-lg font-medium">No matches found for this criteria.</p>
+                        <div className="py-24 flex flex-col items-center justify-center text-center">
+                            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-6">
+                                <Search size={40} />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">No Profiles Found</h3>
+                            <p className="text-slate-500 max-w-sm mb-8">
+                                We couldn't find any profiles matching your specific search criteria. Try broadening your filters or exploring all profiles.
+                            </p>
                             <button
-                                onClick={() => setMode('broad')}
-                                className="mt-4 text-rose-600 font-bold hover:underline"
+                                onClick={() => {
+                                    const params = new URLSearchParams(window.location.search);
+                                    params.delete('religion');
+                                    params.delete('caste');
+                                    params.delete('age');
+                                    params.delete('dosham');
+                                    params.delete('denomination');
+                                    navigate(`?${params.toString()}`);
+                                }}
+                                className="px-8 py-3 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
                             >
-                                Try Browsing All
+                                Clear All Filters
                             </button>
                         </div>
                     )}

@@ -1,0 +1,167 @@
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Heart, Sparkles } from 'lucide-react'
+import { useToast } from '@/components/ui/Toast'
+
+export default function RegisterPage() {
+    const { showToast } = useToast()
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (loading) return
+        setLoading(true)
+        setError('')
+
+        const formData = new FormData(e.currentTarget)
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(r => r.json());
+
+            if (res.error) {
+                setError(res.error)
+                showToast(res.error, 'error')
+                setLoading(false)
+            } else {
+                showToast('Welcome to True Match! Let\'s setup your profile.', 'success')
+                navigate('/profile/setup')
+            }
+        } catch (err) {
+            setLoading(false);
+            setError('Registration failed. Please check your connection.');
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex">
+            {/* Left Side - Image Board */}
+            <div className="hidden lg:block lg:w-1/2 relative bg-rose-50">
+                <div className="absolute inset-0 bg-black/5 z-10" />
+                <img
+                    src="/images/CoupleImage2.jpg"
+                    alt="Wedding Couple"
+                    className="w-full h-full object-cover"
+                />
+                <div className="absolute top-12 left-12 z-20 flex items-center gap-2">
+                    <Heart size={32} className="text-rose-500 fill-rose-500" />
+                    <span className="text-3xl font-serif font-bold text-white tracking-tight shadow-sm">
+                        True Match
+                    </span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 z-20 p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-medium mb-4 border border-white/30">
+                        <Sparkles size={14} />
+                        <span>Find your soulmate today</span>
+                    </div>
+                    <h2 className="text-4xl font-serif font-bold mb-4">Begin Your Journey.</h2>
+                    <p className="text-lg text-rose-100 max-w-md">
+                        "Where love happens, dreams come true. Join thousands of happy couples who found their forever here."
+                    </p>
+                </div>
+            </div>
+
+            {/* Right Side - Registration Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-transparent overflow-y-auto">
+                <div className="max-w-md w-full py-8">
+                    <div className="mb-8">
+                        <Link to="/" className="inline-flex items-center text-slate-500 hover:text-rose-600 transition-colors mb-6 text-sm font-medium">
+                            &larr; Back to Home
+                        </Link>
+                        <h1 className="text-3xl font-bold text-slate-900 mb-2 font-serif">Create Account</h1>
+                        <p className="text-slate-500">Fill in your details to start finding matches.</p>
+                    </div>
+
+                    <form onSubmit={handleRegister} className="space-y-5">
+                        <div className="space-y-5">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-900 mb-1.5">Full Name</label>
+                                <input name="name" required className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium" placeholder="e.g. John Doe" />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-900 mb-1.5">Mobile Number</label>
+                                <div className="flex gap-2">
+                                    <div className="relative w-28 shrink-0">
+                                        <input type="hidden" name="countryCode" value="+91" />
+                                        <select
+                                            disabled
+                                            className="w-full px-3 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-100 appearance-none cursor-not-allowed text-slate-500 font-medium"
+                                        >
+                                            <option value="+91">+91 (IN)</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        </div>
+                                    </div>
+                                    <input
+                                        name="mobile"
+                                        required
+                                        pattern="[0-9]{10}"
+                                        title="Please enter a valid 10-digit mobile number"
+                                        maxLength={10}
+                                        minLength={10}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white text-slate-900 font-medium"
+                                        placeholder="Mobile Number (10 digits)"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Gender</label>
+                                    <div className="relative">
+                                        <select name="gender" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer">
+                                            <option value="MALE">Male</option>
+                                            <option value="FEMALE">Female</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Country</label>
+                                    <div className="relative">
+                                        <select name="country" defaultValue="INDIA" className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white appearance-none cursor-pointer">
+                                            <option value="INDIA">India</option>
+                                        </select>
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1.5">Mother Tongue</label>
+                                <input name="motherTongue" required className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all bg-slate-50 focus:bg-white" placeholder="e.g. Malayalam" />
+                            </div>
+                        </div>
+
+                        {error && <p className="text-rose-600 text-sm bg-rose-50 p-3 rounded-lg border border-rose-100">{error}</p>}
+
+                        <button disabled={loading} className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-rose-200 hover:shadow-rose-300 transform hover:-translate-y-0.5 mt-4">
+                            {loading ? 'Creating Account...' : 'Register'}
+                        </button>
+                    </form>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-slate-500 text-sm">
+                            Already have an account? {' '}
+                            <Link to="/login" className="text-rose-600 font-semibold hover:text-rose-700 hover:underline">
+                                Login here
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}

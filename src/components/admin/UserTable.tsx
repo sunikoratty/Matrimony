@@ -1,11 +1,11 @@
-'use client'
+
 
 import { useState } from 'react'
 import { togglePaidStatus, updateUserStatus } from '@/lib/actions'
 import { Check, X, Shield, Trash2, MoreHorizontal, Pencil } from 'lucide-react'
 import EditUserModal from './EditUserModal'
 
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 
 type User = {
     id: string
@@ -22,8 +22,8 @@ type User = {
 
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 
-export default function UserTable({ users, filter = 'all' }: { users: User[], filter?: string }) {
-    const router = useRouter()
+export default function UserTable({ users, filter = 'all', onRefresh }: { users: User[], filter?: string, onRefresh: () => void }) {
+    const navigate = useNavigate()
     const [loadingId, setLoadingId] = useState<string | null>(null)
     const [editingUser, setEditingUser] = useState<User | null>(null)
 
@@ -61,7 +61,7 @@ export default function UserTable({ users, filter = 'all' }: { users: User[], fi
     async function handleTogglePaid(userId: string, currentStatus: boolean) {
         setLoadingId(userId)
         await togglePaidStatus(userId, currentStatus)
-        router.refresh()
+        onRefresh()
         setLoadingId(null)
     }
 
@@ -69,7 +69,7 @@ export default function UserTable({ users, filter = 'all' }: { users: User[], fi
         if (!confirm(`Are you sure you want to change status to ${status}?`)) return
         setLoadingId(userId)
         await updateUserStatus(userId, status)
-        router.refresh()
+        onRefresh()
         setLoadingId(null)
     }
 
@@ -225,6 +225,7 @@ export default function UserTable({ users, filter = 'all' }: { users: User[], fi
                 <EditUserModal
                     user={editingUser}
                     onClose={() => setEditingUser(null)}
+                    onRefresh={onRefresh}
                 />
             )}
         </div>

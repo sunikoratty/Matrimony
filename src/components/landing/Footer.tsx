@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import { Heart } from 'lucide-react'
 
 export default function Footer() {
@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                     {/* Brand Column */}
                     <div>
-                        <Link href="/" className="flex items-center gap-1.5 mb-4 group">
+                        <Link to="/" className="flex items-center gap-1.5 mb-4 group">
                             <Heart size={20} className="text-rose-500 fill-rose-500" />
                             <span className="text-xl font-serif font-bold text-white">
                                 True Match
@@ -24,7 +24,7 @@ export default function Footer() {
                         <h4 className="font-bold text-white mb-4">Company</h4>
                         <ul className="space-y-3 text-sm">
                             <li>
-                                <Link href="/about" className="hover:text-rose-500 transition-colors">About Us</Link>
+                                <Link to="/about" className="hover:text-rose-500 transition-colors">About Us</Link>
                             </li>
                         </ul>
                     </div>
@@ -34,13 +34,13 @@ export default function Footer() {
                         <h4 className="font-bold text-white mb-4">Legal</h4>
                         <ul className="space-y-3 text-sm">
                             <li>
-                                <Link href="/privacy" className="hover:text-rose-500 transition-colors">Privacy Policy</Link>
+                                <Link to="/privacy" className="hover:text-rose-500 transition-colors">Privacy Policy</Link>
                             </li>
                             <li>
-                                <Link href="/terms" className="hover:text-rose-500 transition-colors">Terms of Service</Link>
+                                <Link to="/terms" className="hover:text-rose-500 transition-colors">Terms of Service</Link>
                             </li>
                             <li>
-                                <Link href="/security" className="hover:text-rose-500 transition-colors">Security</Link>
+                                <Link to="/security" className="hover:text-rose-500 transition-colors">Security</Link>
                             </li>
                         </ul>
                     </div>

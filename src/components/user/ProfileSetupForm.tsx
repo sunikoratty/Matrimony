@@ -1,15 +1,15 @@
-'use client'
+
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
 import { Camera, Loader2 } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 
 export default function ProfileSetupForm({ user }: { user: any }) {
     const { showToast } = useToast()
-    const router = useRouter()
+    const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
@@ -104,7 +104,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 showToast(res.error, 'error')
             } else if (res?.success) {
                 showToast('Profile updated successfully!', 'success')
-                router.push('/profile/view')
+                navigate('/profile/view')
             }
         }} className="space-y-6">
             {/* Photo Upload */}

@@ -1,14 +1,14 @@
-'use client'
+
 
 import { useState, useEffect } from 'react'
 import { X, Save, Loader2 } from 'lucide-react'
 import { adminUpdateUser } from '@/lib/actions'
 import { useToast } from '@/components/ui/Toast'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 
-export default function EditUserModal({ user, onClose }: { user: any, onClose: () => void }) {
+export default function EditUserModal({ user, onClose, onRefresh }: { user: any, onClose: () => void, onRefresh: () => void }) {
     const { showToast } = useToast()
-    const router = useRouter()
+    const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: user.name || '',
@@ -60,7 +60,7 @@ export default function EditUserModal({ user, onClose }: { user: any, onClose: (
         setLoading(false)
         if (result.success) {
             showToast('User updated successfully', 'success')
-            router.refresh()
+            onRefresh()
             onClose()
         } else {
             showToast(result.error || 'Failed to update user', 'error')

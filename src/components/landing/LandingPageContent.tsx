@@ -1,8 +1,9 @@
-'use client'
+
 
 import { useState, useEffect } from 'react'
 import Header from '@/components/landing/Header'
 import Hero from '@/components/landing/Hero'
+import SearchSection from '@/components/landing/SearchSection'
 import Footer from '@/components/landing/Footer'
 import FeaturedProfiles from '@/components/landing/FeaturedProfiles'
 
@@ -35,6 +36,7 @@ export default function LandingPageContent({
             <Header user={user} />
             <main>
                 <Hero user={user} />
+                <SearchSection />
                 <FeaturedProfiles
                     title="Featured Brides"
                     subtitle="Explore a selection of beautiful brides looking for their life partners"

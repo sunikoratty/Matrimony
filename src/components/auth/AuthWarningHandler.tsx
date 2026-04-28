@@ -1,12 +1,12 @@
-'use client'
+
 
 import { useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 
 function WarningHandler() {
-    const searchParams = useSearchParams()
-    const router = useRouter()
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
     const { showToast } = useToast()
 
     useEffect(() => {

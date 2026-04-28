@@ -1,4 +1,4 @@
-'use client'
+
 
 import { useState } from 'react'
 import PaymentModal from '@/components/payment/PaymentModal'
