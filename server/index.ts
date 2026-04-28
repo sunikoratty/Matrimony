@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { prisma } from '../src/lib/db';
+import { prisma, withRetry } from '../src/lib/db';
 import { z } from 'zod';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
@@ -37,8 +37,19 @@ app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:3000'],
     credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
+
+// Detailed Error Logger
+const logError = (context: string, error: any) => {
+    console.error(`[ERROR] ${context}:`, {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+        meta: error.meta,
+        timestamp: new Date().toISOString()
+    });
+};
 
 // --- Helpers ---
 function getEighteenYearsAgo() {
@@ -122,17 +133,19 @@ app.post('/api/register', async (req, res) => {
         }
 
         // 2. Create User and empty Profile
-        const user = await prisma.user.create({
-            data: {
-                name,
-                mobile,
-                gender,
-                motherTongue,
-                country,
-                profile: {
-                    create: {} // Create an empty profile linked to the user
+        const user = await withRetry(async () => {
+            return await prisma.user.create({
+                data: {
+                    name,
+                    mobile,
+                    gender,
+                    motherTongue,
+                    country,
+                    profile: {
+                        create: {} // Create an empty profile linked to the user
+                    }
                 }
-            }
+            });
         });
 
         // 3. Set Session Cookie
@@ -198,9 +211,14 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
         }
 
         // Use upsert-like behavior to ensure profile exists
+        const parsedDob = dob ? new Date(dob) : undefined;
+        if (parsedDob && isNaN(parsedDob.getTime())) {
+            return res.status(400).json({ error: 'Invalid date format' });
+        }
+
         const profileData = {
             bio, 
-            dob: dob ? new Date(dob) : undefined, 
+            dob: parsedDob, 
             religion, caste, denomination, dosham,
             currentResidence, location, occupation, birthStar, qualification, 
             consent: consent === 'on' || consent === true || consent === 'true', 
@@ -208,21 +226,23 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
             maritalStatus
         };
 
-        await prisma.profile.upsert({
-            where: { userId: req.userId },
-            update: profileData as any,
-            create: { ...profileData, userId: req.userId } as any
-        });
+        await withRetry(async () => {
+            await prisma.profile.upsert({
+                where: { userId: req.userId },
+                update: profileData as any,
+                create: { ...profileData, userId: req.userId } as any
+            });
 
-        // Simple completion check
-        const isComplete = !!(dob && religion && currentResidence && location && qualification && photoUrl && maritalStatus);
-        if (isComplete) {
-            await prisma.user.update({ where: { id: req.userId }, data: { isProfileCompleted: true } });
-        }
+            // Simple completion check
+            const isComplete = !!(dob && religion && currentResidence && location && qualification && photoUrl && maritalStatus);
+            if (isComplete) {
+                await prisma.user.update({ where: { id: req.userId }, data: { isProfileCompleted: true } });
+            }
+        });
 
         res.json({ success: true });
     } catch (e) {
-        console.error('Profile Update Error:', e);
+        logError('Profile Update', e);
         res.status(500).json({ error: 'Update failed. Check server logs for details.' });
     }
 });
@@ -289,48 +309,56 @@ app.get('/api/matches', async (req, res) => {
             baseCriteria.profile.dob = { lte: eighteenYearsAgo };
         }
 
-        if (!userSession) {
-            const matches = await prisma.user.findMany({
-                where: baseCriteria,
+        const matches = await withRetry(async () => {
+            if (!userSession) {
+                return await prisma.user.findMany({
+                    where: baseCriteria,
+                    include: { profile: true },
+                    skip: Number(skip), take: Number(take),
+                    orderBy: { createdAt: 'desc' }
+                });
+            }
+
+            const currentUser = await prisma.user.findUnique({
+                where: { id: userSession },
+                include: { profile: true }
+            });
+            if (!currentUser) throw new Error('User not found');
+
+            const finalCriteria = { ...baseCriteria };
+
+            // Always show opposite gender unless explicitly filtered
+            if (!gender) {
+                finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
+            }
+
+            // For recommended mode, filter by the current user's religion
+            if (mode === 'recommended' && !religion && (currentUser as any).profile?.religion) {
+                finalCriteria.profile = {
+                    ...finalCriteria.profile,
+                    religion: (currentUser as any).profile.religion,
+                };
+            }
+
+            const foundMatches = await prisma.user.findMany({
+                where: finalCriteria,
                 include: { profile: true },
                 skip: Number(skip), take: Number(take),
                 orderBy: { createdAt: 'desc' }
             });
+
+            return { matches: foundMatches, currentUser: { ...currentUser, isPaid: true } };
+        });
+
+        if (!userSession) {
             return res.json({ matches, isGuest: true, currentUser: { isPaid: false } });
         }
 
-        const currentUser = await prisma.user.findUnique({
-            where: { id: userSession },
-            include: { profile: true }
-        });
-        if (!currentUser) return res.status(404).json({ error: 'User not found' });
-
-        const finalCriteria = { ...baseCriteria };
-
-        // Always show opposite gender unless explicitly filtered
-        if (!gender) {
-            finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
-        }
-
-        // For recommended mode, filter by the current user's religion
-        if (mode === 'recommended' && !religion && (currentUser as any).profile?.religion) {
-            finalCriteria.profile = {
-                ...finalCriteria.profile,
-                religion: (currentUser as any).profile.religion,
-            };
-        }
-
-        const matches = await prisma.user.findMany({
-            where: finalCriteria,
-            include: { profile: true },
-            skip: Number(skip), take: Number(take),
-            orderBy: { createdAt: 'desc' }
-        });
-
-        res.json({ matches, currentUser: { ...currentUser, isPaid: true } });
-    } catch (e) { 
-        console.error('Matches API Error:', e);
-        res.status(500).json({ error: 'DB Error' }); 
+        res.json(matches);
+    } catch (e: any) { 
+        logError('Matches API', e);
+        if (e.message === 'User not found') return res.status(404).json({ error: 'User not found' });
+        res.status(500).json({ error: 'Database error. Please try again.' }); 
     }
 });
 
@@ -361,13 +389,18 @@ app.get('/api/public-profiles', async (req, res) => {
 app.post('/api/interests/send', authMiddleware, async (req: any, res) => {
     const { targetId } = req.body;
     try {
-        await prisma.interest.upsert({
-            where: { senderId_targetId: { senderId: req.userId, targetId } },
-            update: { status: 'PENDING', isSeenBySender: false },
-            create: { senderId: req.userId, targetId, status: 'PENDING' }
+        await withRetry(async () => {
+            await prisma.interest.upsert({
+                where: { senderId_targetId: { senderId: req.userId, targetId } },
+                update: { status: 'PENDING', isSeenBySender: false },
+                create: { senderId: req.userId, targetId, status: 'PENDING' }
+            });
         });
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: 'Failed to send interest' }); }
+    } catch (e) { 
+        logError('Send Interest', e);
+        res.status(500).json({ error: 'Failed to send interest' }); 
+    }
 });
 
 app.get('/api/interests/received', authMiddleware, async (req: any, res) => {
