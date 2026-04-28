@@ -204,12 +204,21 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
             await prisma.user.update({ where: { id: req.userId }, data: { email } });
         }
 
-        await prisma.profile.update({
+        // Use upsert-like behavior to ensure profile exists
+        const profileData = {
+            bio, 
+            dob: dob ? new Date(dob) : undefined, 
+            religion, caste, denomination, dosham,
+            currentResidence, location, occupation, birthStar, qualification, 
+            consent: consent === 'on' || consent === true || consent === 'true', 
+            photoUrl, 
+            maritalStatus
+        };
+
+        await prisma.profile.upsert({
             where: { userId: req.userId },
-            data: {
-                bio, dob: dob ? new Date(dob) : undefined, religion, caste, denomination, dosham,
-                currentResidence, location, occupation, birthStar, qualification, consent, photoUrl, maritalStatus
-            } as any
+            update: profileData as any,
+            create: { ...profileData, userId: req.userId } as any
         });
 
         const isComplete = !!(dob && religion && currentResidence && location && qualification && photoUrl && maritalStatus);
@@ -218,7 +227,10 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
         }
 
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: 'Update failed' }); }
+    } catch (e) {
+        console.error('Profile Update Error:', e);
+        res.status(500).json({ error: 'Update failed' });
+    }
 });
 
 // Matches
