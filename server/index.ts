@@ -75,8 +75,21 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.post('/api/otp/send', async (req, res) => {
     const { mobile } = req.body;
     try {
-        const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user || user.role !== 'USER') {
+        // Try both with and without +91 prefix for legacy support
+        const mobileWithoutPrefix = mobile.startsWith('+91') ? mobile.slice(3) : mobile;
+        const mobileWithPrefix = mobile.startsWith('+91') ? mobile : `+91${mobile}`;
+
+        const user = await prisma.user.findFirst({ 
+            where: { 
+                OR: [
+                    { mobile: mobileWithPrefix },
+                    { mobile: mobileWithoutPrefix }
+                ],
+                role: 'USER' 
+            } 
+        });
+
+        if (!user) {
             return res.status(404).json({ error: 'User not registered' });
         }
 
@@ -108,8 +121,20 @@ app.post('/api/otp/verify', async (req, res) => {
     }
 
     if (success) {
-        const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user || user.role !== 'USER') return res.status(404).json({ error: 'User not found' });
+        const mobileWithoutPrefix = mobile.startsWith('+91') ? mobile.slice(3) : mobile;
+        const mobileWithPrefix = mobile.startsWith('+91') ? mobile : `+91${mobile}`;
+
+        const user = await prisma.user.findFirst({ 
+            where: { 
+                OR: [
+                    { mobile: mobileWithPrefix },
+                    { mobile: mobileWithoutPrefix }
+                ],
+                role: 'USER' 
+            } 
+        });
+        
+        if (!user) return res.status(404).json({ error: 'User not found' });
 
         res.cookie('user_session', user.id, {
             httpOnly: true,
@@ -124,10 +149,13 @@ app.post('/api/otp/verify', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
     try {
-        const { name, mobile, gender, motherTongue, country = 'INDIA' } = req.body;
+        const { name, mobile, gender, motherTongue, country = 'INDIA', countryCode = '+91' } = req.body;
         
+        // Combine country code and mobile if not already prefixed
+        const fullMobile = mobile.startsWith('+') ? mobile : `${countryCode}${mobile}`;
+
         // 1. Check if user already exists
-        const existingUser = await prisma.user.findUnique({ where: { mobile } });
+        const existingUser = await prisma.user.findUnique({ where: { mobile: fullMobile } });
         if (existingUser) {
             return res.status(400).json({ error: 'Mobile number already registered' });
         }
@@ -137,7 +165,7 @@ app.post('/api/register', async (req, res) => {
             return await prisma.user.create({
                 data: {
                     name,
-                    mobile,
+                    mobile: fullMobile,
                     gender,
                     motherTongue,
                     country,
@@ -332,8 +360,20 @@ app.get('/api/matches', async (req, res) => {
                 finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
             }
 
-            // For recommended mode, filter by the current user's religion
-            if (mode === 'recommended' && !religion && (currentUser as any).profile?.religion) {
+            // FILTERING LOGIC FOR DIFFERENT MODES
+            if (mode === 'recommended' && !religion && (currentUser as any).profile) {
+                const userProfile = (currentUser as any).profile;
+                finalCriteria.profile = {
+                    ...finalCriteria.profile,
+                    religion: userProfile.religion,
+                };
+                
+                if (userProfile.religion === 'Hindu' || userProfile.religion === 'No Religion') {
+                    if (userProfile.caste) finalCriteria.profile.caste = userProfile.caste;
+                } else if (userProfile.religion === 'Christian' || userProfile.religion === 'Muslim') {
+                    if (userProfile.denomination) finalCriteria.profile.denomination = userProfile.denomination;
+                }
+            } else if (mode === 'match_religion' && !religion && (currentUser as any).profile?.religion) {
                 finalCriteria.profile = {
                     ...finalCriteria.profile,
                     religion: (currentUser as any).profile.religion,
@@ -342,7 +382,13 @@ app.get('/api/matches', async (req, res) => {
 
             const foundMatches = await prisma.user.findMany({
                 where: finalCriteria,
-                include: { profile: true },
+                include: { 
+                    profile: true,
+                    receivedInterests: {
+                        where: { senderId: userSession },
+                        select: { status: true }
+                    }
+                },
                 skip: Number(skip), take: Number(take),
                 orderBy: { createdAt: 'desc' }
             });

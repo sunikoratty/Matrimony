@@ -15,18 +15,24 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     const [preview, setPreview] = useState(user.profile?.photoUrl || '')
 
     // Controlled States for all fields
-    const religions = ['Hindu', 'Christian', 'Muslim', 'Others']
+    const religions = ['Hindu', 'Christian', 'Muslim', 'No Religion', 'Others']
     const initIsCustomReligion = user.profile?.religion && !religions.includes(user.profile.religion.trim())
     const [religion, setReligion] = useState(initIsCustomReligion ? 'Others' : (user.profile?.religion?.trim() || ''))
     const [customReligion, setCustomReligion] = useState(initIsCustomReligion ? user.profile.religion : '')
 
-    const castes = ['Nair', 'Ezhava', 'Vishwakarma', 'Brahmin', 'Pulaya', 'Vettuva', 'Kaniyan', 'Dheevara', 'Others']
+    const castes = ['No Caste', 'Nair', 'Ezhava', 'Vishwakarma', 'Brahmin', 'Pulaya', 'Vettuva', 'Kaniyan', 'Dheevara', 'Others']
     const initIsCustomCaste = user.profile?.caste && !castes.includes(user.profile.caste.trim())
     const [caste, setCaste] = useState(initIsCustomCaste ? 'Others' : (user.profile?.caste?.trim() || ''))
     const [customCaste, setCustomCaste] = useState(initIsCustomCaste ? user.profile.caste : '')
 
-    const denominations = ['Latin Catholic', 'Roman Catholic', 'Syro Malabar', 'Syrian Catholic', 'Syro Malankara', 'Pentecost', 'Others']
-    const initIsCustomDenom = user.profile?.denomination && !denominations.includes(user.profile.denomination.trim())
+    const christianDenoms = ['Latin Catholic', 'Roman Catholic', 'Syro Malabar', 'Syrian Catholic', 'Syro Malankara', 'Pentecost', 'Others']
+    const muslimDenoms = ['Shia', 'Sunni', 'Intercaste', 'Others']
+    
+    const isMuslim = religion === 'Muslim'
+    const isChristian = religion === 'Christian'
+    const currentDenoms = isMuslim ? muslimDenoms : (isChristian ? christianDenoms : [])
+
+    const initIsCustomDenom = user.profile?.denomination && !currentDenoms.includes(user.profile.denomination.trim())
     const [denomination, setDenomination] = useState(initIsCustomDenom ? 'Others' : (user.profile?.denomination?.trim() || ''))
     const [customDenomination, setCustomDenomination] = useState(initIsCustomDenom ? user.profile.denomination : '')
 
@@ -40,6 +46,13 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     const [dosham, setDosham] = useState(user.profile?.dosham || '')
     const [birthStar, setBirthStar] = useState(user.profile?.birthStar || '')
     const [consent, setConsent] = useState(user.profile?.consent || false)
+
+    // Logic for No Religion -> No Caste
+    useEffect(() => {
+        if (religion === 'No Religion') {
+            setCaste('No Caste')
+        }
+    }, [religion])
 
     // Date Logic
     const defaultDate = user.profile?.dob ? new Date(user.profile.dob) : null
@@ -93,12 +106,14 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     }
 
     return (
-        <form action={async (formData) => {
+        <form onSubmit={async (e) => {
+            e.preventDefault()
             if (!preview) {
                 showToast('Please upload a photo to complete your profile.', 'error')
                 return
             }
             setLoading(true)
+            const formData = new FormData(e.currentTarget)
             const res = await updateProfile(formData)
             setLoading(false)
             if (res?.error) {
@@ -244,14 +259,15 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     <input type="hidden" name="religion" value={religion === 'Others' ? customReligion : religion} />
                 </div>
 
-                {religion === 'Hindu' && (
+                {(religion === 'Hindu' || religion === 'No Religion') && (
                     <>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Caste *</label>
                             <select
                                 value={caste}
+                                disabled={religion === 'No Religion'}
                                 onChange={(e) => setCaste(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900"
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900 disabled:bg-slate-100 disabled:text-slate-500"
                             >
                                 <option value="">Select Caste</option>
                                 {castes.filter(c => c !== 'Others').map(c => (
@@ -259,7 +275,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 ))}
                                 <option value="Others">Others</option>
                             </select>
-                            {caste === 'Others' && (
+                            {caste === 'Others' && religion !== 'No Religion' && (
                                 <input
                                     required
                                     value={customCaste}
@@ -270,39 +286,44 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             )}
                             <input type="hidden" name="caste" value={caste === 'Others' ? customCaste : caste} />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>
-                            <input
-                                name="dosham"
-                                value={dosham}
-                                onChange={(e) => setDosham(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
-                                placeholder="e.g. Chovva Dosham, etc."
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
-                            <input
-                                name="birthStar"
-                                value={birthStar}
-                                onChange={(e) => setBirthStar(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
-                                placeholder="e.g. Rohini"
-                            />
-                        </div>
+                        {religion === 'Hindu' && (
+                            <>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>
+                                    <input
+                                        name="dosham"
+                                        value={dosham}
+                                        onChange={(e) => setDosham(e.target.value)}
+                                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
+                                        placeholder="e.g. Chovva Dosham, etc."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
+                                    <input
+                                        name="birthStar"
+                                        value={birthStar}
+                                        onChange={(e) => setBirthStar(e.target.value)}
+                                        className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
+                                        placeholder="e.g. Rohini"
+                                    />
+                                </div>
+                            </>
+                        )}
                     </>
                 )}
 
-                {religion === 'Christian' && (
+                {(religion === 'Christian' || religion === 'Muslim') && (
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">Denomination *</label>
                         <select
+                            required
                             value={denomination}
                             onChange={(e) => setDenomination(e.target.value)}
                             className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 mb-2 bg-white text-slate-900"
                         >
                             <option value="">Select Denomination</option>
-                            {denominations.filter(d => d !== 'Others').map(d => (
+                            {currentDenoms.filter(d => d !== 'Others').map(d => (
                                 <option key={d} value={d}>{d}</option>
                             ))}
                             <option value="Others">Others</option>
@@ -374,7 +395,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 </div>
             </div>
 
-            <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400 flex items-center justify-center gap-2">
+            <button disabled={loading} className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold transition-colors disabled:bg-slate-400 flex items-center justify-center gap-2 cursor-pointer">
                 {loading && <CircularLoader size="sm" color="white" />}
                 {loading ? 'Saving Profile...' : 'Save Profile'}
             </button>

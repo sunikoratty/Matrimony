@@ -1,0 +1,84 @@
+Vercel Deployment Guide for Matrimony Web App
+===============================================
+
+This guide outlines the exact steps to publish your Matrimony application to Vercel, including handling the Prisma database schema.
+
+---
+STEP 1: PREPARE YOUR DATABASE
+---
+Vercel is a serverless platform, so you must use a remote PostgreSQL database (like Supabase, Neon, or Railway) instead of a local database on your computer.
+1. Create a free PostgreSQL database on a service like Supabase or Neon.
+2. Copy the "Connection String" (URI) they provide.
+
+---
+STEP 2: PUSH CODE TO GITHUB
+---
+Vercel deploys directly from GitHub.
+1. Open your terminal in VS Code.
+2. Run the following commands to save and upload your latest changes:
+   git add .
+   git commit -m "Ready for production deployment"
+   git push origin main
+
+---
+STEP 3: IMPORT PROJECT IN VERCEL
+---
+1. Log in to your Vercel Dashboard (https://vercel.com).
+2. Click "Add New..." -> "Project".
+3. Connect your GitHub account (if you haven't already).
+4. Find your matrimony repository in the list and click "Import".
+
+---
+STEP 4: CONFIGURE VERCEL SETTINGS
+---
+On the "Configure Project" screen, before clicking Deploy, apply these exact settings:
+
+1. Build Command: 
+   Vercel will try to use `npm run build` by default. To ensure your Prisma database is always up to date when you deploy, override the Build Command to:
+   npx prisma generate && npx prisma db push && npm run build
+
+2. Environment Variables:
+   Open the "Environment Variables" section and add all the keys from your local `.env` file. Do NOT use your local database URL!
+   
+   Add the following variables:
+   - Name: DATABASE_URL 
+     Value: [Paste the remote database connection string from Step 1]
+     
+   - Name: JWT_SECRET
+     Value: [Your secure random string]
+     
+   - Name: TWILIO_ACCOUNT_SID
+     Value: [Your Twilio SID]
+     
+   - Name: TWILIO_AUTH_TOKEN
+     Value: [Your Twilio Token]
+     
+   - Name: TWILIO_PHONE_NUMBER
+     Value: [Your Twilio Number]
+     
+   - Name: RAZORPAY_KEY_ID
+     Value: [Your Razorpay ID]
+     
+   - Name: RAZORPAY_KEY_SECRET
+     Value: [Your Razorpay Secret]
+
+---
+STEP 5: DEPLOY
+---
+1. Click the "Deploy" button.
+2. Vercel will install dependencies, generate the Prisma client, push your schema to the remote database, and build the React frontend.
+3. Wait 1-2 minutes for the success screen.
+
+---
+STEP 6: VERIFY PRODUCTION
+---
+1. Click "Visit" to open your live application.
+2. Because this is a fresh remote database, you will need to create a new Admin user manually, or register normally to test the flow.
+3. Test your Registration, OTP, Profile Setup, and Search functions to ensure everything is connected properly.
+
+---
+TROUBLESHOOTING PRISMA ERRORS ON VERCEL
+---
+If the build fails with a Prisma error, it is usually because:
+1. The `DATABASE_URL` is incorrect or missing in Vercel Environment Variables.
+2. Your remote database requires a connection pooler (like PgBouncer). If using Supabase/Neon, ensure you are using the "Transaction" or "Pooled" connection string (usually ending in `?pgbouncer=true` & `&connection_limit=1`).

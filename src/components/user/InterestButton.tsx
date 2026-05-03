@@ -48,7 +48,7 @@ export default function InterestButton({ targetId, initialStatus, isProfileCompl
         return (
             <div className="flex items-center gap-2 justify-center px-6 py-3 bg-rose-100 text-rose-700 rounded-full font-bold cursor-default">
                 <Check size={20} />
-                <span>Request Sent</span>
+                <span>Interest Request Sent</span>
             </div>
         )
     }

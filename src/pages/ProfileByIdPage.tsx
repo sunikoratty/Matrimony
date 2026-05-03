@@ -37,8 +37,8 @@ export default function ProfileByIdPage() {
                 setCurrentUser(cUser)
 
                 if (cUser) {
-                    const status = await getInterestStatus(id)
-                    setInterestStatus(status)
+                    const response = await getInterestStatus(id)
+                    setInterestStatus(response?.status || null)
                     setIsUnlocked(cUser.id === vUser.id || !!cUser) // TEMPORARY: Always unlock for logged-in users
                 }
             } catch (error) {
@@ -226,7 +226,7 @@ export default function ProfileByIdPage() {
                                                 </>
                                             )}
 
-                                            {viewedUser.profile?.religion === 'Christian' && (
+                                            {(viewedUser.profile?.religion === 'Christian' || viewedUser.profile?.religion === 'Muslim') && (
                                                 <div>
                                                     <p className="text-xs text-slate-400">Denomination</p>
                                                     <p className="font-medium text-slate-700">{viewedUser.profile?.denomination || 'Not set'}</p>

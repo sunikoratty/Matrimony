@@ -17,7 +17,7 @@ export default function SearchSection() {
 
     const handleSearch = () => {
         const params = new URLSearchParams()
-        params.set('mode', 'recommended')
+        params.set('mode', 'search')
         if (searchData.gender) params.set('gender', searchData.gender)
         if (searchData.age) params.set('age', searchData.age)
         if (searchData.religion) {
@@ -48,7 +48,7 @@ export default function SearchSection() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end max-w-4xl mx-auto">
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Looking for</label>
                         <select
@@ -88,59 +88,54 @@ export default function SearchSection() {
                             <option value="Hindu">Hindu</option>
                             <option value="Christian">Christian</option>
                             <option value="Muslim">Muslim</option>
+                            <option value="No Religion">No Religion</option>
                             <option value="Others">Others</option>
                         </select>
                     </div>
 
-                    <div>
-                        <button
-                            onClick={handleSearch}
-                            className="w-full h-[54px] bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold shadow-lg shadow-rose-200 transition-all flex items-center justify-center gap-2"
-                        >
-                            <Search size={20} />
-                            Search Now
-                        </button>
-                    </div>
+
                 </div>
 
                 {/* Additional Filters row */}
-                {(searchData.religion === 'Hindu' || searchData.religion === 'Christian' || searchData.religion === 'Others') && (
+                {(searchData.religion === 'Hindu' || searchData.religion === 'Christian' || searchData.religion === 'Muslim' || searchData.religion === 'No Religion' || searchData.religion === 'Others') && (
                     <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-6 pt-6 border-t border-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                        className="mt-6 pt-6 border-t border-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
                     >
-                        {searchData.religion === 'Hindu' && (
-                            <>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Caste</label>
-                                    <select
-                                        value={searchData.caste}
-                                        onChange={(e) => setSearchData({ ...searchData, caste: e.target.value })}
-                                        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
-                                    >
-                                        <option value="">Select Caste</option>
-                                        <option value="Nair">Nair</option>
-                                        <option value="Ezhava">Ezhava</option>
-                                        <option value="Brahmin">Brahmin</option>
-                                        <option value="Others">Others</option>
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Dosham</label>
-                                    <select
-                                        value={searchData.dosham}
-                                        onChange={(e) => setSearchData({ ...searchData, dosham: e.target.value })}
-                                        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
-                                    >
-                                        <option value="">Any</option>
-                                        <option value="No">No Dosham</option>
-                                        <option value="Yes">Has Dosham</option>
-                                    </select>
-                                </div>
-                            </>
+                        {(searchData.religion === 'Hindu' || searchData.religion === 'No Religion') && (
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Caste</label>
+                                <select
+                                    value={searchData.caste}
+                                    disabled={searchData.religion === 'No Religion'}
+                                    onChange={(e) => setSearchData({ ...searchData, caste: e.target.value })}
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all disabled:opacity-50"
+                                >
+                                    <option value="">Select Caste</option>
+                                    <option value="No Caste">No Caste</option>
+                                    <option value="Nair">Nair</option>
+                                    <option value="Ezhava">Ezhava</option>
+                                    <option value="Brahmin">Brahmin</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </div>
                         )}
-                        {searchData.religion === 'Christian' && (
+                        {searchData.religion === 'Hindu' && (
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Dosham</label>
+                                <select
+                                    value={searchData.dosham}
+                                    onChange={(e) => setSearchData({ ...searchData, dosham: e.target.value })}
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
+                                >
+                                    <option value="">Any</option>
+                                    <option value="No">No Dosham</option>
+                                    <option value="Yes">Has Dosham</option>
+                                </select>
+                            </div>
+                        )}
+                        {(searchData.religion === 'Christian' || searchData.religion === 'Muslim') && (
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Denomination</label>
                                 <select
@@ -149,9 +144,19 @@ export default function SearchSection() {
                                     className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
                                 >
                                     <option value="">Select Denomination</option>
-                                    <option value="Latin Catholic">Latin Catholic</option>
-                                    <option value="Roman Catholic">Roman Catholic</option>
-                                    <option value="Syro Malabar">Syro Malabar</option>
+                                    {searchData.religion === 'Christian' ? (
+                                        <>
+                                            <option value="Latin Catholic">Latin Catholic</option>
+                                            <option value="Roman Catholic">Roman Catholic</option>
+                                            <option value="Syro Malabar">Syro Malabar</option>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <option value="Shia">Shia</option>
+                                            <option value="Sunni">Sunni</option>
+                                            <option value="Intercaste">Intercaste</option>
+                                        </>
+                                    )}
                                     <option value="Others">Others</option>
                                 </select>
                             </div>
@@ -170,6 +175,15 @@ export default function SearchSection() {
                         )}
                     </motion.div>
                 )}
+                <div className="flex justify-center mt-8 pt-6 border-t border-slate-50">
+                    <button 
+                        onClick={handleSearch}
+                        className="px-16 py-4 bg-rose-600 text-white rounded-2xl font-bold text-lg hover:bg-rose-700 transition-all shadow-xl shadow-rose-200 flex items-center gap-3 cursor-pointer"
+                    >
+                        <Search size={24} />
+                        Search Now
+                    </button>
+                </div>
             </motion.div>
         </section>
     )

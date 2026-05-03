@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import CircularLoader from '@/components/ui/CircularLoader'
 import Header from '@/components/landing/Header'
 import MatchesList from '@/components/user/MatchesList'
+import SearchFilters from '@/components/user/SearchFilters'
 
 export default function ProfileViewPage() {
     const navigate = useNavigate();
@@ -77,6 +78,7 @@ export default function ProfileViewPage() {
             <Header user={user} />
             <div className="pt-24 pb-12 px-4">
                 <div className="max-w-6xl mx-auto">
+                    <SearchFilters currentUser={user} />
                     <div className="mt-4">
                         <MatchesList
                             matches={matches}

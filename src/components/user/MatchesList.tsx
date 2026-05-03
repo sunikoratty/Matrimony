@@ -58,6 +58,14 @@ export default function MatchesList({
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const currentMode = searchParams.get('mode') || 'recommended'
+    
+    // Check if any actual search filters are applied
+    const hasSearchFilters = searchParams.has('age') || 
+                             searchParams.has('religion') || 
+                             searchParams.has('caste') || 
+                             searchParams.has('dosham') || 
+                             searchParams.has('denomination') ||
+                             currentMode === 'search';
 
     // Sync state when props change (parent re-fetched matches)
     useEffect(() => {
@@ -123,11 +131,14 @@ export default function MatchesList({
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900">
-                            {currentMode === 'matching' ? 'Your Matching Profiles' :
-                                currentMode === 'recommended' ? 'Recommended Matches' : 'All Profiles'}
+                            {currentMode === 'match_religion' ? 'Matching Your Religion' :
+                                currentMode === 'recommended' ? 'Recommended Matches' : 
+                                currentMode === 'search' ? 'Your Search Result' : 'All Profiles'}
                         </h1>
                         <p className="text-slate-500 mt-1">
-                            {currentMode === 'recommended' ? 'Strict matches based on your profile' : 'Exploring all eligible members'}
+                            {currentMode === 'recommended' ? 'Strict matches based on your profile' : 
+                             currentMode === 'match_religion' ? 'Profiles from your religion' : 
+                             currentMode === 'search' ? 'Profiles matching your custom filters' : 'Exploring all eligible members'}
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -142,6 +153,16 @@ export default function MatchesList({
                         </button>
 
                         <button
+                            onClick={() => setMode('match_religion')}
+                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'match_religion'
+                                ? 'bg-rose-600 text-white shadow-lg'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
+                                }`}
+                        >
+                            Match Religion
+                        </button>
+
+                        <button
                             onClick={() => setMode('broad')}
                             className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'broad'
                                 ? 'bg-rose-600 text-white shadow-lg'
@@ -150,6 +171,18 @@ export default function MatchesList({
                         >
                             Browse All
                         </button>
+
+                        {hasSearchFilters && (
+                            <button
+                                onClick={() => setMode('search')}
+                                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentMode === 'search'
+                                    ? 'bg-rose-600 text-white shadow-lg'
+                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-rose-300'
+                                    }`}
+                            >
+                                Your Search Result
+                            </button>
+                        )}
                     </div>
                 </div>
             )}

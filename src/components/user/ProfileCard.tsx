@@ -13,6 +13,7 @@ type Profile = {
         bio?: string | null
         religion?: string | null
         caste?: string | null
+        denomination?: string | null
         currentResidence?: string | null
         dob?: Date | null
         occupation?: string | null
@@ -21,6 +22,7 @@ type Profile = {
     }
     mobile: string
     email: string | null
+    receivedInterests?: { status: string }[]
 }
 
 export default function ProfileCard({
@@ -37,6 +39,8 @@ export default function ProfileCard({
     const locationText = profile.country === 'INDIA'
         ? (profile.profile.location || 'Location N/A')
         : (profile.country === 'CANADA' ? 'Canada' : profile.country)
+
+    const hasSentInterest = profile.receivedInterests && profile.receivedInterests.some(i => i.status === 'PENDING');
 
     return (
         <div
@@ -80,12 +84,14 @@ export default function ProfileCard({
                                 {profile.profile.occupation ? ` • ${profile.profile.occupation}` : ''}
                             </p>
                         </div>
-                        <Heart size={18} className="text-slate-300 group-hover:text-rose-400 transition-colors flex-shrink-0 ml-2" />
+                        <Heart size={18} className={`${hasSentInterest ? 'fill-rose-500 text-rose-500' : 'text-slate-300 group-hover:text-rose-400'} transition-colors flex-shrink-0 ml-2`} />
                     </div>
 
                     <div className="space-y-1">
                         <p className="text-sm text-slate-600 font-medium">
-                            {profile.profile.religion || 'Religion N/A'} • {profile.profile.caste || 'Caste N/A'}
+                            {profile.profile.religion || 'Religion N/A'} • {(profile.profile.religion === 'Muslim' || profile.profile.religion === 'Christian') 
+                                ? (profile.profile.denomination || 'Denomination N/A') 
+                                : (profile.profile.caste || 'Caste N/A')}
                         </p>
                         <p className="text-sm text-slate-500 flex items-center gap-1">
                             <MapPin size={14} />
