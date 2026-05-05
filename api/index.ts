@@ -380,29 +380,19 @@ app.get('/api/matches', async (req, res) => {
                 finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
             }
 
-            // Broaden Recommended: Show same religion OR profiles who sent interest
+            // Recommended: Show only same religion and caste/denomination match
             if (mode === 'recommended' && !religion && currentUser.profile) {
                 const userProfile = currentUser.profile;
-                finalCriteria.OR = [
-                    {
-                        profile: {
-                            ...finalCriteria.profile,
-                            religion: userProfile.religion,
-                        }
-                    },
-                    {
-                        receivedInterests: {
-                            some: { senderId: userSession }
-                        }
-                    },
-                    {
-                        sentInterests: {
-                            some: { targetId: userSession }
-                        }
-                    }
-                ];
-                // Remove the strict profile filter if using OR
-                delete finalCriteria.profile;
+                finalCriteria.profile = {
+                    ...finalCriteria.profile,
+                    religion: userProfile.religion,
+                };
+                
+                if (userProfile.religion === 'Hindu' || userProfile.religion === 'No Religion') {
+                    if (userProfile.caste) finalCriteria.profile.caste = userProfile.caste;
+                } else if (userProfile.religion === 'Christian' || userProfile.religion === 'Muslim') {
+                    if (userProfile.denomination) finalCriteria.profile.denomination = userProfile.denomination;
+                }
             } else if (mode === 'match_religion' && !religion && currentUser.profile?.religion) {
                 finalCriteria.profile = {
                     ...finalCriteria.profile,
