@@ -93,6 +93,13 @@ export default function ProfileCard({
                                 ? (profile.profile.denomination || 'Denomination N/A') 
                                 : (profile.profile.caste || 'Caste N/A')}
                         </p>
+                        {profile.profile.religion === 'Hindu' && (profile.profile.dosham || profile.profile.birthStar) && (
+                            <p className="text-[11px] text-slate-400 font-medium italic">
+                                {profile.profile.dosham ? `Dosham: ${profile.profile.dosham}` : ''}
+                                {profile.profile.dosham && profile.profile.birthStar ? ' • ' : ''}
+                                {profile.profile.birthStar ? `Star: ${profile.profile.birthStar}` : ''}
+                            </p>
+                        )}
                         <p className="text-sm text-slate-500 flex items-center gap-1">
                             <MapPin size={14} />
                             {locationText}

@@ -66,7 +66,7 @@ const client = (accountSid && authToken) ? twilio(accountSid, authToken) : null;
 const FORCE_MOCK = true;
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://matrimony-web-app.vercel.app'],
+    origin: true,
     credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -380,23 +380,33 @@ app.get('/api/matches', async (req, res) => {
                 finalCriteria.gender = currentUser.gender === 'MALE' ? 'FEMALE' : 'MALE';
             }
 
-            // FILTERING LOGIC FOR DIFFERENT MODES
-            if (mode === 'recommended' && !religion && (currentUser as any).profile) {
-                const userProfile = (currentUser as any).profile;
+            // Broaden Recommended: Show same religion OR profiles who sent interest
+            if (mode === 'recommended' && !religion && currentUser.profile) {
+                const userProfile = currentUser.profile;
+                finalCriteria.OR = [
+                    {
+                        profile: {
+                            ...finalCriteria.profile,
+                            religion: userProfile.religion,
+                        }
+                    },
+                    {
+                        receivedInterests: {
+                            some: { senderId: userSession }
+                        }
+                    },
+                    {
+                        sentInterests: {
+                            some: { targetId: userSession }
+                        }
+                    }
+                ];
+                // Remove the strict profile filter if using OR
+                delete finalCriteria.profile;
+            } else if (mode === 'match_religion' && !religion && currentUser.profile?.religion) {
                 finalCriteria.profile = {
                     ...finalCriteria.profile,
-                    religion: userProfile.religion,
-                };
-                
-                if (userProfile.religion === 'Hindu' || userProfile.religion === 'No Religion') {
-                    if (userProfile.caste) finalCriteria.profile.caste = userProfile.caste;
-                } else if (userProfile.religion === 'Christian' || userProfile.religion === 'Muslim') {
-                    if (userProfile.denomination) finalCriteria.profile.denomination = userProfile.denomination;
-                }
-            } else if (mode === 'match_religion' && !religion && (currentUser as any).profile?.religion) {
-                finalCriteria.profile = {
-                    ...finalCriteria.profile,
-                    religion: (currentUser as any).profile.religion,
+                    religion: currentUser.profile.religion,
                 };
             }
 

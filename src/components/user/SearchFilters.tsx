@@ -14,6 +14,7 @@ export default function SearchFilters({ currentUser }: { currentUser: any }) {
         religion: searchParams.get('religion') || '',
         caste: searchParams.get('caste') || '',
         dosham: searchParams.get('dosham') || '',
+        birthStar: searchParams.get('birthStar') || '',
         denomination: searchParams.get('denomination') || ''
     })
 
@@ -38,6 +39,9 @@ export default function SearchFilters({ currentUser }: { currentUser: any }) {
         if (searchData.dosham) params.set('dosham', searchData.dosham)
         else params.delete('dosham')
 
+        if (searchData.birthStar) params.set('birthStar', searchData.birthStar)
+        else params.delete('birthStar')
+
         if (searchData.denomination) params.set('denomination', searchData.denomination)
         else params.delete('denomination')
 
@@ -52,6 +56,7 @@ export default function SearchFilters({ currentUser }: { currentUser: any }) {
             religion: '',
             caste: '',
             dosham: '',
+            birthStar: '',
             denomination: ''
         })
         navigate('?')
@@ -175,18 +180,29 @@ export default function SearchFilters({ currentUser }: { currentUser: any }) {
                                     )}
 
                                     {searchData.religion === 'Hindu' && (
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Dosham</label>
-                                            <select
-                                                value={searchData.dosham}
-                                                onChange={(e) => setSearchData({ ...searchData, dosham: e.target.value })}
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
-                                            >
-                                                <option value="">Any</option>
-                                                <option value="No">No Dosham</option>
-                                                <option value="Yes">Has Dosham</option>
-                                            </select>
-                                        </div>
+                                        <>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Dosham</label>
+                                                <select
+                                                    value={searchData.dosham}
+                                                    onChange={(e) => setSearchData({ ...searchData, dosham: e.target.value })}
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
+                                                >
+                                                    <option value="">Any</option>
+                                                    <option value="No">No Dosham</option>
+                                                    <option value="Yes">Has Dosham</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Birth Star</label>
+                                                <input
+                                                    value={searchData.birthStar || ''}
+                                                    onChange={(e) => setSearchData({ ...searchData, birthStar: e.target.value })}
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
+                                                    placeholder="e.g. Rohini"
+                                                />
+                                            </div>
+                                        </>
                                     )}
 
                                     {(searchData.religion === 'Christian' || searchData.religion === 'Muslim') && (

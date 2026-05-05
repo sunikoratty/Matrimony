@@ -34,7 +34,7 @@ const FORCE_MOCK = true;
 const BYPASS_NUMBERS = ['+15199036561'];
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: true,
     credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
