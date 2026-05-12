@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText, Maximize2 } from 'lucide-react'
 import Header from '@/components/landing/Header'
 import InterestButton from '@/components/user/InterestButton'
 import MembershipSection from '@/components/user/MembershipSection'
@@ -224,16 +224,29 @@ export default function ProfileByIdPage() {
                                                         </div>
                                                     )}
                                                     {viewedUser.profile?.thalakkuriUrl && (
-                                                        <div>
-                                                            <p className="text-xs text-slate-400">Thalakkuri</p>
-                                                            <a 
-                                                                href={viewedUser.profile.thalakkuriUrl} 
-                                                                target="_blank" 
-                                                                rel="noopener noreferrer"
-                                                                className="font-bold text-rose-600 hover:underline"
+                                                        <div className="md:col-span-2 mt-4 pt-4 border-t border-slate-100">
+                                                            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Thalakkuri / Horoscope</p>
+                                                            <div 
+                                                                className="relative w-32 h-40 bg-slate-100 rounded-xl border-2 border-slate-200 overflow-hidden cursor-pointer group"
+                                                                onClick={() => window.open(viewedUser.profile.thalakkuriUrl, '_blank')}
                                                             >
-                                                                View Document
-                                                            </a>
+                                                                {viewedUser.profile.thalakkuriUrl.includes('application/pdf') || viewedUser.profile.thalakkuriUrl.endsWith('.pdf') ? (
+                                                                    <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                                                                        <FileText size={32} className="text-rose-500 mb-2" />
+                                                                        <span className="text-[10px] font-bold text-slate-500 uppercase">PDF Document</span>
+                                                                    </div>
+                                                                ) : (
+                                                                    <img 
+                                                                        src={viewedUser.profile.thalakkuriUrl} 
+                                                                        className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                                                                        alt="Thalakkuri" 
+                                                                    />
+                                                                )}
+                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                                    <Maximize2 size={24} className="text-white" />
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-[10px] text-slate-400 mt-2 italic font-medium">Click to view full document</p>
                                                         </div>
                                                     )}
                                                 </>

@@ -249,7 +249,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         <option value="NEVER_MARRIED">Never Married</option>
                         <option value="DIVORCED">Divorced</option>
                         <option value="WIDOWED">Widowed</option>
-                        <option value="MARRIED">Married (Admin only)</option>
+                        <option value="MARRIED">Married</option>
                     </select>
                 </div>
                 <div>
