@@ -129,14 +129,50 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 return
             }
             setLoading(true)
-            const formData = new FormData(e.currentTarget)
-            const res = await updateProfile(formData)
-            setLoading(false)
-            if (res?.error) {
-                showToast(res.error, 'error')
-            } else if (res?.success) {
-                showToast('Profile updated successfully!', 'success')
-                navigate('/profile/view')
+            
+            // Construct the update object directly from state for reliability
+            const updateData = {
+                bio,
+                dob: `${year}-${month}-${day}`,
+                religion,
+                caste: caste === 'Others' ? customCaste : caste,
+                denomination,
+                dosham,
+                currentResidence,
+                location,
+                occupation,
+                birthStar,
+                qualification,
+                photoUrl: preview,
+                thalakkuriUrl,
+                maritalStatus,
+                consent: !!consent
+            }
+
+            try {
+                const res = await fetch('/api/profile/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                }).then(r => r.json());
+
+                setLoading(false)
+                if (res?.error) {
+                    showToast(res.error, 'error')
+                } else if (res?.success) {
+                    showToast('Profile updated successfully!', 'success')
+                    navigate('/profile/view')
+                }
+            } catch (err: any) {
+                setLoading(false)
+                logError('Profile Update', err);
+                if (err.code === 'P2002') {
+                    showToast('Data conflict error.', 'error');
+                } else if (err.message?.includes('payload too large')) {
+                    showToast('File size too large for server.', 'error');
+                } else {
+                    showToast('Update failed. Try a smaller file.', 'error');
+                }
             }
         }} className="space-y-6">
             {/* Photo Upload */}

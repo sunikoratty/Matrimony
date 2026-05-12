@@ -271,9 +271,12 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
         });
 
         res.json({ success: true });
-    } catch (e) {
+    } catch (e: any) {
         logError('Profile Update', e);
-        res.status(500).json({ error: 'Update failed. Check server logs for details.' });
+        if (e.message?.includes('too large') || e.code === 'PAYLOAD_TOO_LARGE') {
+            return res.status(413).json({ error: 'File size too large. Please use a smaller image or PDF.' });
+        }
+        res.status(500).json({ error: 'Update failed. Please try again with a smaller file.' });
     }
 });
 
