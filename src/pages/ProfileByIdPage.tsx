@@ -311,68 +311,8 @@ export default function ProfileByIdPage() {
                                         <X size={20} className="text-slate-600" />
                                     </button>
                                 </div>
-                                <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200 text-slate-400">
-                                    {(() => {
-                                        const url = viewedUser.profile.thalakkuriUrl;
-                                        const isPdf = url?.includes('pdf') || url?.includes('octet-stream') && url?.includes('JVBERi');
-                                        
-                                        if (isPdf) {
-                                            return (
-                                                <div className="w-full h-full flex flex-col gap-4">
-                                                    <div className="flex-1 bg-white rounded-lg shadow-inner relative min-h-[60vh]">
-                                                        <object
-                                                            data={url}
-                                                            type="application/pdf"
-                                                            className="w-full h-full rounded-lg"
-                                                        >
-                                                            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-slate-50">
-                                                                <FileText size={48} className="text-slate-300 mb-4" />
-                                                                <p className="text-slate-600 font-medium mb-4">Unable to display PDF directly in your browser.</p>
-                                                                <button 
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        const win = window.open();
-                                                                        win?.document.write(`
-                                                                            <html>
-                                                                                <head><title>Thalakkuri Preview</title></head>
-                                                                                <body style="margin:0; background: #525659;">
-                                                                                    <embed src="${url}" type="application/pdf" width="100%" height="100%">
-                                                                                </body>
-                                                                            </html>
-                                                                        `);
-                                                                    }}
-                                                                    className="px-6 py-2 bg-rose-600 text-white rounded-xl font-bold shadow-lg hover:bg-rose-700 transition-all"
-                                                                >
-                                                                    Open PDF in Full Screen
-                                                                </button>
-                                                            </div>
-                                                        </object>
-                                                    </div>
-                                                    <div className="flex justify-center pb-2">
-                                                        <button 
-                                                            type="button"
-                                                            onClick={() => {
-                                                                const win = window.open();
-                                                                win?.document.write(`<html><body style="margin:0;"><embed src="${url}" type="application/pdf" width="100%" height="100%"></body></html>`);
-                                                            }}
-                                                            className="text-rose-600 text-sm font-bold hover:underline flex items-center gap-2"
-                                                        >
-                                                            <Maximize2 size={16} />
-                                                            Click here if document is not visible
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            );
-                                        }
-
-                                        return (
-                                            <img 
-                                                src={url} 
-                                                className="max-w-full max-h-full object-contain shadow-xl rounded-lg" 
-                                                alt="Full Preview" 
-                                            />
-                                        );
-                                    })()}
+                                <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200">
+                                    <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
                                 </div>
                                 <div className="p-4 bg-white border-t border-slate-100 text-center">
                                     <button 
@@ -389,4 +329,73 @@ export default function ProfileByIdPage() {
             </div>
         </div>
     )
+}
+
+function PdfPreviewer({ url }: { url: string }) {
+    const [blobUrl, setBlobUrl] = useState<string | null>(null);
+    const isPdf = url?.includes('pdf') || (url?.includes('octet-stream') && url?.includes('JVBERi'));
+
+    useEffect(() => {
+        if (!isPdf) return;
+        
+        try {
+            const parts = url.split(',');
+            if (parts.length < 2) return;
+            const byteString = atob(parts[1]);
+            const mimeString = parts[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            const bUrl = URL.createObjectURL(blob);
+            setBlobUrl(bUrl);
+
+            return () => {
+                URL.revokeObjectURL(bUrl);
+            };
+        } catch (e) {
+            console.error("Blob conversion failed", e);
+        }
+    }, [url, isPdf]);
+
+    if (!isPdf) {
+        return <img src={url} className="max-w-full max-h-full object-contain shadow-xl rounded-lg" alt="Full Preview" />;
+    }
+
+    return (
+        <div className="w-full h-full flex flex-col gap-4">
+            <div className="flex-1 bg-white rounded-lg shadow-inner relative min-h-[60vh] w-full">
+                {blobUrl ? (
+                    <iframe
+                        src={blobUrl}
+                        className="w-full h-full rounded-lg border-0"
+                        title="PDF Viewer"
+                    />
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-full p-8 text-slate-400">
+                        <CircularLoader size="md" />
+                        <p className="mt-4 text-sm font-medium">Preparing document...</p>
+                    </div>
+                )}
+            </div>
+            <div className="flex justify-center pb-2">
+                <button 
+                    type="button"
+                    onClick={() => {
+                        if (blobUrl) window.open(blobUrl);
+                        else {
+                            const win = window.open();
+                            win?.document.write(`<html><body style="margin:0;"><embed src="${url}" type="application/pdf" width="100%" height="100%"></body></html>`);
+                        }
+                    }}
+                    className="text-rose-600 text-sm font-bold hover:underline flex items-center gap-2"
+                >
+                    <Maximize2 size={16} />
+                    View Full Document
+                </button>
+            </div>
+        </div>
+    );
 }
