@@ -26,7 +26,7 @@ export default function EditUserModal({ user, onClose, onRefresh }: { user: any,
             denomination: user.profile?.denomination || '',
             dosham: user.profile?.dosham || '',
             birthStar: user.profile?.birthStar || '',
-            maritalStatus: user.profile?.maritalStatus || 'UNMARRIED',
+            maritalStatus: user.profile?.maritalStatus || 'NEVER_MARRIED',
             currentResidence: user.profile?.currentResidence || '',
             location: user.profile?.location || '',
             occupation: user.profile?.occupation || '',
@@ -142,7 +142,7 @@ export default function EditUserModal({ user, onClose, onRefresh }: { user: any,
                                 <div className="space-y-1">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Marital Status</label>
                                     <select name="profile.maritalStatus" value={formData.profile.maritalStatus} onChange={handleChange} className="w-full px-3 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500">
-                                        <option value="UNMARRIED">Unmarried</option>
+                                        <option value="NEVER_MARRIED">Never Married</option>
                                         <option value="MARRIED">Married</option>
                                         <option value="DIVORCED">Divorced</option>
                                         <option value="WIDOWED">Widowed</option>

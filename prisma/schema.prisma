@@ -64,7 +64,7 @@ model Profile {
   religion         String?
   caste            String?
   birthStar        String?
-  maritalStatus    String    @default("UNMARRIED")
+  maritalStatus    String    @default("NEVER_MARRIED")
   currentResidence String?
   location         String?
   occupation       String?
@@ -74,5 +74,6 @@ model Profile {
   qualification    String?
   denomination     String?
   dosham           String?
+  thalakkuriUrl    String?
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

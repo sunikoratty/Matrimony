@@ -19,6 +19,7 @@ type Profile = {
         occupation?: string | null
         qualification?: string | null
         location?: string | null
+        thalakkuriUrl?: string | null
     }
     mobile: string
     email: string | null
@@ -99,6 +100,17 @@ export default function ProfileCard({
                                 {profile.profile.dosham && profile.profile.birthStar ? ' • ' : ''}
                                 {profile.profile.birthStar ? `Star: ${profile.profile.birthStar}` : ''}
                             </p>
+                        )}
+                        {profile.profile.religion === 'Hindu' && profile.profile.thalakkuriUrl && (
+                            <a 
+                                href={profile.profile.thalakkuriUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-[11px] text-rose-600 hover:underline font-bold flex items-center gap-1 mt-1"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                View Thalakkuri / Horoscope
+                            </a>
                         )}
                         <p className="text-sm text-slate-500 flex items-center gap-1">
                             <MapPin size={14} />

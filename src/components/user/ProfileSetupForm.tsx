@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
-import { Camera } from 'lucide-react'
+import { Camera, CheckCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
@@ -38,13 +38,14 @@ export default function ProfileSetupForm({ user }: { user: any }) {
 
     const [location, setLocation] = useState(user.profile?.location || '')
     const [email, setEmail] = useState(user.email || '')
-    const [maritalStatus, setMaritalStatus] = useState(user.profile?.maritalStatus || 'UNMARRIED')
+    const [maritalStatus, setMaritalStatus] = useState(user.profile?.maritalStatus || 'NEVER_MARRIED')
     const [currentResidence, setCurrentResidence] = useState(user.profile?.currentResidence || user.country || 'INDIA')
     const [bio, setBio] = useState(user.profile?.bio || '')
     const [qualification, setQualification] = useState(user.profile?.qualification || '')
     const [occupation, setOccupation] = useState(user.profile?.occupation || '')
     const [dosham, setDosham] = useState(user.profile?.dosham || '')
     const [birthStar, setBirthStar] = useState(user.profile?.birthStar || '')
+    const [thalakkuriUrl, setThalakkuriUrl] = useState(user.profile?.thalakkuriUrl || '')
     const [consent, setConsent] = useState(user.profile?.consent || false)
 
     // Logic for No Religion -> No Caste
@@ -100,6 +101,21 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                     setPreview(compressedBase64)
                 }
                 img.src = event.target?.result as string
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+    
+    async function handleThalakkuri(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0]
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('File size should be less than 2MB', 'error')
+                return
+            }
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setThalakkuriUrl(reader.result as string)
             }
             reader.readAsDataURL(file)
         }
@@ -230,8 +246,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         onChange={(e) => setMaritalStatus(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                     >
-                        <option value="UNMARRIED">Unmarried</option>
-                        <option value="MARRIED">Married</option>
+                        <option value="NEVER_MARRIED">Never Married</option>
+                        <option value="DIVORCED">Divorced</option>
+                        <option value="WIDOWED">Widowed</option>
+                        <option value="MARRIED">Married (Admin only)</option>
                     </select>
                 </div>
                 <div>
@@ -307,6 +325,23 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                         className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
                                         placeholder="e.g. Rohini"
                                     />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Upload Thalakkuri / Horoscope (Optional - Image or PDF)</label>
+                                    <div className="flex items-center gap-4">
+                                        <label className="cursor-pointer px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">
+                                            {thalakkuriUrl ? 'Change File' : 'Choose File'}
+                                            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleThalakkuri} />
+                                        </label>
+                                        {thalakkuriUrl && (
+                                            <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+                                                <CheckCircle size={16} />
+                                                <span>File Uploaded</span>
+                                                <button type="button" onClick={() => setThalakkuriUrl('')} className="text-rose-600 hover:text-rose-700 ml-2">Remove</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <input type="hidden" name="thalakkuriUrl" value={thalakkuriUrl} />
                                 </div>
                             </>
                         )}

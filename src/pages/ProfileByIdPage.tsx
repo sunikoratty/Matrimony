@@ -223,6 +223,19 @@ export default function ProfileByIdPage() {
                                                             <p className="font-medium text-slate-700">{viewedUser.profile.birthStar}</p>
                                                         </div>
                                                     )}
+                                                    {viewedUser.profile?.thalakkuriUrl && (
+                                                        <div>
+                                                            <p className="text-xs text-slate-400">Thalakkuri</p>
+                                                            <a 
+                                                                href={viewedUser.profile.thalakkuriUrl} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="font-bold text-rose-600 hover:underline"
+                                                            >
+                                                                View Document
+                                                            </a>
+                                                        </div>
+                                                    )}
                                                 </>
                                             )}
 
