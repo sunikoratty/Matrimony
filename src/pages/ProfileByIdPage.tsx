@@ -311,8 +311,10 @@ export default function ProfileByIdPage() {
                                         <X size={20} className="text-slate-600" />
                                     </button>
                                 </div>
-                                <div className="p-4 sm:p-6 bg-slate-200/50 min-h-[70vh] flex flex-col items-center justify-center relative">
-                                    <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
+                                <div className="flex-1 overflow-auto bg-slate-200/50 p-4 sm:p-8 flex flex-col items-center">
+                                    <div className="m-auto w-full max-w-full">
+                                        <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
+                                    </div>
                                 </div>
                                 <div className="p-4 bg-white border-t border-slate-100 flex justify-center">
                                     <button 
@@ -354,14 +356,12 @@ function PdfPreviewer({ url }: { url: string }) {
 
     if (!isPdf) {
         return (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                <div className="flex-1 w-full h-[65vh] flex items-center justify-center p-2">
-                    <img 
-                        src={url} 
-                        className="max-w-full max-h-full object-contain rounded-lg shadow-xl bg-white" 
-                        alt="Full Preview" 
-                    />
-                </div>
+            <div className="flex flex-col items-center gap-4">
+                <img 
+                    src={url} 
+                    className="max-w-full h-auto object-contain rounded-lg shadow-xl bg-white" 
+                    alt="Full Preview" 
+                />
                 <a 
                     href={url} 
                     download="Document.jpg"
@@ -374,8 +374,8 @@ function PdfPreviewer({ url }: { url: string }) {
     }
 
     return (
-        <div className="w-full h-full flex flex-col gap-4">
-            <div className="flex-1 bg-white rounded-lg shadow-inner relative min-h-[60vh] w-full">
+        <div className="w-full flex flex-col gap-4">
+            <div className="bg-white rounded-lg shadow-inner relative w-full h-[70vh]">
                 {blobUrl ? (
                     <iframe
                         src={blobUrl}
@@ -389,7 +389,7 @@ function PdfPreviewer({ url }: { url: string }) {
                     </div>
                 )}
             </div>
-            <div className="flex flex-wrap justify-center gap-4 pb-2">
+            <div className="flex flex-wrap justify-center gap-4">
                 {blobUrl && (
                     <a 
                         href={blobUrl} 
