@@ -304,7 +304,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             )}
                             <input type="hidden" name="caste" value={caste === 'Others' ? customCaste : caste} />
                         </div>
-                        {religion === 'Hindu' && (
+                        {religion?.toLowerCase() === 'hindu' && (
                             <>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>

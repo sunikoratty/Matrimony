@@ -101,7 +101,7 @@ export default function ProfileCard({
                                 {profile.profile.birthStar ? `Star: ${profile.profile.birthStar}` : ''}
                             </p>
                         )}
-                        {profile.profile.religion === 'Hindu' && profile.profile.thalakkuriUrl && (
+                        {profile.profile.religion?.toLowerCase() === 'hindu' && profile.profile.thalakkuriUrl && (
                             <div 
                                 className="relative w-16 h-20 mt-2 bg-slate-50 rounded-lg border border-slate-200 overflow-hidden cursor-pointer group"
                                 onClick={(e) => {

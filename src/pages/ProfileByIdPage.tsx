@@ -205,7 +205,7 @@ export default function ProfileByIdPage() {
                                                 <p className="font-medium text-slate-700">{viewedUser.profile?.occupation || 'Not set'}</p>
                                             </div>
 
-                                            {viewedUser.profile?.religion === 'Hindu' && (
+                                            {viewedUser.profile?.religion?.toLowerCase() === 'hindu' && (
                                                 <>
                                                     <div>
                                                         <p className="text-xs text-slate-400">Caste</p>
