@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
-import { Camera, CheckCircle } from 'lucide-react'
+import { Camera, CheckCircle, FileText, Maximize2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
@@ -328,16 +328,37 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Upload Thalakkuri / Horoscope (Optional - Image or PDF)</label>
-                                    <div className="flex items-center gap-4">
-                                        <label className="cursor-pointer px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">
-                                            {thalakkuriUrl ? 'Change File' : 'Choose File'}
-                                            <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleThalakkuri} />
-                                        </label>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <label className="cursor-pointer px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors border border-slate-300">
+                                                {thalakkuriUrl ? 'Change File' : 'Choose File'}
+                                                <input type="file" accept="image/*,application/pdf" className="hidden" onChange={handleThalakkuri} />
+                                            </label>
+                                            {thalakkuriUrl && (
+                                                <button type="button" onClick={() => setThalakkuriUrl('')} className="text-rose-600 hover:text-rose-700 text-sm font-bold">Remove File</button>
+                                            )}
+                                        </div>
+                                        
                                         {thalakkuriUrl && (
-                                            <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
-                                                <CheckCircle size={16} />
-                                                <span>File Uploaded</span>
-                                                <button type="button" onClick={() => setThalakkuriUrl('')} className="text-rose-600 hover:text-rose-700 ml-2">Remove</button>
+                                            <div 
+                                                className="relative w-24 h-32 bg-slate-50 rounded-xl border-2 border-slate-200 overflow-hidden cursor-pointer group shadow-sm"
+                                                onClick={() => window.open(thalakkuriUrl, '_blank')}
+                                            >
+                                                {thalakkuriUrl.includes('application/pdf') || thalakkuriUrl.includes('data:application/pdf') ? (
+                                                    <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                                                        <FileText size={24} className="text-rose-500 mb-1" />
+                                                        <span className="text-[8px] font-bold text-slate-500 uppercase text-center">PDF Document</span>
+                                                    </div>
+                                                ) : (
+                                                    <img 
+                                                        src={thalakkuriUrl} 
+                                                        className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                                                        alt="Thalakkuri Preview" 
+                                                    />
+                                                )}
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <Maximize2 size={18} className="text-white" />
+                                                </div>
                                             </div>
                                         )}
                                     </div>

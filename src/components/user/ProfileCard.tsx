@@ -1,6 +1,6 @@
 
 
-import { Lock, Smartphone, Mail, MapPin, Heart } from 'lucide-react'
+import { Lock, Smartphone, Mail, MapPin, Heart, FileText, Maximize2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import AgeDisplay from '../ui/AgeDisplay'
 
@@ -102,15 +102,30 @@ export default function ProfileCard({
                             </p>
                         )}
                         {profile.profile.religion === 'Hindu' && profile.profile.thalakkuriUrl && (
-                            <a 
-                                href={profile.profile.thalakkuriUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-[11px] text-rose-600 hover:underline font-bold flex items-center gap-1 mt-1"
-                                onClick={(e) => e.stopPropagation()}
+                            <div 
+                                className="relative w-16 h-20 mt-2 bg-slate-50 rounded-lg border border-slate-200 overflow-hidden cursor-pointer group"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    window.open(profile.profile.thalakkuriUrl!, '_blank');
+                                }}
                             >
-                                View Thalakkuri / Horoscope
-                            </a>
+                                {profile.profile.thalakkuriUrl.includes('application/pdf') || profile.profile.thalakkuriUrl.includes('data:application/pdf') ? (
+                                    <div className="w-full h-full flex flex-col items-center justify-center p-1">
+                                        <FileText size={16} className="text-rose-500 mb-0.5" />
+                                        <span className="text-[7px] font-bold text-slate-500 uppercase">PDF</span>
+                                    </div>
+                                ) : (
+                                    <img 
+                                        src={profile.profile.thalakkuriUrl} 
+                                        className="w-full h-full object-cover transition-transform group-hover:scale-110" 
+                                        alt="Thalakkuri" 
+                                    />
+                                )}
+                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <Maximize2 size={12} className="text-white" />
+                                </div>
+                            </div>
                         )}
                         <p className="text-sm text-slate-500 flex items-center gap-1">
                             <MapPin size={14} />

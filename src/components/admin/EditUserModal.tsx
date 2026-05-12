@@ -32,6 +32,7 @@ export default function EditUserModal({ user, onClose, onRefresh }: { user: any,
             occupation: user.profile?.occupation || '',
             qualification: user.profile?.qualification || '',
             dob: user.profile?.dob ? new Date(user.profile.dob).toISOString().split('T')[0] : '',
+            thalakkuriUrl: user.profile?.thalakkuriUrl || '',
         }
     })
 
@@ -201,6 +202,26 @@ export default function EditUserModal({ user, onClose, onRefresh }: { user: any,
                                 <label className="text-xs font-bold text-slate-500 uppercase">Bio / Description</label>
                                 <textarea name="profile.bio" value={formData.profile.bio} onChange={handleChange} rows={3} className="w-full px-3 py-2 rounded-lg border border-slate-200 outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none font-sans" />
                             </div>
+                            {formData.profile.thalakkuriUrl && (
+                                <div className="space-y-1 mt-4">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Thalakkuri / Horoscope</label>
+                                    <div 
+                                        className="relative w-20 h-28 bg-slate-100 rounded-lg border border-slate-200 overflow-hidden cursor-pointer group"
+                                        onClick={() => window.open(formData.profile.thalakkuriUrl, '_blank')}
+                                    >
+                                        {formData.profile.thalakkuriUrl.includes('application/pdf') ? (
+                                            <div className="w-full h-full flex flex-col items-center justify-center">
+                                                <span className="text-[8px] font-bold text-slate-500">PDF</span>
+                                            </div>
+                                        ) : (
+                                            <img src={formData.profile.thalakkuriUrl} className="w-full h-full object-cover" alt="Thalakkuri" />
+                                        )}
+                                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                            <span className="text-[10px] text-white font-bold">VIEW</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </form>
