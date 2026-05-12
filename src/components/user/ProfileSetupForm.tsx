@@ -515,11 +515,26 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                         </div>
                         <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200">
                             {thalakkuriUrl.includes('application/pdf') || thalakkuriUrl.includes('data:application/pdf') ? (
-                                <iframe 
-                                    src={thalakkuriUrl} 
-                                    className="w-full h-[70vh] border-0 rounded-lg shadow-lg"
-                                    title="PDF Preview"
-                                />
+                                <div className="w-full h-full flex flex-col gap-4">
+                                    <embed 
+                                        src={thalakkuriUrl} 
+                                        type="application/pdf"
+                                        className="w-full h-[65vh] border-0 rounded-lg shadow-lg bg-white"
+                                    />
+                                    <div className="flex justify-center">
+                                        <button 
+                                            type="button"
+                                            onClick={() => {
+                                                const win = window.open();
+                                                win?.document.write(`<iframe src="${thalakkuriUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                                            }}
+                                            className="text-rose-600 text-sm font-bold hover:underline flex items-center gap-2"
+                                        >
+                                            <Maximize2 size={16} />
+                                            Open PDF in New Window if not loading
+                                        </button>
+                                    </div>
+                                </div>
                             ) : (
                                 <img 
                                     src={thalakkuriUrl} 
