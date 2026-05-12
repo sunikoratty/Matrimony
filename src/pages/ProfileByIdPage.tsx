@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, FileText, Maximize2 } from 'lucide-react'
+import { ArrowLeft, FileText, Maximize2, X } from 'lucide-react'
 import Header from '@/components/landing/Header'
 import InterestButton from '@/components/user/InterestButton'
 import MembershipSection from '@/components/user/MembershipSection'
@@ -16,6 +16,7 @@ export default function ProfileByIdPage() {
     const [currentUser, setCurrentUser] = useState<any>(null)
     const [interestStatus, setInterestStatus] = useState<any>(null)
     const [isUnlocked, setIsUnlocked] = useState(false)
+    const [showDocModal, setShowDocModal] = useState(false)
     const guestCtaRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -228,9 +229,9 @@ export default function ProfileByIdPage() {
                                                             <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">Thalakkuri / Horoscope</p>
                                                             <div 
                                                                 className="relative w-32 h-40 bg-slate-100 rounded-xl border-2 border-slate-200 overflow-hidden cursor-pointer group"
-                                                                onClick={() => window.open(viewedUser.profile.thalakkuriUrl, '_blank')}
+                                                                onClick={() => setShowDocModal(true)}
                                                             >
-                                                                {viewedUser.profile.thalakkuriUrl.includes('application/pdf') || viewedUser.profile.thalakkuriUrl.endsWith('.pdf') ? (
+                                                                {viewedUser.profile.thalakkuriUrl.includes('application/pdf') || viewedUser.profile.thalakkuriUrl.includes('data:application/pdf') ? (
                                                                     <div className="w-full h-full flex flex-col items-center justify-center p-4">
                                                                         <FileText size={32} className="text-rose-500 mb-2" />
                                                                         <span className="text-[10px] font-bold text-slate-500 uppercase">PDF Document</span>
@@ -252,7 +253,7 @@ export default function ProfileByIdPage() {
                                                 </>
                                             )}
 
-                                            {(viewedUser.profile?.religion === 'Christian' || viewedUser.profile?.religion === 'Muslim') && (
+                                            {(viewedUser.profile?.religion?.toLowerCase() === 'christian' || viewedUser.profile?.religion?.toLowerCase() === 'muslim') && (
                                                 <div>
                                                     <p className="text-xs text-slate-400">Denomination</p>
                                                     <p className="font-medium text-slate-700">{viewedUser.profile?.denomination || 'Not set'}</p>
@@ -264,19 +265,9 @@ export default function ProfileByIdPage() {
 
                                 <div className="mt-6">
                                     <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">About</p>
-                                    {isUnlocked ? (
-                                        <p className="text-slate-600 leading-relaxed">
-                                            {viewedUser.profile?.bio || 'No bio added yet.'}
-                                        </p>
-                                    ) : (
-                                        <div className="mt-2">
-                                            {isPaid ? (
-                                                <p className="text-slate-400 italic text-sm">Please unlock contact details to see full bio.</p>
-                                            ) : (
-                                                <p className="text-slate-400 italic text-sm">Upgrade to premium to read full bio.</p>
-                                            )}
-                                        </div>
-                                    )}
+                                    <p className="text-slate-600 leading-relaxed">
+                                        {viewedUser.profile?.bio || 'No bio added yet.'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -303,6 +294,46 @@ export default function ProfileByIdPage() {
                                 <Link to="/register" className="px-8 py-3 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 shadow-lg transition-all hover:-translate-y-0.5">
                                     Register Free
                                 </Link>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Document Preview Modal */}
+                    {showDocModal && viewedUser.profile?.thalakkuriUrl && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                            <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                    <h3 className="font-bold text-slate-800">Thalakkuri / Horoscope Preview</h3>
+                                    <button 
+                                        onClick={() => setShowDocModal(false)}
+                                        className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                                    >
+                                        <X size={20} className="text-slate-600" />
+                                    </button>
+                                </div>
+                                <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200 text-slate-400">
+                                    {viewedUser.profile.thalakkuriUrl.includes('application/pdf') || viewedUser.profile.thalakkuriUrl.includes('data:application/pdf') ? (
+                                        <iframe 
+                                            src={viewedUser.profile.thalakkuriUrl} 
+                                            className="w-full h-[70vh] border-0 rounded-lg shadow-lg"
+                                            title="PDF Preview"
+                                        />
+                                    ) : (
+                                        <img 
+                                            src={viewedUser.profile.thalakkuriUrl} 
+                                            className="max-w-full max-h-full object-contain shadow-xl rounded-lg" 
+                                            alt="Full Preview" 
+                                        />
+                                    )}
+                                </div>
+                                <div className="p-4 bg-white border-t border-slate-100 text-center">
+                                    <button 
+                                        onClick={() => setShowDocModal(false)}
+                                        className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+                                    >
+                                        Close Preview
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}

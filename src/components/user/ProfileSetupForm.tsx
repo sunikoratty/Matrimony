@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { updateProfile } from '@/lib/user-actions'
-import { Camera, CheckCircle, FileText, Maximize2 } from 'lucide-react'
+import { Camera, CheckCircle, FileText, Maximize2, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useToast } from '@/components/ui/Toast'
 import { useNavigate } from 'react-router-dom'
@@ -47,6 +47,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     const [birthStar, setBirthStar] = useState(user.profile?.birthStar || '')
     const [thalakkuriUrl, setThalakkuriUrl] = useState(user.profile?.thalakkuriUrl || '')
     const [consent, setConsent] = useState(user.profile?.consent || false)
+    const [showDocModal, setShowDocModal] = useState(false)
 
     // Logic for No Religion -> No Caste
     useEffect(() => {
@@ -108,17 +109,36 @@ export default function ProfileSetupForm({ user }: { user: any }) {
     
     async function handleThalakkuri(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
-        if (file) {
-            if (file.size > 2 * 1024 * 1024) {
-                showToast('File size should be less than 2MB', 'error')
-                return
-            }
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setThalakkuriUrl(reader.result as string)
-            }
-            reader.readAsDataURL(file)
+        if (!file) return
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('File size too large. Please upload a file smaller than 5MB.', 'error')
+            return
         }
+        // PDF: store as-is (base64)
+        if (file.type === 'application/pdf') {
+            const reader = new FileReader()
+            reader.onloadend = () => setThalakkuriUrl(reader.result as string)
+            reader.readAsDataURL(file)
+            return
+        }
+        // Image: compress like profile photo
+        const reader = new FileReader()
+        reader.onloadend = (event) => {
+            const img = new Image()
+            img.onload = () => {
+                const canvas = document.createElement('canvas')
+                const maxW = 1200, maxH = 1200
+                let w = img.width, h = img.height
+                if (w > maxW) { h *= maxW / w; w = maxW }
+                if (h > maxH) { w *= maxH / h; h = maxH }
+                canvas.width = w
+                canvas.height = h
+                canvas.getContext('2d')?.drawImage(img, 0, 0, w, h)
+                setThalakkuriUrl(canvas.toDataURL('image/jpeg', 0.6))
+            }
+            img.src = event.target?.result as string
+        }
+        reader.readAsDataURL(file)
     }
 
     return (
@@ -131,31 +151,41 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             setLoading(true)
             
             // Construct the update object directly from state for reliability
+            const isHindu = religion?.toLowerCase() === 'hindu'
             const updateData = {
                 bio,
                 dob: `${year}-${month}-${day}`,
-                religion,
+                religion: religion === 'Others' ? customReligion : religion,
                 caste: caste === 'Others' ? customCaste : caste,
-                denomination,
-                dosham,
+                denomination: (religion === 'Muslim' || religion === 'Christian') ? (denomination === 'Others' ? customDenomination : denomination) : '',
+                dosham: isHindu ? dosham : '',
                 currentResidence,
                 location,
                 occupation,
-                birthStar,
+                birthStar: isHindu ? birthStar : '',
                 qualification,
                 photoUrl: preview,
-                thalakkuriUrl,
+                thalakkuriUrl: isHindu ? thalakkuriUrl : '',
                 maritalStatus,
-                consent: !!consent
+                consent: !!consent,
+                email
             }
 
             try {
-                const res = await fetch('/api/profile/update', {
+                const response = await fetch('/api/profile/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updateData)
-                }).then(r => r.json());
+                });
 
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => null)
+                    setLoading(false)
+                    showToast(errData?.error || `Server error (${response.status}). Try a smaller file.`, 'error')
+                    return
+                }
+
+                const res = await response.json()
                 setLoading(false)
                 if (res?.error) {
                     showToast(res.error, 'error')
@@ -165,14 +195,8 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 }
             } catch (err: any) {
                 setLoading(false)
-                logError('Profile Update', err);
-                if (err.code === 'P2002') {
-                    showToast('Data conflict error.', 'error');
-                } else if (err.message?.includes('payload too large')) {
-                    showToast('File size too large for server.', 'error');
-                } else {
-                    showToast('Update failed. Try a smaller file.', 'error');
-                }
+                console.error('Profile Update Error:', err);
+                showToast('Connection error. The file may be too large for the server.', 'error');
             }
         }} className="space-y-6">
             {/* Photo Upload */}
@@ -219,12 +243,10 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             {years.map(y => <option key={y} value={y}>{y}</option>)}
                         </select>
                     </div>
-                    <input type="hidden" name="dob" value={day && month && year ? `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}` : ''} />
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Current Residence Country *</label>
                     <select
-                        name="currentResidence"
                         required
                         value={currentResidence}
                         onChange={(e) => setCurrentResidence(e.target.value)}
@@ -250,7 +272,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Present Location (City and State) *</label>
                     <input
-                        name="location"
                         required
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
@@ -261,7 +282,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Email ID *</label>
                     <input
-                        name="email"
                         type="email"
                         required
                         value={email}
@@ -276,7 +296,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Marital Status *</label>
                     <select
-                        name="maritalStatus"
                         required
                         value={maritalStatus}
                         onChange={(e) => setMaritalStatus(e.target.value)}
@@ -310,7 +329,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                             placeholder="Type your religion"
                         />
                     )}
-                    <input type="hidden" name="religion" value={religion === 'Others' ? customReligion : religion} />
                 </div>
 
                 {(religion === 'Hindu' || religion === 'No Religion') && (
@@ -338,14 +356,12 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                     placeholder="Type your caste"
                                 />
                             )}
-                            <input type="hidden" name="caste" value={caste === 'Others' ? customCaste : caste} />
                         </div>
                         {religion?.toLowerCase() === 'hindu' && (
                             <>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Dosham (Optional)</label>
                                     <input
-                                        name="dosham"
                                         value={dosham}
                                         onChange={(e) => setDosham(e.target.value)}
                                         className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
@@ -355,7 +371,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Birth Star (Optional)</label>
                                     <input
-                                        name="birthStar"
                                         value={birthStar}
                                         onChange={(e) => setBirthStar(e.target.value)}
                                         className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
@@ -378,7 +393,7 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                         {thalakkuriUrl && (
                                             <div 
                                                 className="relative w-24 h-32 bg-slate-50 rounded-xl border-2 border-slate-200 overflow-hidden cursor-pointer group shadow-sm"
-                                                onClick={() => window.open(thalakkuriUrl, '_blank')}
+                                                onClick={() => setShowDocModal(true)}
                                             >
                                                 {thalakkuriUrl.includes('application/pdf') || thalakkuriUrl.includes('data:application/pdf') ? (
                                                     <div className="w-full h-full flex flex-col items-center justify-center p-2">
@@ -398,7 +413,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                             </div>
                                         )}
                                     </div>
-                                    <input type="hidden" name="thalakkuriUrl" value={thalakkuriUrl} />
                                 </div>
                             </>
                         )}
@@ -429,14 +443,12 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                                 placeholder="Type your denomination"
                             />
                         )}
-                        <input type="hidden" name="denomination" value={denomination === 'Others' ? customDenomination : denomination} />
                     </div>
                 )}
 
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Qualification *</label>
                     <input
-                        name="qualification"
                         required
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
@@ -447,7 +459,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Occupation</label>
                     <input
-                        name="occupation"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
                         className="w-full px-4 py-2 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-rose-500 bg-white text-slate-900"
@@ -459,7 +470,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Bio (Optional)</label>
                 <textarea
-                    name="bio"
                     rows={4}
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
@@ -471,7 +481,6 @@ export default function ProfileSetupForm({ user }: { user: any }) {
             <div className="flex items-start gap-4 p-6 bg-rose-50 rounded-xl border border-rose-100">
                 <input
                     type="checkbox"
-                    name="consent"
                     required
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
@@ -491,6 +500,45 @@ export default function ProfileSetupForm({ user }: { user: any }) {
                 {loading && <CircularLoader size="sm" color="white" />}
                 {loading ? 'Saving Profile...' : 'Save Profile'}
             </button>
+            {/* Document Preview Modal */}
+            {showDocModal && thalakkuriUrl && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                            <h3 className="font-bold text-slate-800">Thalakkuri / Horoscope Preview</h3>
+                            <button 
+                                onClick={() => setShowDocModal(false)}
+                                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+                            >
+                                <X size={20} className="text-slate-600" />
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200">
+                            {thalakkuriUrl.includes('application/pdf') || thalakkuriUrl.includes('data:application/pdf') ? (
+                                <iframe 
+                                    src={thalakkuriUrl} 
+                                    className="w-full h-[70vh] border-0 rounded-lg shadow-lg"
+                                    title="PDF Preview"
+                                />
+                            ) : (
+                                <img 
+                                    src={thalakkuriUrl} 
+                                    className="max-w-full max-h-full object-contain shadow-xl rounded-lg" 
+                                    alt="Full Preview" 
+                                />
+                            )}
+                        </div>
+                        <div className="p-4 bg-white border-t border-slate-100 text-center">
+                            <button 
+                                onClick={() => setShowDocModal(false)}
+                                className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+                            >
+                                Close Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </form>
     )
 }
