@@ -69,7 +69,7 @@ app.use(cors({
     origin: true,
     credentials: true
 }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 
 // Detailed Error Logger
@@ -269,7 +269,7 @@ app.get('/api/profile/:id', async (req, res) => {
 
 app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
     try {
-        const { bio, dob, religion, caste, denomination, dosham, currentResidence, photoUrl, email, location, occupation, birthStar, qualification, consent, maritalStatus } = req.body;
+        const { bio, dob, religion, caste, denomination, dosham, currentResidence, photoUrl, email, location, occupation, birthStar, qualification, consent, maritalStatus, thalakkuriUrl } = req.body;
         
         if (email) {
             await prisma.user.update({ where: { id: req.userId }, data: { email } });
@@ -288,7 +288,8 @@ app.post('/api/profile/update', authMiddleware, async (req: any, res) => {
             currentResidence, location, occupation, birthStar, qualification, 
             consent: consent === 'on' || consent === true || consent === 'true', 
             photoUrl, 
-            maritalStatus
+            maritalStatus,
+            thalakkuriUrl
         };
 
         await withRetry(async () => {
