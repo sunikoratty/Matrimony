@@ -533,31 +533,23 @@ export default function ProfileSetupForm({ user }: { user: any }) {
 
 function PdfPreviewer({ url }: { url: string }) {
     const [blobUrl, setBlobUrl] = useState<string | null>(null);
-    const isPdf = url?.includes('pdf') || (url?.includes('octet-stream') && url?.includes('JVBERi'));
+    const isPdf = url?.startsWith('data:application/pdf') || (url?.includes('octet-stream') && url?.includes('JVBERi'));
 
     useEffect(() => {
         if (!isPdf) return;
         
-        try {
-            const parts = url.split(',');
-            if (parts.length < 2) return;
-            const byteString = atob(parts[1]);
-            const mimeString = parts[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            const blob = new Blob([ab], { type: mimeString });
-            const bUrl = URL.createObjectURL(blob);
-            setBlobUrl(bUrl);
+        let bUrl = '';
+        fetch(url)
+            .then(res => res.blob())
+            .then(blob => {
+                bUrl = URL.createObjectURL(blob);
+                setBlobUrl(bUrl);
+            })
+            .catch(e => console.error("Blob conversion failed", e));
 
-            return () => {
-                URL.revokeObjectURL(bUrl);
-            };
-        } catch (e) {
-            console.error("Blob conversion failed", e);
-        }
+        return () => {
+            if (bUrl) URL.revokeObjectURL(bUrl);
+        };
     }, [url, isPdf]);
 
     if (!isPdf) {
