@@ -311,13 +311,22 @@ export default function ProfileByIdPage() {
                                         <X size={20} className="text-slate-600" />
                                     </button>
                                 </div>
-                                <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-200">
-                                    <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
+                                <div className="flex-1 overflow-hidden p-4 sm:p-6 flex items-center justify-center bg-slate-200/50">
+                                    <div className="w-full h-full max-h-[70vh] flex items-center justify-center">
+                                        <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-white border-t border-slate-100 text-center">
+                                <div className="p-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                                    <a 
+                                        href={viewedUser.profile.thalakkuriUrl} 
+                                        download="Thalakkuri.pdf"
+                                        className="px-6 py-2 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors text-sm"
+                                    >
+                                        Download Document
+                                    </a>
                                     <button 
                                         onClick={() => setShowDocModal(false)}
-                                        className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
+                                        className="px-8 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg active:scale-95"
                                     >
                                         Close Preview
                                     </button>
@@ -353,7 +362,15 @@ function PdfPreviewer({ url }: { url: string }) {
     }, [url, isPdf]);
 
     if (!isPdf) {
-        return <img src={url} className="max-w-full max-h-full object-contain shadow-xl rounded-lg" alt="Full Preview" />;
+        return (
+            <div className="w-full h-full flex items-center justify-center">
+                <img 
+                    src={url} 
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-xl bg-white" 
+                    alt="Full Preview" 
+                />
+            </div>
+        );
     }
 
     return (
