@@ -311,22 +311,13 @@ export default function ProfileByIdPage() {
                                         <X size={20} className="text-slate-600" />
                                     </button>
                                 </div>
-                                <div className="flex-1 overflow-hidden p-4 sm:p-6 flex items-center justify-center bg-slate-200/50">
-                                    <div className="w-full h-full max-h-[70vh] flex items-center justify-center">
-                                        <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
-                                    </div>
+                                <div className="p-4 sm:p-6 bg-slate-200/50 min-h-[70vh] flex flex-col items-center justify-center relative">
+                                    <PdfPreviewer url={viewedUser.profile.thalakkuriUrl} />
                                 </div>
-                                <div className="p-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row gap-3 justify-center items-center">
-                                    <a 
-                                        href={viewedUser.profile.thalakkuriUrl} 
-                                        download="Thalakkuri.pdf"
-                                        className="px-6 py-2 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors text-sm"
-                                    >
-                                        Download Document
-                                    </a>
+                                <div className="p-4 bg-white border-t border-slate-100 flex justify-center">
                                     <button 
                                         onClick={() => setShowDocModal(false)}
-                                        className="px-8 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg active:scale-95"
+                                        className="px-10 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg active:scale-95"
                                     >
                                         Close Preview
                                     </button>
@@ -363,12 +354,21 @@ function PdfPreviewer({ url }: { url: string }) {
 
     if (!isPdf) {
         return (
-            <div className="w-full h-full flex items-center justify-center">
-                <img 
-                    src={url} 
-                    className="max-w-full max-h-full object-contain rounded-lg shadow-xl bg-white" 
-                    alt="Full Preview" 
-                />
+            <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                <div className="flex-1 w-full h-[65vh] flex items-center justify-center p-2">
+                    <img 
+                        src={url} 
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-xl bg-white" 
+                        alt="Full Preview" 
+                    />
+                </div>
+                <a 
+                    href={url} 
+                    download="Document.jpg"
+                    className="px-6 py-2 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors text-sm"
+                >
+                    Download Image
+                </a>
             </div>
         );
     }
@@ -389,7 +389,16 @@ function PdfPreviewer({ url }: { url: string }) {
                     </div>
                 )}
             </div>
-            <div className="flex justify-center pb-2">
+            <div className="flex flex-wrap justify-center gap-4 pb-2">
+                {blobUrl && (
+                    <a 
+                        href={blobUrl} 
+                        download="Thalakkuri.pdf"
+                        className="px-6 py-2 border border-slate-300 text-slate-700 bg-white rounded-xl font-bold hover:bg-slate-50 transition-colors text-sm"
+                    >
+                        Download PDF
+                    </a>
+                )}
                 <button 
                     type="button"
                     onClick={() => {
